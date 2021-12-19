@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-6">
+        <h1>Order</h1>
+    </div>
+
+</div>
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">FullName</th>
+            <th scope="col">Address</th>
+            <th scope="col">PhoneNumber</th>
+            <th scope="col">Note</th>
+            <th scope="col">State</th>
+            <th scope="col">Total</th>
+
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each orders}}
+        <tr>
+            <th scope="row">{{this.id}}</th>
+            <td>{{this.fullName}}</td>
+            <td>{{this.address}}</td>
+            <td>{{this.phoneNumber}}</td>
+            <td>{{this.note}}</td>
+            <td>{{this.state}}</td>
+            <td>{{this.total}}</td>
+            <td class="text-end">
+                <a href="/order/{{this.id}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>
+                    View Detail</a>
+            </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>

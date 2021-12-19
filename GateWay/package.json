@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "axios": "^0.24.0",
+    "express": "^4.17.1",
+    "nodejs": "^0.0.0",
+    "nodemon": "^2.0.15"
+  },
+  "name": "userpagination",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
