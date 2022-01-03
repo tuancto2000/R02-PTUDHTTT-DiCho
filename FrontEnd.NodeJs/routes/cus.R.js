@@ -26,4 +26,7 @@ router.get('/shop-details', cusControl.item_Detail);
 router.get('/shop-near', cusControl.shop_near);
 
 
+router.get('/signup-store', cusControl.cus_signup_store);
+
+
 module.exports = router;

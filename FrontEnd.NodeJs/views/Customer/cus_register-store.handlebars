@@ -1,0 +1,50 @@
+
+<!-- This snippet uses Font Awesome 5 Free as a dependency. You can download it at fontawesome.io! -->
+<head>
+  <link rel="stylesheet" href="Customer/cus_resister-store.css" type="text/css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+          <div class="card-img-left d-none d-md-flex">
+            <!-- Background image for card set in CSS! -->
+          </div>
+          <div class="card-body p-4 p-sm-5">
+            <h5 class="card-title text-center mb-5 fw-light fs-5">Đăng ký bán hàng</h5>
+            <form>
+
+              <div class="form-floating mb-3">
+                <input type="text" name ="storeName" class="form-control" id="floatingInputUsername"  placeholder="Tên cửa hàng" required autofocus>
+                <label for="floatingInputUsername">Tên cửa hàng</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="email" name ="email" class="form-control" id="floatingInputEmail" value ="{{email}}" placeholder="name@example.com">
+                <label for="floatingInputEmail">Email</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" name ="sdt" class="form-control"  value ="{{sdt}}" placeholder="SĐT" required>
+                <label for="floatingInputUsername">Số điện thoại</label>
+              </div>
+
+              <hr>
+              
+
+              <div class="d-grid mb-2">
+                <button class="btn btn-lg btn-primary btn-login fw-bold text-uppercase" type="submit">Đăng ký</button>
+              </div>
+
+              <a class="d-block text-center mt-2 small" href="#">Have an account? Sign In</a>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

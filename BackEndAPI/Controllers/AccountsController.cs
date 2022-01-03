@@ -1,6 +1,7 @@
 ﻿using BackEndAPI.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,14 @@ namespace BackEndAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             return Ok();
+        }
+        [HttpGet("{cusId}")]
+        public async Task<IActionResult> GetDetail(int cusId)
+        {
+            var user = await _context.NguoiDung.FirstOrDefaultAsync(x => x.MaNguoiDung == cusId);
+            if (user == null)
+                throw new Exception($"Can not find user with Id {cusId}");
+            return Ok(user);
         }
     }
    

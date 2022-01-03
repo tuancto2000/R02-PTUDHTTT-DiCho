@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+#node_modules
+FrontEnd.NodeJs/node_modules
+
+#VS history
+FrontEnd.NodeJs/.history
