@@ -12,7 +12,7 @@ namespace BackEndAPI.Entities
         public string Sdt { get; set; }
         public string Email { get; set; }
         public string TenCuaHang { get; set; }
-
+        public string DiaChi { get; set; }
         public virtual NguoiDung NguoiDung { get; set; }
         public virtual ICollection<DonHang> DSDonHang { get; set; }
         public virtual ICollection<SanPham> DSSanPham { get; set; }
