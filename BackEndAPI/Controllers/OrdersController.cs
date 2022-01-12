@@ -26,7 +26,7 @@ namespace BackEndAPI.Controllers
         {
             var orders = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
                .Include(x => x.NguoiMua).Include(x => x.Shipper).Include(x => x.CuaHang).AsQueryable();
-            if (search != "") orders = orders.Where(x => x.NguoiMua.TenNguoiDung.Contains(search) || x.TenNguoiNhan.Contains(search));
+            if (!String.IsNullOrEmpty(search)) orders = orders.Where(x => x.NguoiMua.TenNguoiDung.Contains(search) || x.TenNguoiNhan.Contains(search));
             if (state != -1) orders = orders.Where(x => (int)x.TrangThai == state);
             var total = await orders.CountAsync();
             orders = orders.Skip((page - 1) * pageSize).Take(pageSize);
