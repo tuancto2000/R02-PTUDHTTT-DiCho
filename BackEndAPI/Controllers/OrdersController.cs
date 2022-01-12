@@ -21,6 +21,37 @@ namespace BackEndAPI.Controllers
         {
             _context = context;
         }
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody]DonHangCreateRequest request)
+        {
+            var chitiet = new List<ChiTietDonHang>();
+            foreach (var item in request.DSChiTietDonHang)
+            {
+                chitiet.Add(new ChiTietDonHang
+                {
+                    MaSp = item.MaSp,
+                    SoLuong = item.SoLuong,
+                    DonGia = item.DonGia
+                });
+            }
+            var donhang = new DonHang
+            {
+                MaNguoiDung = request.MaNguoiDung,
+                MaCuaHang = request.MaCuaHang,
+                DiaChi = request.DiaChi,
+                NgayMua = DateTime.Now,
+                TrangThai = TrangThaiDonHang.ChoXacNhan,
+                TenNguoiNhan = request.TenNguoiNhan,
+                Sdt = request.Sdt,
+                PhanHoi = request.PhanHoi,
+                DSChiTietDonHang = chitiet
+            };
+            _context.DonHang.Add(donhang);
+
+            if (await _context.SaveChangesAsync() > 0)
+                return Ok(donhang.MaDonHang);
+            return BadRequest("Co loi trong qua trinh tao don hang");
+        }
         [HttpGet("paging")]
         public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1, int pageSize = 7)
         {
@@ -41,6 +72,7 @@ namespace BackEndAPI.Controllers
                 TenNguoiNhan = x.TenNguoiNhan,
                 Sdt = x.Sdt,
                 PhanHoi = x.PhanHoi,
+
             }).ToList();
             return Ok(new { Data = data, Total = total });
         }
@@ -66,7 +98,6 @@ namespace BackEndAPI.Controllers
                 PhanHoi = order.PhanHoi,
                 DSChiTietDonHang = order.DSChiTietDonHang.Select(x => new ChiTietVM
                 {
-                    MaDonHang = x.MaDonHang,
                     TenSp = x.SanPham.TenSp,
                     SoLuong = x.SoLuong,
                     DonGia = x.DonGia
@@ -81,21 +112,30 @@ namespace BackEndAPI.Controllers
         {
             var order = await _context.DonHang.FirstOrDefaultAsync(x => x.MaDonHang == orderId);
             if (order == null)
-                throw new Exception($"Khong tim thay don hang voi id: {orderId}");
+                return BadRequest($"Khong tim thay don hang voi id: {orderId}");
+            if (order.TrangThai == TrangThaiDonHang.Huy)
+                return BadRequest($"Khong the huy don hang co trang thai huy");
+            if (order.TrangThai == TrangThaiDonHang.ThanhCong)
+                return BadRequest($"Khong the huy don hang co trang thai thanh cong");
             order.TrangThai = TrangThaiDonHang.Huy;
             if (await _context.SaveChangesAsync() > 0)
                 return Ok();
             return BadRequest("Co loi trong qua trinh huy don hang");
         }
         [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateNextState(int orderId)
+        public async Task<IActionResult> UpdateNextState(int orderId, [FromQuery] int shipperId =-1)
         {
-            var order = await _context.DonHang.FirstOrDefaultAsync(x => x.MaDonHang == orderId);
+            var order = await _context.DonHang.FindAsync(orderId);
             if (order == null)
                 throw new Exception($"Khong tim thay don hang voi id: {orderId}");
-
+            if (shipperId != -1)
+            {
+                var shipper = await _context.NguoiDung.FindAsync(shipperId);
+                if (shipper.VaiTro != LoaiNguoiDung.Shipper)
+                    return BadRequest("Ban khong phai la shipper");
+                order.MaShipper = shipperId;
+            }
             order.TrangThai = NextState(order.TrangThai);
-
             if (await _context.SaveChangesAsync() > 0)
                 return Ok();
             return BadRequest("Co loi trong qua trinh cap nhat don hang");
