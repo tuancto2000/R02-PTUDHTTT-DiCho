@@ -97,8 +97,8 @@ namespace BackEndAPI.Controllers
                 return Ok(hopdong.MaHopDong);
             return BadRequest("Co loi trong qua trinh xet duyet hop dong");
         }
-        [HttpGet("RegisterRequest")]
-        public async Task<IActionResult> GetRegisterRequest(string type, int page = 1, int pageSize = 7)
+        [HttpGet("RegisterRequest/{type}")]
+        public async Task<IActionResult> GetRegisterRequest(string type)
         {
             var loainguoidung = type == "shipper" ? LoaiNguoiDung.Shipper : LoaiNguoiDung.CuaHang;
             var contract = _context.HopDong.Include(x => x.NguoiDung)

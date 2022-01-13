@@ -9,5 +9,6 @@ app.use(
   })
 );
 app.use("/api/orders", require("./controllers/order.C"));
+app.use("/api/contracts", require("./controllers/contract.c"));
 
 app.listen(port);
