@@ -1,36 +1,63 @@
 package com.example.DiChoThue.Controllers;
 
-import com.example.DiChoThue.Models.Employee;
+import com.example.DiChoThue.Entities.Employee;
+import com.example.DiChoThue.Exception.ResourceNotFoundException;
+import com.example.DiChoThue.Repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class EmployeeController {
-    private List<Employee> employeeList = new CopyOnWriteArrayList<>();
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
-    @PostMapping("/employee")
-    public ResponseEntity addEmployee(@RequestBody Employee employee) {
+    @GetMapping("/employees")
+    public List<Employee> getAllEmployees() {
+        return employeeRepository.findAll();
+    }
 
-        employee.setPhone("0" + employee.getPhone());
-        employeeList.add(employee);
-
+    @GetMapping("/employees/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable(value = "id") Long employeeId)
+            throws ResourceNotFoundException {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
         return ResponseEntity.ok().body(employee);
     }
 
-    @GetMapping("/employee")
-    public List<Employee> getlistEmployee() {
-        return employeeList;
+    @PostMapping("/employees")
+    public Employee createEmployee(@Valid @RequestBody Employee employee) {
+        return employeeRepository.save(employee);
     }
 
-    @GetMapping("/employee/{number}")
-    public List<Employee> listEmployee(@PathVariable(name = "number") Integer number) {
-        if (number == null || number > employeeList.size()) {
-            return employeeList;
-        }
-        return employeeList.subList(0, number);
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable(value = "id") Long employeeId,
+                                                   @Valid @RequestBody Employee employeeDetails) throws ResourceNotFoundException {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+
+        employee.setEmailId(employeeDetails.getEmailId());
+        employee.setLastName(employeeDetails.getLastName());
+        employee.setFirstName(employeeDetails.getFirstName());
+        final Employee updatedEmployee = employeeRepository.save(employee);
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/employees/{id}")
+    public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Long employeeId)
+            throws ResourceNotFoundException {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+
+        employeeRepository.delete(employee);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 }
