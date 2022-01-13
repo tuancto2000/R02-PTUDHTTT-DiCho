@@ -1,4 +1,8 @@
-
+<head>
+    <link rel="stylesheet" href="../css/checkout.css" type="text/css">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/checkout.js"></script>
+</head>
 <body>
     
 
@@ -34,34 +38,34 @@
                                 <div class="col">
                                     <div class="checkout__input">
                                         <p>Họ và tên<span>*</span></p>
-                                        <input type="text">
+                                        <input type="text" required>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="checkout__input">
                                 <p>Địa chỉ<span>*</span></p>
-                                <input type="text" placeholder="180 Nguyễn Thị Minh Khai" class="checkout__input__add">
+                                <input type="text" placeholder="180 Nguyễn Thị Minh Khai" class="checkout__input__add" required>
                             </div>
                            
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>SĐT<span>*</span></p>
-                                        <input type="text">
+                                        <input type="text" required>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>Email<span>*</span></p>
-                                        <input type="text">
+                                        <input type="email" required>
                                     </div>
                                 </div>
                             </div>
                             
                             
                             <div class="checkout__input">
-                                <p>Ghi chú thêm<span>*</span></p>
+                                <p>Ghi chú thêm</p>
                                 <input type="text"
                                     placeholder="Không ship vào 12h trưa">
                             </div>
@@ -77,18 +81,20 @@
                                 </ul>
                                 <div class="checkout__order__total">Tổng tiền <span>$750.99</span></div>
                               
-                                <p>Vì lý do dịch bệnh, vui lòng chọn một trong các phương thức thanh toán online sau</p>
+                                <p>Vì lý do dịch bệnh, vui lòng chọn một trong các phương thức thanh toán sau</p>
                                 <div class="checkout__input__checkbox">
-                                    <label for="payment">
+                                    <label for="momoQR">
                                         Momo
-                                        <input type="checkbox" id="momo">
+                                        <input type="radio" id="momoQR" name="payment" value="momo" required>
                                         <span class="checkmark"></span>
                                     </label>
+                                    <img id="momoQRCode" src="../img/testPay.png">
                                 </div>
+                                
                                 <div class="checkout__input__checkbox">
-                                    <label for="paypal">
-                                        Zalopay
-                                        <input type="checkbox" id="zalopay">
+                                    <label for="tructiep">
+                                        Trực tiếp
+                                        <input type="radio" id="tructiep" name="payment" value="tructiep">
                                         <span class="checkmark"></span>
                                     </label>
                                 </div>

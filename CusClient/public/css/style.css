@@ -33,9 +33,6 @@
 html,
 body {
 	height: 100%;
-	font-family: "Cairo", sans-serif;
-	-webkit-font-smoothing: antialiased;
-	font-smoothing: antialiased;
 }
 
 h1,
@@ -47,7 +44,6 @@ h6 {
 	margin: 0;
 	color: #111111;
 	font-weight: 400;
-	font-family: "Cairo", sans-serif;
 }
 
 h1 {
@@ -76,7 +72,6 @@ h6 {
 
 p {
 	font-size: 16px;
-	font-family: "Cairo", sans-serif;
 	color: #6f6f6f;
 	font-weight: 400;
 	line-height: 26px;
@@ -98,7 +93,6 @@ a:hover,
 a:focus {
 	text-decoration: none;
 	outline: none;
-	color: #ffffff;
 }
 
 ul,
@@ -1329,7 +1323,6 @@ ol {
 }
 
 .product__item__pic__hover li:hover a i {
-	color: #ffffff;
 	transform: rotate(360deg);
 }
 
@@ -1569,7 +1562,6 @@ ol {
 }
 
 .product__item__pic__hover li:hover a i {
-	color: #ffffff;
 	transform: rotate(360deg);
 }
 
@@ -1647,7 +1639,6 @@ ol {
 .blog__pagination a:hover {
 	background: #7fad39;
 	border-color: #7fad39;
-	color: #ffffff;
 }
 
 .product__pagination a:last-child,
@@ -2721,7 +2712,6 @@ ol {
 
 .footer__widget .footer__widget__social a:hover {
 	background: #7fad39;
-	color: #ffffff;
 	border-color: #ffffff;
 }
 

@@ -370,3 +370,10 @@ FodyWeavers.xsd
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+
+##VSCode history
+CusClient/.history
+
+##Node_module
+CusClient/node_modules

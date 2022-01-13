@@ -18,4 +18,4 @@ app.use("/order", require("./controllers/home.C"));
 app.use("/", (req, res) => {
   res.redirect("/order");
 });
-app.listen(port);
+app.listen(3000);
