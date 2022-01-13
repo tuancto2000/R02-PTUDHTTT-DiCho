@@ -12,12 +12,12 @@ app.use(express.urlencoded({extended:false}));
 
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
-app.set('views', './views');
+app.set('views', './public/views');
 
-const routes = require('./routes/cus.R');
+const cusControl = require('./controllers/cus.C');
 
-app.use('/',routes);
+app.use('/',cusControl);
 
 
-app.use(express.static(__dirname+'/views'));
+app.use(express.static(__dirname+'/public'));
 app.listen(port,()=> {console.log(`Listen at port ${port}`)});
