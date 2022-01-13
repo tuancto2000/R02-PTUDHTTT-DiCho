@@ -44,7 +44,8 @@ namespace BackEndAPI.Controllers
                 TenNguoiNhan = request.TenNguoiNhan,
                 Sdt = request.Sdt,
                 PhanHoi = request.PhanHoi,
-                DSChiTietDonHang = chitiet
+                DSChiTietDonHang = chitiet,
+                TongTien = chitiet.Sum(x => x.SoLuong * x.DonGia)
             };
             _context.DonHang.Add(donhang);
 
@@ -72,6 +73,7 @@ namespace BackEndAPI.Controllers
                 TenNguoiNhan = x.TenNguoiNhan,
                 Sdt = x.Sdt,
                 PhanHoi = x.PhanHoi,
+                TongTien = x.TongTien
 
             }).ToList();
             return Ok(new { Data = data, Total = total });
@@ -101,7 +103,8 @@ namespace BackEndAPI.Controllers
                     TenSp = x.SanPham.TenSp,
                     SoLuong = x.SoLuong,
                     DonGia = x.DonGia
-                }).ToList()
+                }).ToList(),
+                TongTien = order.TongTien
             };
             if (order.MaShipper != null) model.TenShipper = order.Shipper.TenNguoiDung;
 

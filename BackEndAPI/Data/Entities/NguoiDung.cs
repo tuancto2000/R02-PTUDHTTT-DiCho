@@ -16,6 +16,7 @@ namespace BackEndAPI.Entities
         public string Sdt { get; set; }
         public string Email { get; set; }
         public LoaiNguoiDung VaiTro { get; set; }
+        public bool KichHoat { get; set; }
 
         public virtual ICollection<CuaHang> CuaHang { get; set; }
         public virtual ICollection<DonHang> DSDonHangDaMua { get; set; }

@@ -234,7 +234,7 @@ namespace BackEndAPI.Entities
 
             modelBuilder.Entity<HopDong>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MaHopDong);
 
                 entity.ToTable("HOP_DONG");
 

@@ -4,14 +4,16 @@ using BackEndAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEndAPI.Migrations
 {
     [DbContext(typeof(PTUDContext))]
-    partial class PTUDContextModelSnapshot : ModelSnapshot
+    [Migration("20220113005157_add-user-isActive")]
+    partial class adduserisActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,12 +310,6 @@ namespace BackEndAPI.Migrations
 
             modelBuilder.Entity("BackEndAPI.Entities.HopDong", b =>
                 {
-                    b.Property<int>("MaHopDong")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("MA_HOP_DONG")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<string>("ChungNhanAnToanImg")
                         .HasColumnType("nvarchar(max)");
 
@@ -323,12 +319,13 @@ namespace BackEndAPI.Migrations
                     b.Property<string>("HopDongImg")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MaHopDong")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_HOP_DONG");
+
                     b.Property<int>("MaNguoiDung")
                         .HasColumnType("int")
                         .HasColumnName("MA_NGUOI_DUNG");
-
-                    b.Property<DateTime?>("NgayDangKy")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayHieuLuc")
                         .HasColumnType("datetime2")
@@ -341,8 +338,6 @@ namespace BackEndAPI.Migrations
                     b.Property<DateTime?>("NgayKyHopDong")
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAY_KY_HOP_DONG");
-
-                    b.HasKey("MaHopDong");
 
                     b.HasIndex("MaNguoiDung");
 

@@ -18,6 +18,7 @@ namespace BackEndAPI.ViewModels.Orders
         public string TenNguoiNhan { get; set; }
         public string Sdt { get; set; }
         public string PhanHoi { get; set; }
+        public int TongTien { get; set; }
         public List<ChiTietVM> DSChiTietDonHang { get; set; }
     }
 }
