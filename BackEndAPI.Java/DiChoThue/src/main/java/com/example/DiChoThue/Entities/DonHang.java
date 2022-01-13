@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -16,15 +14,16 @@ import java.util.Date;
 @Table(name = "DON_HANG")
 public class DonHang {
     @Id
-    private int MA_DON_HANG;
-    private int MA_NGUOI_DUNG;
-    private int MA_CUA_HANG;
-    private int MA_SHIPPER;
-    private String DIA_CHI;
-    private Date NGAY_MUA;
-    private int TRANG_THAI;
-    private Date NGAY_CAP_NHAT;
-    private String TEN_NGUOI_NHAN;
-    private String SDT;
-    private String PHAN_HOI;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int ma_don_hang;
+    private int ma_nguoi_dung;
+    private int ma_cua_hang;
+    private int ma_shipper;
+    private String dia_chi;
+    private Date ngay_mua;
+    private int trang_thai;
+    private Date ngay_cap_nhat;
+    private String ten_nguoi_nhan;
+    private String sdt;
+    private String phan_hoi;
 }

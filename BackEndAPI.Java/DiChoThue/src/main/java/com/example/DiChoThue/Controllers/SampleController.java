@@ -1,6 +1,5 @@
 package com.example.DiChoThue.Controllers;
 
-import com.example.DiChoThue.Entities.Employee;
 import com.example.DiChoThue.Entities.NguoiDung;
 import com.example.DiChoThue.Exception.ResourceNotFoundException;
 import com.example.DiChoThue.Repository.NguoiDungRepository;
@@ -19,9 +18,6 @@ import java.util.Map;
 public class SampleController {
     @Autowired
     NguoiDungRepository nguoiDungRepository;
-
-    @Autowired
-    private EntityManager entityManager;
 
     @GetMapping("/users")
     public List<NguoiDung> getAllUsers() {

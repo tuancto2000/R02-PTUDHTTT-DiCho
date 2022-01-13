@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
@@ -15,8 +13,9 @@ import javax.persistence.Table;
 @Table(name = "HINH_ANH")
 public class HinhAnh {
     @Id
-    private int MA_HINH_ANH;
-    private int MA_SP;
-    private String NGUON_HINH_ANH;
-    private Boolean MAC_DINH;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int ma_hinh_anh;
+    private int ma_sp;
+    private String nguon_hinh_anh;
+    private Boolean mac_dinh;
 }
