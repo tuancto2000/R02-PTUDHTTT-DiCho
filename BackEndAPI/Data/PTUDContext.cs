@@ -332,6 +332,23 @@ namespace BackEndAPI.Entities
                 
                 entity.Property(e => e.LoaiVung).IsRequired().HasColumnName("LOAI_VUNG");
             });
+            modelBuilder.Entity<PhanHoi>(entity =>
+            {
+                entity.HasKey(e => e.MaPhanHoi);
+
+                entity.ToTable("PHAN_HOI");
+
+                entity.Property(e => e.MaNguoiPhanHoi).IsRequired().HasColumnName("MA_NGUOI_PHAN_HOI");
+
+                entity.Property(e => e.MaNguoiDuocPhanHoi).IsRequired().HasColumnName("MA_NGUOI_DUOC_PHAN_HOI");
+
+                entity.Property(e => e.NoiDung).IsRequired().HasColumnName("NOI_DUNG");
+
+                entity.HasOne(d => d.NguoiDuocPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiDuocPhanHoi).OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.NguoiPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiPhanHoi).OnDelete(DeleteBehavior.Restrict);
+
+            });
         }
     }
 }
