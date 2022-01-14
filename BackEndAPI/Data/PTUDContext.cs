@@ -1,4 +1,5 @@
 ﻿using System;
+using BackEndAPI.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -234,7 +235,7 @@ namespace BackEndAPI.Entities
 
             modelBuilder.Entity<HopDong>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MaHopDong);
 
                 entity.ToTable("HOP_DONG");
 
@@ -260,7 +261,7 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.MaNguoiDung).HasColumnName("MA_NGUOI_DUNG");
 
-                entity.Property(e => e.DiaChi).HasColumnName("DIA_CHI");
+                entity.Property(e => e.MaDiaChi).HasColumnName("MA_DIA_CHI");
 
                 entity.Property(e => e.Email).HasColumnName("EMAIL");
 
@@ -271,6 +272,8 @@ namespace BackEndAPI.Entities
                 entity.Property(e => e.TenNguoiDung).HasColumnName("TEN_NGUOI_DUNG");
 
                 entity.Property(e => e.VaiTro).HasColumnName("VAI_TRO");
+
+                //entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
             });
 
             modelBuilder.Entity<SanPham>(entity =>
@@ -310,7 +313,22 @@ namespace BackEndAPI.Entities
 
                 entity.HasOne(d => d.NguoiDung).WithMany().HasForeignKey(d => d.MaNguoiDung);
             });
-        }
+            modelBuilder.Entity<DiaChi>(entity =>
+            {
+                entity.HasKey(e => e.MaDiaChi);
 
+                entity.ToTable("DIA_CHI");
+
+                entity.Property(e => e.MaDiaChi).IsRequired().HasColumnName("MA_DIA_CHI");
+
+                entity.Property(e => e.ToaDoDong).IsRequired().HasColumnName("TOA_DO_DONG");
+
+                entity.Property(e => e.ToaDoTay).IsRequired().HasColumnName("TOA_DO_TAY");
+
+                entity.Property(e => e.TenDiaChi).IsRequired().HasColumnName("TEN_DIA_CHI");
+                
+                entity.Property(e => e.LoaiVung).IsRequired().HasColumnName("LOAI_VUNG");
+            });
+        }
     }
 }

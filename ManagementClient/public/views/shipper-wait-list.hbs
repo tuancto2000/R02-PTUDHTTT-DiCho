@@ -1,0 +1,42 @@
+<div class="row mb-3 mt-5">
+    <div class="col-6">
+        <h1> Danh sách nhu yếu phẩm</h1>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+        <a href="/product/add" type="button" class="btn btn-primary align-self-center">Create New Product</a>
+    </div>
+</div>
+<table class="table table-bordered w-100 ">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col" data-filter-control='select'>Tên nhu yếu phẩm</th>
+            <th scope="col">Hình ảnh</th>
+            <th scope="col">Giá tiền</th>
+            <th scope="col">Đơn vị</th>
+            <th scope="col">Số lượng </th>
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each products}}
+        <tr>
+            <td>{{ten_sanpham}}</td>
+            <td><img style="width: 100px; height:100px" src={{url}}></td>
+            <td>{{gia_tien}}</td>
+            <td>{{don_vi}}</td>
+            <td>{{con_lai}}</td>
+            <td class="text-end">
+                <a href="/product/edit/{{id_nhu_yeu_pham}}" type="button" class="btn btn-light btn-small"><i
+                        class="bi bi-eye"></i>
+                    Detail</a>
+            </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+    {{{paginateHelper pagination paginationClass="pagination"}}}
+</nav>

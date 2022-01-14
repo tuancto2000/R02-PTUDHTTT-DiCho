@@ -19,7 +19,7 @@ namespace BackEndAPI.Entities
         public string TenNguoiNhan { get; set; }
         public string Sdt { get; set; }
         public string PhanHoi { get; set; }
-
+        public int TongTien { get; set; }
         public virtual CuaHang CuaHang { get; set; }
         public virtual NguoiDung NguoiMua { get; set; }
         public virtual NguoiDung Shipper { get; set; }

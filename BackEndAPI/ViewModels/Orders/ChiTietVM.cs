@@ -7,9 +7,9 @@ namespace BackEndAPI.ViewModels.Orders
 {
     public class ChiTietVM
     {
-        public int MaDonHang { get; set; }
+        public int MaSp { get; set; }
         public string TenSp { get; set; }
-        public int? SoLuong { get; set; }
-        public int? DonGia { get; set; }
+        public int SoLuong { get; set; }
+        public int DonGia { get; set; }
     }
 }
