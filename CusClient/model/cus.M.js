@@ -6,7 +6,6 @@ module.exports.getUserInfo = async (cusId) => {
     await axios.get(`http://localhost:18291/api/Accounts/${cusId}`).then(users=>{
         user = users.data;
     });
-   
-    
+  
     return user
 };

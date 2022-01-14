@@ -22,7 +22,7 @@ namespace BackEndAPI.Controllers
             _context = context;
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]DonHangCreateRequest request)
+        public async Task<IActionResult> Create([FromBody] DonHangCreateRequest request)
         {
             var chitiet = new List<ChiTietDonHang>();
             foreach (var item in request.DSChiTietDonHang)
@@ -38,7 +38,7 @@ namespace BackEndAPI.Controllers
             {
                 MaNguoiDung = request.MaNguoiDung,
                 MaCuaHang = request.MaCuaHang,
-                DiaChi = request.DiaChi,
+                //DiaChi = request.DiaChi,
                 NgayMua = DateTime.Now,
                 TrangThai = TrangThaiDonHang.ChoXacNhan,
                 TenNguoiNhan = request.TenNguoiNhan,
@@ -67,7 +67,7 @@ namespace BackEndAPI.Controllers
                 MaDonHang = x.MaDonHang,
                 TenNguoiDung = x.NguoiMua.TenNguoiDung,
                 TenCuaHang = x.CuaHang.TenCuaHang,
-                DiaChi = x.DiaChi,
+                //DiaChi = x.DiaChi,
                 NgayMua = x.NgayMua,
                 TrangThai = x.TrangThai.ToString(),
                 TenNguoiNhan = x.TenNguoiNhan,
@@ -82,6 +82,7 @@ namespace BackEndAPI.Controllers
         [HttpGet("detail/{orderId}")]
         public async Task<IActionResult> GetDetail([FromRoute] int orderId)
         {
+
             var order = await _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
                 .Include(x => x.NguoiMua).Include(x => x.Shipper).Include(x => x.CuaHang)
                 .FirstOrDefaultAsync(x => x.MaDonHang == orderId);
@@ -92,7 +93,7 @@ namespace BackEndAPI.Controllers
                 MaDonHang = order.MaDonHang,
                 TenNguoiDung = order.NguoiMua.TenNguoiDung,
                 TenCuaHang = order.CuaHang.TenCuaHang,
-                DiaChi = order.DiaChi,
+                //DiaChi = order.DiaChi,
                 NgayMua = order.NgayMua,
                 TrangThai = order.TrangThai.ToString(),
                 TenNguoiNhan = order.TenNguoiNhan,
@@ -126,7 +127,7 @@ namespace BackEndAPI.Controllers
             return BadRequest("Co loi trong qua trinh huy don hang");
         }
         [HttpPut("{orderId}")]
-        public async Task<IActionResult> UpdateNextState(int orderId, [FromQuery] int shipperId =-1)
+        public async Task<IActionResult> UpdateNextState(int orderId, [FromQuery] int shipperId = -1)
         {
             var order = await _context.DonHang.FindAsync(orderId);
             if (order == null)
@@ -165,6 +166,12 @@ namespace BackEndAPI.Controllers
                     }
                 default: return state;
             }
+        }
+        [HttpGet("test/{storeId}")]
+        public async Task<IActionResult> Test(int storeId)
+        {
+            var product = _context.SanPham.Include(x => x.CuaHang).Where(x => x.MaCuaHang == storeId);
+            return Ok(product);
         }
     }
 }

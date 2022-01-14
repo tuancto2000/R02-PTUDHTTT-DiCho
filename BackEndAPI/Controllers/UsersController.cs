@@ -36,7 +36,7 @@ namespace BackEndAPI.Controllers
             {
                 MaNguoiDung = taikhoan.MaNguoiDung,
                 MatKhau = taikhoan.MatKhau,
-                DiaChi = taikhoan.NguoiDung.DiaChi,
+                //DiaChi = taikhoan.NguoiDung.DiaChi,
                 Email = taikhoan.NguoiDung.Email,
                 NgaySinh = taikhoan.NguoiDung.NgaySinh,
                 Sdt = taikhoan.NguoiDung.Sdt,
@@ -53,7 +53,7 @@ namespace BackEndAPI.Controllers
                 MatKhau = request.MatKhau,
                 NguoiDung = new NguoiDung
                 {
-                    DiaChi = request.DiaChi,
+                    //DiaChi = request.DiaChi,
                     Email = request.Email,
                     NgaySinh = request.NgaySinh,
                     Sdt = request.Sdt,
