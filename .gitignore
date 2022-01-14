@@ -374,6 +374,7 @@ out/
 
 ##VSCode history
 CusClient/.history
-
+ManagementClient/.history
 ##Node_module
 CusClient/node_modules
+ManagementClient/node_modules
