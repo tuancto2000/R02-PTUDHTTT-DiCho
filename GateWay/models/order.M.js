@@ -1,5 +1,5 @@
 const axios = require("axios");
-axios.defaults.baseURL = "http://localhost:18291/api/";
+axios.defaults.baseURL = process.env.DOTNET_URL;
 
 exports.paging = async (search, state, page, pageSize) => {
   var url = "/orders/paging?";

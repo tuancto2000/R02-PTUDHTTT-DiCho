@@ -1,6 +1,7 @@
 const express = require("express"),
-  app = express(),
-  port = 5000;
+  app = express();
+
+require("dotenv").config();
 
 app.use(express.static("public"));
 app.use(
@@ -10,5 +11,6 @@ app.use(
 );
 app.use("/api/orders", require("./controllers/order.C"));
 app.use("/api/contracts", require("./controllers/contract.c"));
+app.use("/api/users", require("./controllers/user.C"));
 
-app.listen(port);
+app.listen(process.env.PORT);
