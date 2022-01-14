@@ -3,7 +3,7 @@ const router = express.Router();
 const model = require("../models/user.M");
 module.exports = router;
 
-router.get("/detail", async (req, res) => {
+router.get("/", async (req, res) => {
   const data = await model.getAll();
   res.send(data);
 });
