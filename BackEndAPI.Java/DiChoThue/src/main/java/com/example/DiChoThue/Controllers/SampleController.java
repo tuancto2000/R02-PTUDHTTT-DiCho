@@ -45,7 +45,6 @@ public class SampleController {
 
         nguoiDung.setTen_nguoi_dung(nguoiDungDetail.getTen_nguoi_dung());
         nguoiDung.setEmail(nguoiDungDetail.getEmail());
-        nguoiDung.setDia_chi(nguoiDungDetail.getDia_chi());
 
         final NguoiDung updatedUser = nguoiDungRepository.save(nguoiDung);
         return ResponseEntity.ok(updatedUser);
