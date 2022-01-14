@@ -14,7 +14,8 @@ namespace BackEndAPI.Entities
         public int? GiaSp { get; set; }
         public int? SoLuongConLai { get; set; }
         public string MoTa { get; set; }
-
+        public double TrungBinhSao { get; set; }
+        public int SoLuotDanhGia { get; set; }
         public virtual CuaHang CuaHang { get; set; }
         public virtual DanhMuc DanhMuc { get; set; }
         public virtual ICollection<ChiTietDonHang> DSChiTietDonHang { get; set; }
@@ -23,3 +24,5 @@ namespace BackEndAPI.Entities
         public virtual ICollection<HinhAnh> DSHinhAnh { get; set; }
     }
 }
+
+

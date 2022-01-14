@@ -178,11 +178,11 @@ namespace BackEndAPI.Entities
 
                 entity.HasOne(d => d.NguoiMua)
                     .WithMany(p => p.DSDonHangDaMua)
-                    .HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict); 
+                    .HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Shipper)
                     .WithMany(p => p.DSDonHangDaShip)
-                    .HasForeignKey(d => d.MaShipper).OnDelete(DeleteBehavior.Restrict); 
+                    .HasForeignKey(d => d.MaShipper).OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<GioHang>(entity =>
@@ -306,7 +306,7 @@ namespace BackEndAPI.Entities
 
             modelBuilder.Entity<TaiKhoan>(entity =>
             {
-                entity.HasKey(e=>e.MaNguoiDung);
+                entity.HasKey(e => e.MaNguoiDung);
 
                 entity.ToTable("TAI_KHOAN");
 
@@ -329,24 +329,32 @@ namespace BackEndAPI.Entities
                 entity.Property(e => e.ToaDoTay).IsRequired().HasColumnName("TOA_DO_TAY");
 
                 entity.Property(e => e.TenDiaChi).IsRequired().HasColumnName("TEN_DIA_CHI");
-                
+
                 entity.Property(e => e.LoaiVung).IsRequired().HasColumnName("LOAI_VUNG");
             });
-            modelBuilder.Entity<PhanHoi>(entity =>
+            modelBuilder.Entity<DanhGia>(entity =>
             {
-                entity.HasKey(e => e.MaPhanHoi);
+                entity.HasKey(e => e.MaDanhGia);
 
-                entity.ToTable("PHAN_HOI");
+                entity.ToTable("DANH_GIA");
 
-                entity.Property(e => e.MaNguoiPhanHoi).IsRequired().HasColumnName("MA_NGUOI_PHAN_HOI");
+                entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
 
-                entity.Property(e => e.MaNguoiDuocPhanHoi).IsRequired().HasColumnName("MA_NGUOI_DUOC_PHAN_HOI");
+                entity.Property(e => e.MaSanPham).IsRequired().HasColumnName("MA_SAN_PHAM");
 
-                entity.Property(e => e.NoiDung).IsRequired().HasColumnName("NOI_DUNG");
+                entity.Property(e => e.MaChiTietDonHang).IsRequired().HasColumnName("MA_CHI_TIET_DON_HANG");
 
-                entity.HasOne(d => d.NguoiDuocPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiDuocPhanHoi).OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.MaDanhGia).IsRequired().HasColumnName("MA_DANH_GIA");
 
-                entity.HasOne(d => d.NguoiPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiPhanHoi).OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.Sao).IsRequired().HasColumnName("SAO");
+
+                entity.Property(e => e.BinhLuan).IsRequired().HasColumnName("BINH_LUAN");
+
+                entity.HasOne(d => d.NguoiDung).WithMany().HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict); ;
+
+                entity.HasOne(d => d.SanPham).WithMany().HasForeignKey(d => d.MaSanPham).OnDelete(DeleteBehavior.Restrict); ;
+
+                entity.HasOne(d => d.ChiTietDonHang).WithMany().HasForeignKey(d => d.MaChiTietDonHang).OnDelete(DeleteBehavior.Restrict); ;
 
             });
         }
