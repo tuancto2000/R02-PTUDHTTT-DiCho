@@ -4,14 +4,16 @@ using BackEndAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BackEndAPI.Migrations
 {
     [DbContext(typeof(PTUDContext))]
-    partial class PTUDContextModelSnapshot : ModelSnapshot
+    [Migration("20220114035117_add-address2")]
+    partial class addaddress2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,35 +49,6 @@ namespace BackEndAPI.Migrations
                     b.HasKey("MaDiaChi");
 
                     b.ToTable("DIA_CHI");
-                });
-
-            modelBuilder.Entity("BackEndAPI.Data.Entities.PhanHoi", b =>
-                {
-                    b.Property<int>("MaPhanHoi")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("MaNguoiDuocPhanHoi")
-                        .HasColumnType("int")
-                        .HasColumnName("MA_NGUOI_DUOC_PHAN_HOI");
-
-                    b.Property<int>("MaNguoiPhanHoi")
-                        .HasColumnType("int")
-                        .HasColumnName("MA_NGUOI_PHAN_HOI");
-
-                    b.Property<string>("NoiDung")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("NOI_DUNG");
-
-                    b.HasKey("MaPhanHoi");
-
-                    b.HasIndex("MaNguoiDuocPhanHoi");
-
-                    b.HasIndex("MaNguoiPhanHoi");
-
-                    b.ToTable("PHAN_HOI");
                 });
 
             modelBuilder.Entity("BackEndAPI.Entities.ChiTietDonHang", b =>
@@ -512,25 +485,6 @@ namespace BackEndAPI.Migrations
                     b.HasKey("MaNguoiDung");
 
                     b.ToTable("TAI_KHOAN");
-                });
-
-            modelBuilder.Entity("BackEndAPI.Data.Entities.PhanHoi", b =>
-                {
-                    b.HasOne("BackEndAPI.Entities.NguoiDung", "NguoiDuocPhanHoi")
-                        .WithMany()
-                        .HasForeignKey("MaNguoiDuocPhanHoi")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BackEndAPI.Entities.NguoiDung", "NguoiPhanHoi")
-                        .WithMany()
-                        .HasForeignKey("MaNguoiPhanHoi")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("NguoiDuocPhanHoi");
-
-                    b.Navigation("NguoiPhanHoi");
                 });
 
             modelBuilder.Entity("BackEndAPI.Entities.ChiTietDonHang", b =>

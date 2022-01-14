@@ -1,4 +1,5 @@
-﻿using BackEndAPI.Data.Enums;
+﻿using BackEndAPI.Data.Entities;
+using BackEndAPI.Data.Enums;
 using BackEndAPI.Entities;
 using BackEndAPI.ViewModels.Users;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +37,7 @@ namespace BackEndAPI.Controllers
             {
                 MaNguoiDung = taikhoan.MaNguoiDung,
                 MatKhau = taikhoan.MatKhau,
-                //DiaChi = taikhoan.NguoiDung.DiaChi,
+                DiaChi = taikhoan.NguoiDung.DiaChi.TenDiaChi,
                 Email = taikhoan.NguoiDung.Email,
                 NgaySinh = taikhoan.NguoiDung.NgaySinh,
                 Sdt = taikhoan.NguoiDung.Sdt,
@@ -53,7 +54,12 @@ namespace BackEndAPI.Controllers
                 MatKhau = request.MatKhau,
                 NguoiDung = new NguoiDung
                 {
-                    //DiaChi = request.DiaChi,
+                    DiaChi = new DiaChi {
+                        TenDiaChi = request.DiaChi,
+                        ToaDoTay = 0,
+                        ToaDoDong = 0,
+                        LoaiVung = LoaiVung.Do
+                    },
                     Email = request.Email,
                     NgaySinh = request.NgaySinh,
                     Sdt = request.Sdt,

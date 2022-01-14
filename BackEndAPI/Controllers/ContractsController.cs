@@ -1,4 +1,5 @@
-﻿using BackEndAPI.Data.Enums;
+﻿using BackEndAPI.Data.Entities;
+using BackEndAPI.Data.Enums;
 using BackEndAPI.Entities;
 using BackEndAPI.ViewModels.Contracts;
 using BackEndAPI.ViewModels.Users;
@@ -55,7 +56,13 @@ namespace BackEndAPI.Controllers
             var cuahang = new CuaHang
             {
                 MaNguoiDung = request.MaNguoiDung,
-                DiaChi = request.DiaChi,
+                DiaChi = new DiaChi
+                {
+                    TenDiaChi = request.DiaChi,
+                    ToaDoTay = 0,
+                    ToaDoDong = 0,
+                    LoaiVung = LoaiVung.Do
+                },
                 Email = request.Email,
                 Sdt = request.Sdt,
                 TenCuaHang = request.TenCuaHang,

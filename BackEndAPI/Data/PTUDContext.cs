@@ -124,6 +124,8 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.Email).HasColumnName("EMAIL");
 
+                entity.Property(e => e.MaDiaChi).HasColumnName("MA_DIA_CHI");
+
                 entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
 
                 entity.Property(e => e.Sdt)
@@ -136,6 +138,7 @@ namespace BackEndAPI.Entities
                 entity.HasOne(d => d.NguoiDung)
                     .WithMany(p => p.CuaHang)
                     .HasForeignKey(d => d.MaNguoiDung);
+                entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
             });
 
             modelBuilder.Entity<DonHang>(entity =>
@@ -273,7 +276,7 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.VaiTro).HasColumnName("VAI_TRO");
 
-                //entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
+                entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
             });
 
             modelBuilder.Entity<SanPham>(entity =>
@@ -328,6 +331,23 @@ namespace BackEndAPI.Entities
                 entity.Property(e => e.TenDiaChi).IsRequired().HasColumnName("TEN_DIA_CHI");
                 
                 entity.Property(e => e.LoaiVung).IsRequired().HasColumnName("LOAI_VUNG");
+            });
+            modelBuilder.Entity<PhanHoi>(entity =>
+            {
+                entity.HasKey(e => e.MaPhanHoi);
+
+                entity.ToTable("PHAN_HOI");
+
+                entity.Property(e => e.MaNguoiPhanHoi).IsRequired().HasColumnName("MA_NGUOI_PHAN_HOI");
+
+                entity.Property(e => e.MaNguoiDuocPhanHoi).IsRequired().HasColumnName("MA_NGUOI_DUOC_PHAN_HOI");
+
+                entity.Property(e => e.NoiDung).IsRequired().HasColumnName("NOI_DUNG");
+
+                entity.HasOne(d => d.NguoiDuocPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiDuocPhanHoi).OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.NguoiPhanHoi).WithMany().HasForeignKey(d => d.MaNguoiPhanHoi).OnDelete(DeleteBehavior.Restrict);
+
             });
         }
     }
