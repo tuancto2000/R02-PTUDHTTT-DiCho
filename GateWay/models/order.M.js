@@ -1,56 +1,75 @@
 const axios = require("axios");
-axios.defaults.baseURL = process.env.DOTNET_URL;
+const netBaseURL = process.env.DOTNET_URL;
+const javaBaseURL = process.env.JAVA_URL;
 
 exports.paging = async (search, state, page, pageSize) => {
-  var url = "/orders/paging?";
-  url += search != null ? `search=${search}&` : "";
-  url += state != null ? `state=${state}&` : "";
-  url += page != null ? `page=${page}&` : "";
-  url += pageSize != null ? `pageSize=${pageSize}&` : "";
-  console.log("paging", url);
-  const rs = await axios({
-    method: "get",
-    url: url,
-  })
-    .then((response) => response.data)
-    .catch((error) => console.log("errrrrrrr : ", error));
-  return rs;
+    var url = "/orders/paging?";
+    url += search != null ? `search=${search}&` : "";
+    url += state != null ? `state=${state}&` : "";
+    url += page != null ? `page=${page}&` : "";
+    url += pageSize != null ? `pageSize=${pageSize}&` : "";
+    console.log("paging", url);
+    const rs = await axios({
+        baseURL: netBaseURL,
+        baseURL: netBaseURL,
+        method: "get",
+        url: url,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
 };
 
 exports.getById = async (id) => {
-  const rs = await axios({
-    method: "get",
-    url: "/orders/detail/" + id,
-  })
-    .then((response) => response.data)
-    .catch((error) => console.log("errrrrrrr : ", error));
-  return rs;
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "get",
+        url: "/orders/detail/" + id,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
 };
 exports.cancel = async (id) => {
-  const rs = await axios({
-    method: "put",
-    url: "/orders/cancel/" + id,
-  })
-    .then((response) => response.data)
-    .catch((error) => console.log("errrrrrrr : ", error));
-  return rs;
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "put",
+        url: "/orders/cancel/" + id,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
 };
 exports.nextState = async (id) => {
-  const rs = await axios({
-    method: "put",
-    url: "/orders/" + id,
-  })
-    .then((response) => response.data)
-    .catch((error) => console.log("errrrrrrr : ", error));
-  return rs;
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "put",
+        url: "/orders/" + id,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
 };
 exports.add = async (data) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "post",
+        url: "/orders/",
+        data: data,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.addRate = async (data) => {
   const rs = await axios({
-    method: "post",
-    url: "/orders/" + id,
-    data: data,
+      baseURL: javaBaseURL,
+      method: "post",
+      url: "/orders/" + data.ma_chi_tiet_don_hang + "/rate",
+      data: data,
   })
-    .then((response) => response.data)
-    .catch((error) => console.log("errrrrrrr : ", error));
+      .then((response) => response.data)
+      .catch((error) => console.log("errrrrrrr : ", error));
   return rs;
 };
