@@ -9,7 +9,6 @@ router.get("/", async (req, res) => {
         search = req.query.search,
         state = req.query.state;
     const data = await model.paging(search, state, page, pagesize);
-    console.log(data);
     res.send(data);
 });
 router.get("/detail/:id", async (req, res) => {
@@ -20,7 +19,7 @@ router.get("/detail/:id", async (req, res) => {
 router.put("/cancel/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.cancel(id);
-    res.send(data);
+    res.status(200).res.send(data);
 });
 router.get("/nextState/:id", async (req, res) => {
     let id = req.params.id;
@@ -30,10 +29,10 @@ router.get("/nextState/:id", async (req, res) => {
 router.post("/add", async (req, res) => {
     let data = req.body;
     const result = await model.add(data);
-    res.send(result);
+    res.status(200).res.send(result);
 });
 router.post("/add/:id/rate", async (req, res) => {
     let data = req.body;
     const result = await model.addRate(data);
-    res.send(result);
+    res.status(200).res.send(result);
 });

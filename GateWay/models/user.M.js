@@ -26,7 +26,7 @@ exports.addUser = async (data) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
-        url: `/User`,
+        url: `/Users`,
         data: data,
     })
         .then((response) => response.data)

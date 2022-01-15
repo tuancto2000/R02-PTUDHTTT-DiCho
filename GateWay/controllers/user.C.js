@@ -17,5 +17,5 @@ router.get("/detail/:id", async (req, res) => {
 router.post("/add", async (req, res) => {
     let data = req.body;
     const result = await model.addUser(data);
-    res.send(result);
+    res.status(200).send((result).toString());
 });
