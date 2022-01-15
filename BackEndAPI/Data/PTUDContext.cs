@@ -299,6 +299,9 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.TenSp).HasColumnName("TEN_SP");
 
+                 entity.Property(e => e.TrangThai).HasColumnName("TRANG_THAI");
+                
+
                 entity.HasOne(d => d.CuaHang).WithMany(p => p.DSSanPham).HasForeignKey(d => d.MaCuaHang);
 
                 entity.HasOne(d => d.DanhMuc).WithMany(p => p.DSSanPham).HasForeignKey(d => d.MaDm);
