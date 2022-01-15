@@ -1,7 +1,6 @@
 package com.example.DiChoThue.Controllers;
 
 import com.example.DiChoThue.Entities.DanhMuc;
-import com.example.DiChoThue.Entities.NguoiDung;
 import com.example.DiChoThue.Repository.DanhMucRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

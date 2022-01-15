@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,7 @@ public class SampleController {
 
     @PutMapping("/user/{id}")
     public ResponseEntity<NguoiDung> updateUser(@PathVariable(value = "id") Integer userId,
-                                                   @Valid @RequestBody NguoiDung nguoiDungDetail) throws ResourceNotFoundException {
+                                                @Valid @RequestBody NguoiDung nguoiDungDetail) throws ResourceNotFoundException {
         NguoiDung nguoiDung = nguoiDungRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + userId));
 
@@ -51,7 +50,7 @@ public class SampleController {
     }
 
     @DeleteMapping("/user/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id")  Integer userId)
+    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Integer userId)
             throws ResourceNotFoundException {
         NguoiDung nguoiDung = nguoiDungRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + userId));

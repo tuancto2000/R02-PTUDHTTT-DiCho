@@ -25,7 +25,6 @@ public class DeliveriesController {
     private EntityManager entityManager;
 
 
-
     @GetMapping("/shippers/{id}")
     public ResponseEntity<NguoiDungModel> getShipperInfo(@PathVariable(value = "id") Integer orderId)
             throws ResourceNotFoundException {

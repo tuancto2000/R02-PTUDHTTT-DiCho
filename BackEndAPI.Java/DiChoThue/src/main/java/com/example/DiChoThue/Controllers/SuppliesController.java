@@ -1,19 +1,10 @@
 package com.example.DiChoThue.Controllers;
 
-import com.example.DiChoThue.Entities.DanhMuc;
-import com.example.DiChoThue.Entities.SanPham;
-import com.example.DiChoThue.Exception.ResourceNotFoundException;
-import com.example.DiChoThue.Models.SanPhamModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/supplies")

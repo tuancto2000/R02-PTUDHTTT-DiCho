@@ -21,4 +21,6 @@ public class SanPham {
     private int gia_sp;
     private int so_luong_con_lai;
     private String mo_ta;
+    private int soluotdanhgia;
+    private float trungbinhsao;
 }
