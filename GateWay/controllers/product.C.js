@@ -23,12 +23,12 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
-    const data = await model.addProduct(id);
+    const data = await model.updateProduct(id);
     res.send(data);
 });
 
 router.delete("/:id", async (req, res) => {
     let id = req.params.id;
-    const data = await model.addProduct(id);
+    const data = await model.deleteProduct(id);
     res.send(data);
 });
