@@ -23,4 +23,5 @@ public class SanPham {
     private String mo_ta;
     private int soluotdanhgia;
     private float trungbinhsao;
+    private boolean trang_thai;
 }
