@@ -315,6 +315,10 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
 
+                entity.Property(e => e.Username).HasColumnName("USERNAME");
+
+                entity.HasIndex(u => u.Username).IsUnique();
+
                 entity.Property(e => e.MatKhau).IsRequired().HasColumnName("MAT_KHAU");
 
                 entity.HasOne(d => d.NguoiDung).WithMany().HasForeignKey(d => d.MaNguoiDung);

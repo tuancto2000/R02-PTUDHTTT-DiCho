@@ -27,6 +27,19 @@ namespace BackEndAPI.Controllers
         {
             return Ok();
         }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            var taikhoan = await _context.TaiKhoan.FirstOrDefaultAsync(x => x.Username == username);
+            if (taikhoan == null)
+                return BadRequest($"Username or password is incorrect");
+            if (taikhoan.MatKhau != password)
+                return BadRequest($"Username or password is incorrect");
+            var user = await _context.NguoiDung.FindAsync(taikhoan.MaNguoiDung);
+            if (user == null)
+                return BadRequest("Can not login");
+            return Ok(user.MaNguoiDung);
+        }
         [HttpGet("{cusId}")]
         public async Task<IActionResult> GetDetail(int cusId)
         {
@@ -54,7 +67,8 @@ namespace BackEndAPI.Controllers
                 MatKhau = request.MatKhau,
                 NguoiDung = new NguoiDung
                 {
-                    DiaChi = new DiaChi {
+                    DiaChi = new DiaChi
+                    {
                         TenDiaChi = request.DiaChi,
                         ToaDoTay = 0,
                         ToaDoDong = 0,
@@ -72,7 +86,7 @@ namespace BackEndAPI.Controllers
                 return Ok(taikhoan.MaNguoiDung);
             return BadRequest("Co loi trong qua trinh tao tai khoan");
         }
-        
+
 
     }
 
