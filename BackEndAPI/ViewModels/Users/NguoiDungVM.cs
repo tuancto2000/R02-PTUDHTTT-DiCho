@@ -9,6 +9,7 @@ namespace BackEndAPI.ViewModels.Users
     {
         public int MaNguoiDung { get; set; }
         public string MatKhau { get; set; }
+        public string Username { get; set; }
         public string TenNguoiDung { get; set; }
         public DateTime? NgaySinh { get; set; }
         public string DiaChi { get; set; }
