@@ -30,7 +30,7 @@ namespace BackEndAPI.Controllers
         [HttpGet("{cusId}")]
         public async Task<IActionResult> GetDetail(int cusId)
         {
-            var taikhoan = await _context.TaiKhoan.Include(x => x.NguoiDung).FirstOrDefaultAsync(x => x.MaNguoiDung == cusId);
+            var taikhoan = await _context.TaiKhoan.Include(x => x.NguoiDung).ThenInclude(y => y.DiaChi).FirstOrDefaultAsync(x => x.MaNguoiDung == cusId);
             if (taikhoan == null)
                 throw new Exception($"Can not find user with Id {cusId}");
             var model = new NguoiDungVM

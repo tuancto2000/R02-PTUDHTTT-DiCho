@@ -2,55 +2,56 @@ const axios = require("axios");
 const netBaseURL = process.env.DOTNET_URL;
 const javaBaseURL = process.env.JAVA_URL;
 
-exports.getByType = async (type) => {
-    var url = "/Contracts/RegisterRequest/" + type;
+exports.getAllByStoreID = async (id) => {
     const rs = await axios({
-        baseURL: netBaseURL,
         method: "get",
-        url: url,
+        baseURL: javaBaseURL,
+        url: `/products/store/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
 
-exports.getDetail = async (type, id) => {
+exports.getAllByProductID = async (id) => {
     const rs = await axios({
-        baseURL: netBaseURL,
         method: "get",
-        url: `/Contracts/detail/${type}/${id}`,
+        baseURL: javaBaseURL,
+        url: `/products/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.accept = async (data) => {
+
+exports.addProduct = async (data) => {
     const rs = await axios({
-        baseURL: netBaseURL,
         method: "post",
-        url: "/Contracts/accept",
+        baseURL: javaBaseURL,
+        url: `/products`,
         data: data,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.addShipper = async (id) => {
+
+exports.updateProduct = async (id) => {
     const rs = await axios({
-        baseURL: netBaseURL,
-        method: "post",
-        url: "/Contracts/shipper/" + id,
+        baseURL: javaBaseURL,
+        method: "put",
+        url: `/product/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.addStore = async (data) => {
+
+exports.deleteProduct = async (id) => {
     const rs = await axios({
-        baseURL: netBaseURL,
-        method: "post",
-        url: "/Contracts/accept",
-        data: data,
+        baseURL: javaBaseURL,
+        method: "delete",
+        url: `/product/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
