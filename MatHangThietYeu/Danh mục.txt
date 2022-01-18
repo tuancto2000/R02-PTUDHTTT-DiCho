@@ -1,0 +1,84 @@
+-1.Đồ điện tử
+1.1.Băng keo cách điện
+1.2.Bếp từ
+1.3.Bóng đèn
+1.4.Dây điện
+1.5.Máy lạnh
+1.6.Máy lọc không khí
+1.7.Nồi cơm
+1.8.Ổ điện
+1.9.Phích cắm
+1.10.Tủ lạnh
+-2.dụng cụ hằng ngày phục vụ gia đình
+2.1.Bàn chải chà sàn
+2.2.Cây chà bồn cầu
+2.3.Cây lau nhà
+2.4.Cây chổi
+2.5.Dao cạo râu
+2.6.Khăn tắm
+2.7.Ky hốt rác
+2.8.Nước tẩy
+2.9.Thau
+2.10.Xà bông tắm
+-3.Gói sản phẩm
+3.1.Combo rau củ quả
+3.2.Combo đồ ăn thiết yếu 1
+3.3.Combo đồ ăn thiết yếu 2
+3.4.Combo dụng cụ điện
+3.5.Combo dụng cụ y tế
+3.6.Combo Sữa uống
+3.7.Combo thực phẩm đông lạnh
+3.8.Combo thực phẩm thiết yếu
+3.9.Combo trái cây
+3.10.Combo vệ sinh cá nhân
+3.11.Combo vệ sinh phòng
+-4.Lương thực
+4.1.Bắp ngô
+4.2.Bún
+4.3.Gạo
+4.4.Nếp
+4.5.Hủ Tiếu
+4.6.Lương khô
+4.7.Mì quảng
+4.8.Phở
+-5.Nhu yếu phẩm cần thiết
+5.1.Cồn rửa tay
+5.2.Giấy ăn
+5.3.Giấy vệ sinh
+5.4.Kem đánh răng
+5.5.Khẩu trang
+5.6.Nước giặt đồ
+5.7.Bàn chải đánh răng
+-6.Thực phẩm tươi sống
+6.1.Bạch tuộc
+6.2.Cá
+6.3.Mực
+6.4.Ngêu sò
+6.5.Thịt bò
+6.6.Thịt gà
+6.7.Thịt heo
+6.8.Tôm
+6.9.Trứng cút
+6.10.Trứng gà
+6.11.Trứng Vịt
+-7.Thuốc và thiết bị y tế
+7.1.Thuốc cảm cúm
+7.2.Gói bù nước
+7.3.Thuốc hạ sốt
+7.4.máy đo huyết áp
+7.5.Máy đo nhịp tim
+7.6.máy đo thân nhiệt
+7.7.Thuốc xông mũi(bạc hà)
+7.8.Thuốc VitaminC
+7.9.Xe lăn
+-8.Trái cây
+8.1.Bưởi
+8.2.Cam
+8.3.Chuối
+8.4.Dâu tây
+8.5.Dưa hấu
+8.6.Kiwi
+8.7.Na
+8.8.Quýt
+8.9.Táo
+8.10.Thanh long
