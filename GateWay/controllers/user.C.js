@@ -19,3 +19,11 @@ router.post("/add", async (req, res) => {
     const result = await model.addUser(data);
     res.status(200).send((result).toString());
 });
+
+router.post("/login", async (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    const result = await model.login(username, password);
+    res.status(200).send((result).toString());
+});
+
