@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const model = require("../models/user.M");
 const { bcryptPassword, checkPassword } = require("../middlewares/middlewares");
-const { signAccessToken, verifyAccessToken } = require("../middlewares/authJwt");
+const { signAccessToken } = require("../middlewares/authJwt");
 const createError = require('http-errors');
 module.exports = router;
 
