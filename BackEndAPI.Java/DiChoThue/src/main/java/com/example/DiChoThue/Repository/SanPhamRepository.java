@@ -1,6 +1,5 @@
 package com.example.DiChoThue.Repository;
 
-import com.example.DiChoThue.Entities.HinhAnh;
 import com.example.DiChoThue.Entities.SanPham;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @Repository
 public interface SanPhamRepository extends JpaRepository<SanPham, Integer> {

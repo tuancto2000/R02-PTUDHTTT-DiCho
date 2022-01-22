@@ -17,6 +17,6 @@ public class DiaChi {
     private int ma_dia_chi;
     private String ten_dia_chi;
     private int toa_do_dong;
-    private int toa_do_tay;
+    private int toa_do_bac;
     private int loai_vung;
 }

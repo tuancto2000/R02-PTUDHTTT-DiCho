@@ -19,8 +19,6 @@ import javax.persistence.Query;
 import javax.validation.Valid;
 import java.util.List;
 
-import static java.util.stream.Collectors.toSet;
-
 @RestController
 @RequestMapping("/api/products")
 public class ProductsController {
@@ -71,7 +69,7 @@ public class ProductsController {
 
         int productId = sanPhamRepository.save(sanPham).getMa_sp();
 
-        for(HinhAnh ha : product.getHinh_anh()){
+        for (HinhAnh ha : product.getHinh_anh()) {
             ha.setMa_sp(productId);
             hinhAnhRepository.save(ha);
         }
@@ -94,18 +92,17 @@ public class ProductsController {
 
         sanPhamRepository.save(sanPham);
         List<HinhAnh> listHinhAnhNew = sanPhamDetail.getHinh_anh();
+        List<HinhAnh> listHinhAnhOld = hinhAnhRepository.getImByProductId(productId);
 
-        if(listHinhAnhNew != null){
-            List<HinhAnh> listHinhAnhOld = hinhAnhRepository.getImByProductId(productId);
-
-            for(HinhAnh ha : listHinhAnhOld){
-                if(!listHinhAnhNew.contains(ha)){
+        if (listHinhAnhNew != null) {
+            for (HinhAnh ha : listHinhAnhOld) {
+                if (!listHinhAnhNew.contains(ha)) {
                     hinhAnhRepository.delete(ha);
                 }
             }
 
-            for (HinhAnh ha: listHinhAnhNew) {
-                if(ha.getMa_hinh_anh() == 0){
+            for (HinhAnh ha : listHinhAnhNew) {
+                if (ha.getMa_hinh_anh() == 0) {
                     hinhAnhRepository.save(ha);
                 }
             }
@@ -123,14 +120,5 @@ public class ProductsController {
         sanPhamRepository.changeState(productId);
 
         return ResponseEntity.ok(Boolean.TRUE);
-    }
-
-    @GetMapping("/test")
-    @ResponseBody
-    public String getFoos(@RequestParam String id,@RequestParam(value = "l", required=false) String l ) {
-        if(l==null){
-            return "ID: " + id;
-        }
-        return "ID: " + id + l;
     }
 }

@@ -1,13 +1,11 @@
 package com.example.DiChoThue.Repository;
 
 import com.example.DiChoThue.Entities.DonHang;
-import com.example.DiChoThue.Entities.HinhAnh;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface DonHangRepository extends JpaRepository<DonHang, Integer> {

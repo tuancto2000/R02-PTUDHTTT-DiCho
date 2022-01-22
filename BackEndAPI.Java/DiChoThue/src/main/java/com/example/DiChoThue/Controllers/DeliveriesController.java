@@ -2,11 +2,8 @@ package com.example.DiChoThue.Controllers;
 
 import com.example.DiChoThue.Entities.CuaHang;
 import com.example.DiChoThue.Entities.DonHang;
-import com.example.DiChoThue.Entities.NguoiDung;
 import com.example.DiChoThue.Exception.ResourceNotFoundException;
 import com.example.DiChoThue.Models.GetDeliveryHistoryModel;
-import com.example.DiChoThue.Models.GetOrderHistoryModel;
-import com.example.DiChoThue.Models.NguoiDungModel;
 import com.example.DiChoThue.Repository.NguoiDungRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

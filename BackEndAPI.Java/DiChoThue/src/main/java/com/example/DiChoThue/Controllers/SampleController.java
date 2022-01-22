@@ -60,4 +60,13 @@ public class SampleController {
         response.put("deleted", Boolean.TRUE);
         return response;
     }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public String getFoos(@RequestParam String id, @RequestParam(value = "l", required = false) String l) {
+        if (l == null) {
+            return "ID: " + id;
+        }
+        return "ID: " + id + l;
+    }
 }
