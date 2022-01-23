@@ -5,22 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "NGUOI_DUNG")
-public class NguoiDung {
+@Table(name = "CUA_HANG")
+public class DiaChi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int ma_nguoi_dung;
-    private String ten_nguoi_dung;
-    private Date ngay_sinh;
-    private String sdt;
-    private String email;
-    private String vai_tro;
-    private Boolean KichHoat;
     private int ma_dia_chi;
+    private String ten_dia_chi;
+    private int toa_do_dong;
+    private int toa_do_bac;
+    private int loai_vung;
 }

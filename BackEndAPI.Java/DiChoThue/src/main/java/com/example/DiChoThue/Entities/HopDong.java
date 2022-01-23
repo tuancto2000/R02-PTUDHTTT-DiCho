@@ -20,4 +20,8 @@ public class HopDong {
     private Date ngay_ky_hop_dong;
     private Date ngay_hieu_luc;
     private Date ngay_ket_thuc;
+    private String chungNhanAnToanImg;
+    private String giayPhepKinhDoanhImg;
+    private String hopDongImg;
+    private Date ngayDangKy;
 }
