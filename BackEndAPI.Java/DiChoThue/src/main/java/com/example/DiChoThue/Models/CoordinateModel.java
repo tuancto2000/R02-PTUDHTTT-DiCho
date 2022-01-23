@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetNearestStoreResponseModel {
-    int ma_cua_hang;
-    String ten_cua_hang;
-    double khoang_cach;
+public class CoordinateModel {
+    private int toa_do_dong;
+    private int toa_do_bac;
 }

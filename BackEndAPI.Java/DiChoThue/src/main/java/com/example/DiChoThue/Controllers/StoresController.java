@@ -1,18 +1,17 @@
 package com.example.DiChoThue.Controllers;
 
 import com.example.DiChoThue.Entities.CuaHang;
+import com.example.DiChoThue.Entities.DiaChi;
 import com.example.DiChoThue.Entities.DonHang;
+import com.example.DiChoThue.Entities.NguoiDung;
 import com.example.DiChoThue.Exception.ResourceNotFoundException;
+import com.example.DiChoThue.Models.CoordinateModel;
 import com.example.DiChoThue.Models.GetCommissionModel;
 import com.example.DiChoThue.Models.GetNearestStoreRequestModel;
 import com.example.DiChoThue.Models.GetNearestStoreResponseModel;
-import com.example.DiChoThue.Repository.DiaChiRepository;
 import com.example.DiChoThue.Repository.DonHangRepository;
-import com.example.DiChoThue.Repository.NguoiDungRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,12 +30,6 @@ public class StoresController {
 
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private NguoiDungRepository nguoiDungRepository;
-
-    @Autowired
-    private DiaChiRepository diaChiRepository;
 
     @GetMapping("/{storeId}/commission")
     public ResponseEntity<GetCommissionModel> getCommission(@PathVariable(value = "storeId") Integer storeId,
@@ -75,17 +67,25 @@ public class StoresController {
     @PostMapping("/nearest-stores")
     public ResponseEntity<List<GetNearestStoreResponseModel>> getNearestStore(@Valid @RequestBody GetNearestStoreRequestModel getNearestStoreRequestModel)
             throws ResourceNotFoundException {
-        List<GetNearestStoreResponseModel> nearestStoreResponseModels = new ArrayList<>();
+        final int distance = 100000;
 
-        int a = diaChiRepository.getNearestAddress(getNearestStoreRequestModel.getMa_nguoi_dung());
+        String sql = "Select new " + CoordinateModel.class.getName()
+                + "(dc.toa_do_dong, dc.toa_do_bac) from " + NguoiDung.class.getName() + " nd join " + DiaChi.class.getName() + " dc"
+                + " on nd.ma_dia_chi = dc.ma_dia_chi where nd.ma_nguoi_dung = " + getNearestStoreRequestModel.getMa_nguoi_dung();
 
-        System.out.println(a);
-//        try {
-//            nearestStoreResponseModels = diaChiRepository.getNearestAddress(getNearestStoreRequestModel.getMa_nguoi_dung());
-//        }
-//        catch (Exception e) {
-//            System.out.println("lỗi");
-//        }
-        return ResponseEntity.ok().body(nearestStoreResponseModels);
+        Query query = entityManager.createQuery(sql, CoordinateModel.class);
+        CoordinateModel coordinate = (CoordinateModel) query.getSingleResult();
+
+        sql = "Select new " + GetNearestStoreResponseModel.class.getName()
+                + "(ch.ma_cua_hang, ch.ten_cua_hang, SQRT(" +
+                "POWER(CONVERT(bigint,(dc.toa_do_dong - " + coordinate.getToa_do_dong() + ")), 2) + " +
+                "POWER(CONVERT(bigint,(dc.toa_do_bac - " + coordinate.getToa_do_bac() + ")), 2)) AS khoang_cach) "
+                + " from " + DiaChi.class.getName() + " dc join " + CuaHang.class.getName() + " ch on dc.ma_dia_chi = ch.ma_dia_chi"
+                + " where SQRT(" +
+                "POWER(CONVERT(bigint,(dc.toa_do_dong - " + coordinate.getToa_do_dong() + ")), 2) + " +
+                "POWER(CONVERT(bigint,(dc.toa_do_bac - " + coordinate.getToa_do_bac() + ")), 2)) < " + distance + " order by khoang_cach";
+        query = entityManager.createQuery(sql, GetNearestStoreResponseModel.class);
+
+        return ResponseEntity.ok().body(query.getResultList());
     }
 }
