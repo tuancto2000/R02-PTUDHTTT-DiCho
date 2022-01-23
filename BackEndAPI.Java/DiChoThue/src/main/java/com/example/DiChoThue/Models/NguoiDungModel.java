@@ -13,7 +13,6 @@ public class NguoiDungModel {
     private int MA_NGUOI_DUNG;
     private String TEN_NGUOI_DUNG;
     private Date NGAY_SINH;
-    private String DIA_CHI;
     private String SDT;
     private String EMAIL;
 }

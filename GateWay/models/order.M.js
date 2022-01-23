@@ -11,7 +11,6 @@ exports.paging = async (search, state, page, pageSize) => {
     console.log("paging", url);
     const rs = await axios({
         baseURL: netBaseURL,
-        baseURL: netBaseURL,
         method: "get",
         url: url,
     })
@@ -72,4 +71,37 @@ exports.addRate = async (data) => {
       .then((response) => response.data)
       .catch((error) => console.log("errrrrrrr : ", error));
   return rs;
+};
+
+exports.getShipperInforFromOrders = async (id) => {
+    const rs = await axios({
+        baseURL: javaBaseURL,
+        method: "get",
+        url: `/orders/${id}/shipper`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.getOrderHistory = async (id) => {
+    const rs = await axios({
+        baseURL: javaBaseURL,
+        method: "get",
+        url: `/orders/history/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.getOrderDetail = async (id) => {
+    const rs = await axios({
+        baseURL: javaBaseURL,
+        method: "get",
+        url: `/orders/${id}/detail`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
 };

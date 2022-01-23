@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
@@ -39,20 +38,19 @@ public class SampleController {
 
     @PutMapping("/user/{id}")
     public ResponseEntity<NguoiDung> updateUser(@PathVariable(value = "id") Integer userId,
-                                                   @Valid @RequestBody NguoiDung nguoiDungDetail) throws ResourceNotFoundException {
+                                                @Valid @RequestBody NguoiDung nguoiDungDetail) throws ResourceNotFoundException {
         NguoiDung nguoiDung = nguoiDungRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + userId));
 
         nguoiDung.setTen_nguoi_dung(nguoiDungDetail.getTen_nguoi_dung());
         nguoiDung.setEmail(nguoiDungDetail.getEmail());
-        nguoiDung.setDia_chi(nguoiDungDetail.getDia_chi());
 
         final NguoiDung updatedUser = nguoiDungRepository.save(nguoiDung);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/user/{id}")
-    public Map<String, Boolean> deleteUser(@PathVariable(value = "id")  Integer userId)
+    public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Integer userId)
             throws ResourceNotFoundException {
         NguoiDung nguoiDung = nguoiDungRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + userId));
@@ -61,5 +59,14 @@ public class SampleController {
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
         return response;
+    }
+
+    @GetMapping("/test")
+    @ResponseBody
+    public String getFoos(@RequestParam String id, @RequestParam(value = "l", required = false) String l) {
+        if (l == null) {
+            return "ID: " + id;
+        }
+        return "ID: " + id + l;
     }
 }
