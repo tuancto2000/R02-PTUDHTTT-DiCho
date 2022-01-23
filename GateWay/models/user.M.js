@@ -33,23 +33,18 @@ exports.addUser = async (data) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.getPassword= async (username)=>{
+
+exports.login = async (username, password) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
-        url: `/Users/getPassword?username=${username}`,
+        url: `/Users/login`,
+        data: {
+            username: username,
+            password: password,
+        },
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
-}
-exports.getUser= async (username)=>{
-    const rs = await axios({
-        method: "post",
-        baseURL: netBaseURL,
-        url: `/Users/getUser?username=${username}`,
-    })
-        .then((response) => response.data)
-        .catch((error) => console.log("errrrrrrr : ", error));
-    return rs;
-}
+};

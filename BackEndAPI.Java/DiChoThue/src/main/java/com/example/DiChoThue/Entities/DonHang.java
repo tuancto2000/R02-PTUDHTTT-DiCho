@@ -26,5 +26,4 @@ public class DonHang {
     private String ten_nguoi_nhan;
     private String sdt;
     private String phan_hoi;
-    private int tongtien;
 }

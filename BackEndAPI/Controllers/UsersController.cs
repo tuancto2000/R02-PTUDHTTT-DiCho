@@ -27,29 +27,19 @@ namespace BackEndAPI.Controllers
         {
             return Ok();
         }
-        [HttpPost("getUser")]
-        public async Task<IActionResult> getUser(string username)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string username, string password)
         {
             var taikhoan = await _context.TaiKhoan.FirstOrDefaultAsync(x => x.Username == username);
             if (taikhoan == null)
+                return BadRequest($"Username or password is incorrect");
+            if (taikhoan.MatKhau != password)
                 return BadRequest($"Username or password is incorrect");
             var user = await _context.NguoiDung.FindAsync(taikhoan.MaNguoiDung);
             if (user == null)
                 return BadRequest("Can not login");
             return Ok(user.MaNguoiDung);
         }
-        [HttpPost("getPassword")]
-        public async Task<IActionResult> getPassword(string username)
-        {
-            var taikhoan = await _context.TaiKhoan.FirstOrDefaultAsync(x => x.Username == username);
-            if (taikhoan == null)
-                return BadRequest($"Username or password is incorrect");
-            var user = await _context.TaiKhoan.FindAsync(taikhoan.MaNguoiDung);
-            if (user == null)
-                return BadRequest("Can not login");
-            return Ok(user.MatKhau);
-        }
-
         [HttpGet("{cusId}")]
         public async Task<IActionResult> GetDetail(int cusId)
         {
@@ -75,13 +65,12 @@ namespace BackEndAPI.Controllers
             var taikhoan = new TaiKhoan
             {
                 MatKhau = request.MatKhau,
-                Username = request.Username,
                 NguoiDung = new NguoiDung
                 {
                     DiaChi = new DiaChi
                     {
                         TenDiaChi = request.DiaChi,
-                        ToaDoBac = 0,
+                        ToaDoTay = 0,
                         ToaDoDong = 0,
                         LoaiVung = LoaiVung.Do
                     },

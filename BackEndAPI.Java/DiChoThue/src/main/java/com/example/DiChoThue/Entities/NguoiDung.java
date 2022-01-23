@@ -12,15 +12,15 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @Table(name = "NGUOI_DUNG")
+///@SQLInsert(sql = "insert into NGUOI_DUNG (TEN_NGUOI_DUNG, NGAY_SINH, DIA_CHI, SDT, EMAIL, VAI_TRO) values (?, ?, ?, ?, ?, ?)")
 public class NguoiDung {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int ma_nguoi_dung;
     private String ten_nguoi_dung;
     private Date ngay_sinh;
+    private String dia_chi;
     private String sdt;
     private String email;
     private String vai_tro;
-    private Boolean KichHoat;
-    private int ma_dia_chi;
 }

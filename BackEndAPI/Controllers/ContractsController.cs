@@ -59,7 +59,7 @@ namespace BackEndAPI.Controllers
                 DiaChi = new DiaChi
                 {
                     TenDiaChi = request.DiaChi,
-                    ToaDoBac = 0,
+                    ToaDoTay = 0,
                     ToaDoDong = 0,
                     LoaiVung = LoaiVung.Do
                 },

@@ -19,5 +19,5 @@ public class CuaHang {
     private String sdt;
     private String email;
     private String ten_cua_hang;
-    private String ma_dia_chi;
+    private String dia_chi;
 }

@@ -333,7 +333,7 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.ToaDoDong).IsRequired().HasColumnName("TOA_DO_DONG");
 
-                entity.Property(e => e.ToaDoBac).IsRequired().HasColumnName("TOA_DO_BAC");
+                entity.Property(e => e.ToaDoTay).IsRequired().HasColumnName("TOA_DO_TAY");
 
                 entity.Property(e => e.TenDiaChi).IsRequired().HasColumnName("TEN_DIA_CHI");
 

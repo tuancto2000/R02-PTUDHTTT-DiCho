@@ -76,13 +76,13 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("TEN_DIA_CHI");
 
-                    b.Property<int>("ToaDoBac")
-                        .HasColumnType("int")
-                        .HasColumnName("TOA_DO_BAC");
-
                     b.Property<int>("ToaDoDong")
                         .HasColumnType("int")
                         .HasColumnName("TOA_DO_DONG");
+
+                    b.Property<int>("ToaDoTay")
+                        .HasColumnType("int")
+                        .HasColumnName("TOA_DO_TAY");
 
                     b.HasKey("MaDiaChi");
 
