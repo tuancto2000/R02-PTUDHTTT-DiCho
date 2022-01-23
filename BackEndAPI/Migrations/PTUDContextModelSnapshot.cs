@@ -19,6 +19,76 @@ namespace BackEndAPI.Migrations
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("BackEndAPI.Data.Entities.DanhGia", b =>
+                {
+                    b.Property<int>("MaDanhGia")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("MA_DANH_GIA")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BinhLuan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("BINH_LUAN");
+
+                    b.Property<int>("MaChiTietDonHang")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_CHI_TIET_DON_HANG");
+
+                    b.Property<int>("MaNguoiDung")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_NGUOI_DUNG");
+
+                    b.Property<int>("MaSanPham")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_SAN_PHAM");
+
+                    b.Property<int>("Sao")
+                        .HasColumnType("int")
+                        .HasColumnName("SAO");
+
+                    b.HasKey("MaDanhGia");
+
+                    b.HasIndex("MaChiTietDonHang");
+
+                    b.HasIndex("MaNguoiDung");
+
+                    b.HasIndex("MaSanPham");
+
+                    b.ToTable("DANH_GIA");
+                });
+
+            modelBuilder.Entity("BackEndAPI.Data.Entities.DiaChi", b =>
+                {
+                    b.Property<int>("MaDiaChi")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("MA_DIA_CHI")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LoaiVung")
+                        .HasColumnType("int")
+                        .HasColumnName("LOAI_VUNG");
+
+                    b.Property<string>("TenDiaChi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("TEN_DIA_CHI");
+
+                    b.Property<int>("ToaDoDong")
+                        .HasColumnType("int")
+                        .HasColumnName("TOA_DO_DONG");
+
+                    b.Property<int>("ToaDoTay")
+                        .HasColumnType("int")
+                        .HasColumnName("TOA_DO_TAY");
+
+                    b.HasKey("MaDiaChi");
+
+                    b.ToTable("DIA_CHI");
+                });
+
             modelBuilder.Entity("BackEndAPI.Entities.ChiTietDonHang", b =>
                 {
                     b.Property<int>("Id")
@@ -28,7 +98,7 @@ namespace BackEndAPI.Migrations
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("DonGia")
+                    b.Property<int>("DonGia")
                         .HasColumnType("int")
                         .HasColumnName("DON_GIA");
 
@@ -40,7 +110,7 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnName("MA_SP");
 
-                    b.Property<int?>("SoLuong")
+                    b.Property<int>("SoLuong")
                         .HasColumnType("int")
                         .HasColumnName("SO_LUONG");
 
@@ -127,6 +197,10 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("EMAIL");
 
+                    b.Property<int?>("MaDiaChi")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_DIA_CHI");
+
                     b.Property<int>("MaNguoiDung")
                         .HasColumnType("int")
                         .HasColumnName("MA_NGUOI_DUNG");
@@ -142,6 +216,8 @@ namespace BackEndAPI.Migrations
                         .HasColumnName("TEN_CUA_HANG");
 
                     b.HasKey("MaCuaHang");
+
+                    b.HasIndex("MaDiaChi");
 
                     b.HasIndex("MaNguoiDung");
 
@@ -214,6 +290,9 @@ namespace BackEndAPI.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("TEN_NGUOI_NHAN");
+
+                    b.Property<int>("TongTien")
+                        .HasColumnType("int");
 
                     b.Property<int>("TrangThai")
                         .HasColumnType("int")
@@ -303,12 +382,26 @@ namespace BackEndAPI.Migrations
             modelBuilder.Entity("BackEndAPI.Entities.HopDong", b =>
                 {
                     b.Property<int>("MaHopDong")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("MA_HOP_DONG");
+                        .HasColumnName("MA_HOP_DONG")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ChungNhanAnToanImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GiayPhepKinhDoanhImg")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HopDongImg")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MaNguoiDung")
                         .HasColumnType("int")
                         .HasColumnName("MA_NGUOI_DUNG");
+
+                    b.Property<DateTime?>("NgayDangKy")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayHieuLuc")
                         .HasColumnType("datetime2")
@@ -321,6 +414,8 @@ namespace BackEndAPI.Migrations
                     b.Property<DateTime?>("NgayKyHopDong")
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAY_KY_HOP_DONG");
+
+                    b.HasKey("MaHopDong");
 
                     b.HasIndex("MaNguoiDung");
 
@@ -337,13 +432,16 @@ namespace BackEndAPI.Migrations
                         .HasAnnotation("SqlServer:IdentitySeed", 1)
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("DiaChi")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("DIA_CHI");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("EMAIL");
+
+                    b.Property<bool>("KichHoat")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaDiaChi")
+                        .HasColumnType("int")
+                        .HasColumnName("MA_DIA_CHI");
 
                     b.Property<DateTime?>("NgaySinh")
                         .HasColumnType("datetime2")
@@ -362,6 +460,8 @@ namespace BackEndAPI.Migrations
                         .HasColumnName("VAI_TRO");
 
                     b.HasKey("MaNguoiDung");
+
+                    b.HasIndex("MaDiaChi");
 
                     b.ToTable("NGUOI_DUNG");
                 });
@@ -396,9 +496,19 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("int")
                         .HasColumnName("SO_LUONG_CON_LAI");
 
+                    b.Property<int>("SoLuotDanhGia")
+                        .HasColumnType("int");
+
                     b.Property<string>("TenSp")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("TEN_SP");
+
+                    b.Property<bool?>("TrangThai")
+                        .HasColumnType("bit")
+                        .HasColumnName("TRANG_THAI");
+
+                    b.Property<double>("TrungBinhSao")
+                        .HasColumnType("float");
 
                     b.HasKey("MaSp");
 
@@ -420,9 +530,44 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("MAT_KHAU");
 
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("USERNAME");
+
                     b.HasKey("MaNguoiDung");
 
+                    b.HasIndex("Username")
+                        .IsUnique()
+                        .HasFilter("[USERNAME] IS NOT NULL");
+
                     b.ToTable("TAI_KHOAN");
+                });
+
+            modelBuilder.Entity("BackEndAPI.Data.Entities.DanhGia", b =>
+                {
+                    b.HasOne("BackEndAPI.Entities.ChiTietDonHang", "ChiTietDonHang")
+                        .WithMany()
+                        .HasForeignKey("MaChiTietDonHang")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BackEndAPI.Entities.NguoiDung", "NguoiDung")
+                        .WithMany()
+                        .HasForeignKey("MaNguoiDung")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BackEndAPI.Entities.SanPham", "SanPham")
+                        .WithMany()
+                        .HasForeignKey("MaSanPham")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ChiTietDonHang");
+
+                    b.Navigation("NguoiDung");
+
+                    b.Navigation("SanPham");
                 });
 
             modelBuilder.Entity("BackEndAPI.Entities.ChiTietDonHang", b =>
@@ -484,11 +629,17 @@ namespace BackEndAPI.Migrations
 
             modelBuilder.Entity("BackEndAPI.Entities.CuaHang", b =>
                 {
+                    b.HasOne("BackEndAPI.Data.Entities.DiaChi", "DiaChi")
+                        .WithMany()
+                        .HasForeignKey("MaDiaChi");
+
                     b.HasOne("BackEndAPI.Entities.NguoiDung", "NguoiDung")
                         .WithMany("CuaHang")
                         .HasForeignKey("MaNguoiDung")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("DiaChi");
 
                     b.Navigation("NguoiDung");
                 });
@@ -550,6 +701,15 @@ namespace BackEndAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("NguoiDung");
+                });
+
+            modelBuilder.Entity("BackEndAPI.Entities.NguoiDung", b =>
+                {
+                    b.HasOne("BackEndAPI.Data.Entities.DiaChi", "DiaChi")
+                        .WithMany()
+                        .HasForeignKey("MaDiaChi");
+
+                    b.Navigation("DiaChi");
                 });
 
             modelBuilder.Entity("BackEndAPI.Entities.SanPham", b =>

@@ -1,13 +1,26 @@
-const express = require("express"),
-  app = express(),
-  port = 3000;
+const express = require("express");
+const app = express();
+const bodyParser = require('body-parser');
+const createError = require('http-errors');
+
+require("dotenv").config();
 
 app.use(express.static("public"));
 app.use(
-  express.urlencoded({
-    extended: "true",
-  })
+    express.urlencoded({
+        extended: "true",
+    })
 );
-app.use("/api/orders", require("./controllers/order.C"));
 
-app.listen(3000);
+app.use(bodyParser.json());
+
+app.use("/api/orders", require("./controllers/order.C"));
+app.use("/api/contracts", require("./controllers/contract.C"));
+app.use("/api/users", require("./controllers/user.C"));
+app.use("/api/category", require("./controllers/category.C"));
+app.use("/api/product", require("./controllers/product.C"));
+app.use("/api/carts", require("./controllers/cart.C"));
+app.use("/api/stores", require("./controllers/store.C"));
+app.use("/api/deliveries", require("./controllers/delivery.C"));
+
+app.listen(process.env.PORT);

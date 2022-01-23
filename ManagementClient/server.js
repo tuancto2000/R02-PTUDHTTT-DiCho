@@ -1,6 +1,6 @@
 const express = require("express"),
   app = express(),
-  port = 3000,
+  port = 3001,
   exphbs = require("express-handlebars");
 const hbs = exphbs.create({
   extname: "hbs",
@@ -14,8 +14,8 @@ app.use(
     extended: "true",
   })
 );
-app.use("/order", require("./controllers/home.C"));
+app.use("/order", require("./controllers/order.C"));
 app.use("/", (req, res) => {
   res.redirect("/order");
 });
-app.listen(3000);
+app.listen(port);

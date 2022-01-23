@@ -1,4 +1,5 @@
 ﻿using System;
+using BackEndAPI.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -123,6 +124,8 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.Email).HasColumnName("EMAIL");
 
+                entity.Property(e => e.MaDiaChi).HasColumnName("MA_DIA_CHI");
+
                 entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
 
                 entity.Property(e => e.Sdt)
@@ -135,6 +138,7 @@ namespace BackEndAPI.Entities
                 entity.HasOne(d => d.NguoiDung)
                     .WithMany(p => p.CuaHang)
                     .HasForeignKey(d => d.MaNguoiDung);
+                entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
             });
 
             modelBuilder.Entity<DonHang>(entity =>
@@ -174,11 +178,11 @@ namespace BackEndAPI.Entities
 
                 entity.HasOne(d => d.NguoiMua)
                     .WithMany(p => p.DSDonHangDaMua)
-                    .HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict); 
+                    .HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Shipper)
                     .WithMany(p => p.DSDonHangDaShip)
-                    .HasForeignKey(d => d.MaShipper).OnDelete(DeleteBehavior.Restrict); 
+                    .HasForeignKey(d => d.MaShipper).OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<GioHang>(entity =>
@@ -234,7 +238,7 @@ namespace BackEndAPI.Entities
 
             modelBuilder.Entity<HopDong>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.MaHopDong);
 
                 entity.ToTable("HOP_DONG");
 
@@ -260,7 +264,7 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.MaNguoiDung).HasColumnName("MA_NGUOI_DUNG");
 
-                entity.Property(e => e.DiaChi).HasColumnName("DIA_CHI");
+                entity.Property(e => e.MaDiaChi).HasColumnName("MA_DIA_CHI");
 
                 entity.Property(e => e.Email).HasColumnName("EMAIL");
 
@@ -271,6 +275,8 @@ namespace BackEndAPI.Entities
                 entity.Property(e => e.TenNguoiDung).HasColumnName("TEN_NGUOI_DUNG");
 
                 entity.Property(e => e.VaiTro).HasColumnName("VAI_TRO");
+
+                entity.HasOne(d => d.DiaChi).WithMany().HasForeignKey(d => d.MaDiaChi);
             });
 
             modelBuilder.Entity<SanPham>(entity =>
@@ -293,6 +299,9 @@ namespace BackEndAPI.Entities
 
                 entity.Property(e => e.TenSp).HasColumnName("TEN_SP");
 
+                 entity.Property(e => e.TrangThai).HasColumnName("TRANG_THAI");
+                
+
                 entity.HasOne(d => d.CuaHang).WithMany(p => p.DSSanPham).HasForeignKey(d => d.MaCuaHang);
 
                 entity.HasOne(d => d.DanhMuc).WithMany(p => p.DSSanPham).HasForeignKey(d => d.MaDm);
@@ -300,17 +309,61 @@ namespace BackEndAPI.Entities
 
             modelBuilder.Entity<TaiKhoan>(entity =>
             {
-                entity.HasKey(e=>e.MaNguoiDung);
+                entity.HasKey(e => e.MaNguoiDung);
 
                 entity.ToTable("TAI_KHOAN");
 
                 entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
 
+                entity.Property(e => e.Username).HasColumnName("USERNAME");
+
+                entity.HasIndex(u => u.Username).IsUnique();
+
                 entity.Property(e => e.MatKhau).IsRequired().HasColumnName("MAT_KHAU");
 
                 entity.HasOne(d => d.NguoiDung).WithMany().HasForeignKey(d => d.MaNguoiDung);
             });
-        }
+            modelBuilder.Entity<DiaChi>(entity =>
+            {
+                entity.HasKey(e => e.MaDiaChi);
 
+                entity.ToTable("DIA_CHI");
+
+                entity.Property(e => e.MaDiaChi).IsRequired().HasColumnName("MA_DIA_CHI");
+
+                entity.Property(e => e.ToaDoDong).IsRequired().HasColumnName("TOA_DO_DONG");
+
+                entity.Property(e => e.ToaDoTay).IsRequired().HasColumnName("TOA_DO_TAY");
+
+                entity.Property(e => e.TenDiaChi).IsRequired().HasColumnName("TEN_DIA_CHI");
+
+                entity.Property(e => e.LoaiVung).IsRequired().HasColumnName("LOAI_VUNG");
+            });
+            modelBuilder.Entity<DanhGia>(entity =>
+            {
+                entity.HasKey(e => e.MaDanhGia);
+
+                entity.ToTable("DANH_GIA");
+
+                entity.Property(e => e.MaNguoiDung).IsRequired().HasColumnName("MA_NGUOI_DUNG");
+
+                entity.Property(e => e.MaSanPham).IsRequired().HasColumnName("MA_SAN_PHAM");
+
+                entity.Property(e => e.MaChiTietDonHang).IsRequired().HasColumnName("MA_CHI_TIET_DON_HANG");
+
+                entity.Property(e => e.MaDanhGia).IsRequired().HasColumnName("MA_DANH_GIA");
+
+                entity.Property(e => e.Sao).IsRequired().HasColumnName("SAO");
+
+                entity.Property(e => e.BinhLuan).IsRequired().HasColumnName("BINH_LUAN");
+
+                entity.HasOne(d => d.NguoiDung).WithMany().HasForeignKey(d => d.MaNguoiDung).OnDelete(DeleteBehavior.Restrict); ;
+
+                entity.HasOne(d => d.SanPham).WithMany().HasForeignKey(d => d.MaSanPham).OnDelete(DeleteBehavior.Restrict); ;
+
+                entity.HasOne(d => d.ChiTietDonHang).WithMany().HasForeignKey(d => d.MaChiTietDonHang).OnDelete(DeleteBehavior.Restrict); ;
+
+            });
+        }
     }
 }
