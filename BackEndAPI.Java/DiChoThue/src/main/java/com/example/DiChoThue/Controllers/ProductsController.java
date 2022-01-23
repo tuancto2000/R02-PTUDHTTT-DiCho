@@ -1,5 +1,6 @@
 package com.example.DiChoThue.Controllers;
 
+import com.example.DiChoThue.Entities.CuaHang;
 import com.example.DiChoThue.Entities.DanhMuc;
 import com.example.DiChoThue.Entities.HinhAnh;
 import com.example.DiChoThue.Entities.SanPham;
@@ -11,13 +12,19 @@ import com.example.DiChoThue.Models.UpdateProductModel;
 import com.example.DiChoThue.Repository.HinhAnhRepository;
 import com.example.DiChoThue.Repository.SanPhamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
@@ -31,24 +38,113 @@ public class ProductsController {
     @Autowired
     private EntityManager entityManager;
 
-    @GetMapping("/store/{storeId}")
-    public ResponseEntity<List<SanPhamModel>> getAllProductsOfStore(@PathVariable(value = "storeId") Integer storeId)
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllProducts(
+            @RequestParam(required = false) String productName,
+            @RequestParam(defaultValue = "-1") int categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size)
             throws ResourceNotFoundException {
-        String sql = "Select new " + SanPhamModel.class.getName()
-                + "(sp.ma_sp, dm.ma_dm, dm.ten_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
-                + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
-                + " dm on sp.ma_dm = dm.ma_dm where sp.ma_cua_hang = " + storeId;
-        Query query = entityManager.createQuery(sql, SanPhamModel.class);
-        return ResponseEntity.ok().body(query.getResultList());
+        try {
+            List<SanPham> sanPhams = new ArrayList<SanPham>();
+            PageRequest paging = PageRequest.of(page, size);
+            Page<SanPham> pageProducts;
+
+            if (productName != null && categoryId != -1) {
+                String sql = "Select new " + SanPham.class.getName()
+                        + "(sp.ma_sp, sp.ma_cua_hang, sp.ma_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai)"
+                        + " from " + SanPham.class.getName() + " sp where sp.ten_sp like '%" + productName + "%' and ma_dm = " + categoryId + "order by sp.trungbinhsao desc";
+
+                List<SanPham> sanPhamList = entityManager
+                        .createQuery(sql, SanPham.class)
+                        .getResultList();
+                final int start = page;
+                final int end = Math.min((start + size), sanPhamList.size());
+                pageProducts = new PageImpl<SanPham>(sanPhamList.subList(start, end), paging, sanPhamList.size());
+            } else if (productName != null) {
+                String sql = "Select new " + SanPham.class.getName()
+                        + "(sp.ma_sp, sp.ma_cua_hang, sp.ma_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai)"
+                        + " from " + SanPham.class.getName() + " sp where sp.ten_sp like '%" + productName + "%'" + "order by sp.trungbinhsao desc";
+
+                List<SanPham> sanPhamList = entityManager
+                        .createQuery(sql, SanPham.class)
+                        .getResultList();
+                final int start = page;
+                final int end = Math.min((start + size), sanPhamList.size());
+                pageProducts = new PageImpl<SanPham>(sanPhamList.subList(start, end), paging, sanPhamList.size());
+            } else if (categoryId != -1) {
+                pageProducts = sanPhamRepository.findByCategoryId(categoryId, paging);
+            } else {
+                pageProducts = sanPhamRepository.findAll(paging);
+            }
+
+            sanPhams = pageProducts.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("sanphams", sanPhams);
+            response.put("currentPage", pageProducts.getNumber());
+            response.put("totalItems", pageProducts.getTotalElements());
+            response.put("totalPages", pageProducts.getTotalPages());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/store/{storeId}")
+    public ResponseEntity<Map<String, Object>> getAllProductsOfStore(@PathVariable(value = "storeId") Integer storeId,
+                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                     @RequestParam(defaultValue = "6") int size)
+            throws ResourceNotFoundException {
+        try {
+            List<SanPhamModel> sanPhams = new ArrayList<SanPhamModel>();
+            PageRequest paging = PageRequest.of(page, size);
+            Page<SanPhamModel> pageProducts;
+
+            String sql = "Select new " + SanPhamModel.class.getName()
+                    + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
+                    + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+                    + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                    + "where sp.ma_cua_hang = " + storeId + "order by sp.trungbinhsao desc";
+            List<SanPhamModel> sanPhamModels = entityManager.createQuery(sql, SanPhamModel.class).getResultList();
+
+            final int start = page;
+            final int end = Math.min((start + size), sanPhamModels.size());
+            pageProducts = new PageImpl<SanPhamModel>(sanPhamModels.subList(start, end), paging, sanPhamModels.size());
+
+
+            sanPhams = pageProducts.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("sanphams", sanPhams);
+            response.put("currentPage", pageProducts.getNumber());
+            response.put("totalItems", pageProducts.getTotalElements());
+            response.put("totalPages", pageProducts.getTotalPages());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+//        String sql = "Select new " + SanPhamModel.class.getName()
+//                + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
+//                + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+//                + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+//                + "where sp.ma_cua_hang = " + storeId;
+//        Query query = entityManager.createQuery(sql, SanPhamModel.class);
+//        return ResponseEntity.ok().body(query.getResultList());
     }
 
     @GetMapping("/{productId}")
     public ResponseEntity<GetProductByIdModel> getProductById(@PathVariable(value = "productId") Integer productId)
             throws ResourceNotFoundException {
         String sql = "Select new " + SanPhamModel.class.getName()
-                + "(sp.ma_sp, dm.ma_dm, dm.ten_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
+                + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
                 + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
-                + " dm on sp.ma_dm = dm.ma_dm where sp.ma_sp = " + productId;
+                + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                + "where sp.ma_sp = " + productId;
         SanPhamModel sanPhamModel = entityManager.createQuery(sql, SanPhamModel.class).getSingleResult();
         List<HinhAnh> listHinhAnh = hinhAnhRepository.getImByProductId(sanPhamModel.getMa_sp());
 
