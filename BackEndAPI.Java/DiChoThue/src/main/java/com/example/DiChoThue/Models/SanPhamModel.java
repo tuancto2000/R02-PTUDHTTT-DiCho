@@ -1,27 +1,22 @@
-package com.example.DiChoThue.Entities;
+package com.example.DiChoThue.Models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "SAN_PHAM")
-public class SanPham {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class SanPhamModel {
     private int ma_sp;
-    private int ma_cua_hang;
-    private int ma_dm;
     private String ten_sp;
+    private int ma_dm;
+    private String ten_dm;
+    private int ma_cua_hang;
+    private String ten_cua_hang;
     private int gia_sp;
     private int so_luong_con_lai;
     private String mo_ta;
     private int soluotdanhgia;
     private float trungbinhsao;
-    private boolean trang_thai;
 }

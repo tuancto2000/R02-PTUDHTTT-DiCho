@@ -11,7 +11,7 @@ namespace BackEndAPI.Data.Entities
         public int MaDiaChi { get; set; }
         public string TenDiaChi { get; set; }
         public int ToaDoDong { get; set; }
-        public int ToaDoTay { get; set; }
+        public int ToaDoBac { get; set; }
         public LoaiVung LoaiVung { get; set; }
     }
 }
