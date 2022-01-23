@@ -15,8 +15,8 @@ public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
     @Query("select dc from DiaChi dc where dc.ma_dia_chi = ?1")
     DiaChi getAddressById(int addressId);
 
-//    @Procedure(procedureName = "GetNearestPostCode")
-//    List<GetNearestStoreResponseModel> getNearestAddress(int userId);
-@Procedure(procedureName = "GetNearestPostCode")
-int getNearestAddress(@Param("userId") int userId);
+//    @Query(value = "{call GetNearestPostCode(:userId)}",nativeQuery = true)
+//    List<GetNearestStoreResponseModel> getNearestAddress(@Param("userId") int userId);
+//@Procedure(procedureName = "GetNearestPostCode")
+//int getNearestAddress(@Param("userId") int userId);
 }
