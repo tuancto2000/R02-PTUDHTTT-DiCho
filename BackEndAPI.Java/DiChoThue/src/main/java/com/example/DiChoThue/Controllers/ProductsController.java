@@ -46,37 +46,55 @@ public class ProductsController {
             @RequestParam(defaultValue = "6") int size)
             throws ResourceNotFoundException {
         try {
-            List<SanPham> sanPhams = new ArrayList<SanPham>();
+            List<SanPhamModel> sanPhams = new ArrayList<SanPhamModel>();
             PageRequest paging = PageRequest.of(page, size);
-            Page<SanPham> pageProducts;
+            Page<SanPhamModel> pageProducts;
+            String sql = "";
 
             if (productName != null && categoryId != -1) {
-                String sql = "Select new " + SanPham.class.getName()
-                        + "(sp.ma_sp, sp.ma_cua_hang, sp.ma_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai)"
-                        + " from " + SanPham.class.getName() + " sp where sp.ten_sp like '%" + productName + "%' and ma_dm = " + categoryId + "order by sp.trungbinhsao desc";
-
-                List<SanPham> sanPhamList = entityManager
-                        .createQuery(sql, SanPham.class)
-                        .getResultList();
-                final int start = page;
-                final int end = Math.min((start + size), sanPhamList.size());
-                pageProducts = new PageImpl<SanPham>(sanPhamList.subList(start, end), paging, sanPhamList.size());
+                sql = "Select new " + SanPhamModel.class.getName()
+                        + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                        + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
+                        + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+                        + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                        + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                        + "where sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%' and sp.ma_dm = " + categoryId
+                        + "order by sp.trungbinhsao desc";
             } else if (productName != null) {
-                String sql = "Select new " + SanPham.class.getName()
-                        + "(sp.ma_sp, sp.ma_cua_hang, sp.ma_dm, sp.ten_sp, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai)"
-                        + " from " + SanPham.class.getName() + " sp where sp.ten_sp like '%" + productName + "%'" + "order by sp.trungbinhsao desc";
-
-                List<SanPham> sanPhamList = entityManager
-                        .createQuery(sql, SanPham.class)
-                        .getResultList();
-                final int start = page;
-                final int end = Math.min((start + size), sanPhamList.size());
-                pageProducts = new PageImpl<SanPham>(sanPhamList.subList(start, end), paging, sanPhamList.size());
+                sql = "Select new " + SanPhamModel.class.getName()
+                        + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                        + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
+                        + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+                        + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                        + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                        + "where sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%'"
+                        + " order by sp.trungbinhsao desc";
             } else if (categoryId != -1) {
-                pageProducts = sanPhamRepository.findByCategoryId(categoryId, paging);
+                sql = "Select new " + SanPhamModel.class.getName()
+                        + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                        + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
+                        + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+                        + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                        + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                        + "where sp.trang_thai = 1 and sp.ma_dm = " + categoryId
+                        + "order by sp.trungbinhsao desc";
             } else {
-                pageProducts = sanPhamRepository.findAll(paging);
+                sql = "Select new " + SanPhamModel.class.getName()
+                        + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                        + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
+                        + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
+                        + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
+                        + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                        + "where sp.trang_thai = 1"
+                        + "order by sp.trungbinhsao desc";
             }
+
+            List<SanPhamModel> sanPhamList = entityManager
+                    .createQuery(sql, SanPhamModel.class)
+                    .getResultList();
+            final int start = page;
+            final int end = Math.min((start + size), sanPhamList.size());
+            pageProducts = new PageImpl<SanPhamModel>(sanPhamList.subList(start, end), paging, sanPhamList.size());
 
             sanPhams = pageProducts.getContent();
 
@@ -103,16 +121,17 @@ public class ProductsController {
             Page<SanPhamModel> pageProducts;
 
             String sql = "Select new " + SanPhamModel.class.getName()
-                    + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
+                    + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                    + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
                     + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                     + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
-                    + "where sp.ma_cua_hang = " + storeId + "order by sp.trungbinhsao desc";
+                    + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                    + "where sp.ma_cua_hang = " + storeId + "and ha.mac_dinh = 1 order by sp.trungbinhsao desc";
             List<SanPhamModel> sanPhamModels = entityManager.createQuery(sql, SanPhamModel.class).getResultList();
 
             final int start = page;
             final int end = Math.min((start + size), sanPhamModels.size());
             pageProducts = new PageImpl<SanPhamModel>(sanPhamModels.subList(start, end), paging, sanPhamModels.size());
-
 
             sanPhams = pageProducts.getContent();
 
@@ -126,27 +145,20 @@ public class ProductsController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
-//        String sql = "Select new " + SanPhamModel.class.getName()
-//                + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
-//                + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
-//                + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
-//                + "where sp.ma_cua_hang = " + storeId;
-//        Query query = entityManager.createQuery(sql, SanPhamModel.class);
-//        return ResponseEntity.ok().body(query.getResultList());
     }
 
     @GetMapping("/{productId}")
     public ResponseEntity<GetProductByIdModel> getProductById(@PathVariable(value = "productId") Integer productId)
             throws ResourceNotFoundException {
         String sql = "Select new " + SanPhamModel.class.getName()
-                + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai, sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao) "
+                + "(sp.ma_sp, sp.ten_sp, dm.ma_dm, dm.ten_dm, sp.ma_cua_hang, ch.ten_cua_hang, sp.gia_sp, sp.so_luong_con_lai,"
+                + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
                 + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                 + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
-                + "where sp.ma_sp = " + productId;
+                + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
+                + "where sp.ma_sp = " + productId + " and ha.mac_dinh = 1";
         SanPhamModel sanPhamModel = entityManager.createQuery(sql, SanPhamModel.class).getSingleResult();
-        List<HinhAnh> listHinhAnh = hinhAnhRepository.getImByProductId(sanPhamModel.getMa_sp());
+        List<HinhAnh> listHinhAnh = hinhAnhRepository.getImgByProductId(sanPhamModel.getMa_sp());
 
         GetProductByIdModel product = new GetProductByIdModel(sanPhamModel, listHinhAnh);
         return ResponseEntity.ok().body(product);
@@ -188,7 +200,7 @@ public class ProductsController {
 
         sanPhamRepository.save(sanPham);
         List<HinhAnh> listHinhAnhNew = sanPhamDetail.getHinh_anh();
-        List<HinhAnh> listHinhAnhOld = hinhAnhRepository.getImByProductId(productId);
+        List<HinhAnh> listHinhAnhOld = hinhAnhRepository.getImgByProductId(productId);
 
         if (listHinhAnhNew != null) {
             for (HinhAnh ha : listHinhAnhOld) {

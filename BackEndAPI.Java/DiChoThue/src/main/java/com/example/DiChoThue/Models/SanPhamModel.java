@@ -19,4 +19,6 @@ public class SanPhamModel {
     private String mo_ta;
     private int soluotdanhgia;
     private float trungbinhsao;
+    private Boolean trang_thai;
+    private String nguon_hinh_anh;
 }

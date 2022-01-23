@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface HinhAnhRepository extends JpaRepository<HinhAnh, Integer> {
     @Query("select ha from HinhAnh ha where ha.ma_sp = ?1  order by ha.mac_dinh desc")
-    List<HinhAnh> getImByProductId(int productId);
+    List<HinhAnh> getImgByProductId(int productId);
 }

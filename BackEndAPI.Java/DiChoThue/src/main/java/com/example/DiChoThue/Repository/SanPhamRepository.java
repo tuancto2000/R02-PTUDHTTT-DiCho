@@ -16,10 +16,4 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Integer> {
     @Modifying
     @Query("update SanPham set trang_thai = 0 where ma_sp = ?1")
     void changeState(int productId);
-
-    @Query("select sp from SanPham sp where sp.ma_dm = ?1 order by sp.trungbinhsao desc")
-    Page<SanPham> findByCategoryId(int categoryId, Pageable pageable);
-
-    @Query("select sp from SanPham sp order by sp.trungbinhsao desc")
-    Page<SanPham> findAll(Pageable pageable);
 }
