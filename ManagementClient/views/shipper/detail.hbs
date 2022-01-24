@@ -1,0 +1,33 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detail User</li>
+    </ol>
+</nav>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Số lượng</th>
+            <th scope="col">Đơn giá</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each detail}}
+        <tr>
+            <td>{{this.tenSp}}</td>
+            <td>{{this.soLuong}}</td>
+            <td>{{this.donGia}}</td>
+
+        </tr>
+        {{/each}}
+
+    </tbody>
+</table>
+<div class="col-12 d-grid">
+    <a href="/shipper"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>
+<div class="col-12 d-grid">
+    <a href="/shipper"><button class="btn btn-primary" type="submit">Nhận đơn hàng</button></a>
+</div>

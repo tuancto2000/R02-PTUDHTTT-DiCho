@@ -9,6 +9,31 @@ router.get("/store/:id", async (req, res) => {
     res.send(data);
 });
 
+
+router.get("/", async (req, res) => {
+    let id = req.query.id;
+    const data = await model.getAll();
+    res.send(data);
+});
+
+router.get("/pagenation", async (req, res) => {
+    let page = req.query.page;
+    let pagesize = req.query.size;
+    const data = await model.getProductPagnation(page,pagesize);
+    res.send(data);
+});
+
+router.get("/category-search", async (req, res) => {
+    console.log(req.query);
+    let id = req.query.categoryId;
+    let name = req.query.productName || "";
+    let page = req.query.page || 0;
+    let size = req.query.size || 5;
+    const data = await model.getAllByProductCategory(id,name,page,size);
+    res.send(data);
+});
+
+
 router.get("/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.getAllByProductID(id);

@@ -24,6 +24,42 @@ exports.getAllByProductID = async (id) => {
     return rs;
 };
 
+
+exports.getAll= async () => {
+    const rs = await axios({
+        method: "get",
+        baseURL: javaBaseURL,
+        url: `/products`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+
+exports.getAllByProductCategory = async (id,name,page,size) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: javaBaseURL,
+        url: `/products?categoryId=${id}&productName=${name}&page=${page}&size=${size}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+
+exports.getProductPagnation = async (page,pagesize) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: javaBaseURL,
+        url: `/products?page=${page}&size=${pagesize}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
 exports.addProduct = async (data) => {
     const rs = await axios({
         method: "post",

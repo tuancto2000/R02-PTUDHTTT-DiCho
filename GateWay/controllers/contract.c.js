@@ -3,7 +3,7 @@ const router = express.Router();
 const model = require("../models/contract.M");
 module.exports = router;
 router.get("/", async (req, res) => {
-    let page = req.query.type;
+    let type = req.query.type;
     const data = await model.getByType(type);
     res.send(data);
 });
