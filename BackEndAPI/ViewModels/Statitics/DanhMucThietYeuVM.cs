@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 
 namespace BackEndAPI.ViewModels.Statitics
 {
-    public class MatHangThietYeuVM
+    public class DanhMucThietYeuVM
     {
-        public string TenSp { get; set; }
+        public string Ten { get; set; }
+        public int SoLoaiSanPham { get; set; }
         public int? SoLuongConLai { get; set; }
-        public double TrungBinhSao { get; set; }
         public int SoLuongBanRa { get; set; }
-        public int SoLuotDanhGia { get; set; }
     }
 }

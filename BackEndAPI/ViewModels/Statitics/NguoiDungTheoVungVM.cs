@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace BackEndAPI.ViewModels.Statitics
 {
     // Thống kê khách hàng, shipper, cửa hàng ở các vùng đỏ vàng xanh
-    public class ThongKeNguoiDung
+    public class NguoiDungTheoVungVM
     {
         public string Ten { get; set; }
         public string Loai { get; set; }
