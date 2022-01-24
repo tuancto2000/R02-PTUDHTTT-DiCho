@@ -4,8 +4,8 @@ const model = require("../models/product.M");
 module.exports = router;
 
 router.get("/", async (req, res) => {
-    let data = req.query;
-    const data = await model.getAll(data);
+    let query = req.query;
+    const data = await model.getAll(query);
     res.send(data);
 });
 

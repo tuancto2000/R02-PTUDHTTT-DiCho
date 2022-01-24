@@ -5,8 +5,8 @@ module.exports = router;
 
 router.get("/getCommission/:id", async (req, res) => {
     let { id } = req.params;
-    let data = req.query;
-    const data = await model.getCommission(id, data);
+    let query = req.query;
+    const data = await model.getCommission(id, query);
     res.send(data);
 });
 
