@@ -3,6 +3,12 @@ const router = express.Router();
 const model = require("../models/product.M");
 module.exports = router;
 
+router.get("/", async (req, res) => {
+    let data = req.query;
+    const data = await model.getAll(data);
+    res.send(data);
+});
+
 router.get("/store/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.getAllByStoreID(id);
