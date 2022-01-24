@@ -2,6 +2,28 @@ const axios = require("axios");
 const netBaseURL = process.env.DOTNET_URL;
 const javaBaseURL = process.env.JAVA_URL;
 
+exports.getAll = async (data) => {
+    let { categoryId, productName, page, size } = data;
+    let url;
+    if (categoryId && !productName && !page && !size) {
+        url = `/products?categoryId=${categoryId}`;
+    } else if (categoryId && productName && !page && !size) {
+        url = `/products?categoryId=${categoryId}&productName=${productName}`;
+    } else if (!categoryId && !productName && page && size) {
+        url = `/products?page=${page}&size=${size}`;
+    } else {
+        url = `/products`;
+    }
+    const rs = await axios({
+        method: "get",
+        baseURL: javaBaseURL,
+        url: url,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
 exports.getAllByStoreID = async (id) => {
     const rs = await axios({
         method: "get",

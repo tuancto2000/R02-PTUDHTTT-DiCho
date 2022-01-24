@@ -58,7 +58,7 @@ public class ProductsController {
                         + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                         + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
                         + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
-                        + "where sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%' and sp.ma_dm = " + categoryId
+                        + "where ha.mac_dinh = 1 and sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%' and sp.ma_dm = " + categoryId
                         + "order by sp.trungbinhsao desc";
             } else if (productName != null) {
                 sql = "Select new " + SanPhamModel.class.getName()
@@ -67,7 +67,7 @@ public class ProductsController {
                         + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                         + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
                         + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
-                        + "where sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%'"
+                        + "where ha.mac_dinh = 1 and sp.trang_thai = 1 and sp.ten_sp like '%" + productName + "%'"
                         + " order by sp.trungbinhsao desc";
             } else if (categoryId != -1) {
                 sql = "Select new " + SanPhamModel.class.getName()
@@ -76,7 +76,7 @@ public class ProductsController {
                         + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                         + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
                         + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
-                        + "where sp.trang_thai = 1 and sp.ma_dm = " + categoryId
+                        + "where ha.mac_dinh = 1 and sp.trang_thai = 1 and sp.ma_dm = " + categoryId
                         + "order by sp.trungbinhsao desc";
             } else {
                 sql = "Select new " + SanPhamModel.class.getName()
@@ -85,7 +85,7 @@ public class ProductsController {
                         + " from " + SanPham.class.getName() + " sp join " + DanhMuc.class.getName()
                         + " dm on sp.ma_dm = dm.ma_dm join " + CuaHang.class.getName() + " ch on sp.ma_cua_hang = ch.ma_cua_hang "
                         + "join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp "
-                        + "where sp.trang_thai = 1"
+                        + "where ha.mac_dinh = 1 and sp.trang_thai = 1"
                         + "order by sp.trungbinhsao desc";
             }
 
