@@ -57,7 +57,32 @@ exports.getByRole = async (role) => {
     const rs = await axios({
         method: "get",
         baseURL: netBaseURL,
-        url: `/getbyrole/${id}`,
+        url: `/Users/getbyrole/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+exports.paging = async (role) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: netBaseURL,
+        url: `/Users/paging`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+exports.changePassword = async (data) => {
+    const { username, password } = data;
+    const rs = await axios({
+        method: "post",
+        baseURL: netBaseURL,
+        url: `/Users/changePassword`,
+        data: {
+            username: username,
+            password: password,
+        },
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

@@ -122,7 +122,18 @@ exports.getByStoreId = async (id) => {
     const rs = await axios({
         baseURL: netBaseURL,
         method: "get",
-        url: `/getbystore/${id}`,
+        url: `/orders/getbystore/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.getByShipper = async (id) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "get",
+        url: `/orders/getbyshipper/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
