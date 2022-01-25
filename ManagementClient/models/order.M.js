@@ -11,10 +11,39 @@ exports.all = async () => {
   return rs;
 };
 
+
+exports.paging = async (search, state, page, pageSize) => {
+  var url = "/orders?";
+  url += search != null ? `search=${search}&` : "";
+  url += state != null ? `state=${state}&` : "";
+  url += page != null ? `page=${page}&` : "";
+  url += pageSize != null ? `pageSize=${pageSize}&` : "";
+  console.log("paging", url);
+  const rs = await axios({
+      method: "get",
+      url: url,
+  })
+      .then((response) => response.data)
+      .catch((error) => console.log("errrrrrrr : ", error));
+  return rs;
+};
+
 exports.getById = async (id) => {
   const rs = await axios({
     method: "get",
     url: "/orders/" + id,
+  })
+    .then((response) => response.data)
+    .catch((error) => console.log("errrrrrrr : ", error));
+  return rs;
+};
+
+
+
+exports.orderShipper = async (id) => {
+  const rs = await axios({
+    method: "get",
+    url: "/orders/" + id +"/shipper",
   })
     .then((response) => response.data)
     .catch((error) => console.log("errrrrrrr : ", error));

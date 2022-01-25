@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-6">
+        <h1>Order</h1>
+    </div>
+
+</div>
+<div class="row">
+        <form action="/admin/filter-product" method="GET" class="form-inline md-form">
+            <div class="col-2 m-0 pl-0">
+                <input class="form-control mr-sm-2 border border-secondary " type="text" placeholder="Tìm kiếm theo tên"
+                    aria-label="Search" name="search" value="{{search}}" style="width: 100%;">
+            </div>
+            <div class="col-2">
+                <select name="categoryId" class="form-select form-select-md border border-secondary ">
+                    <option value="">Danh mục</option>
+                    {{#each danhmuc}}
+                       <option value="{{this.ma_dm}}">{{this.ten_dm}}</option>
+                    {{/each}}
+                </select>
+            </div>
+         
+            <div class="col-1">
+                <button class="btn btn-outline-primary align-self-center" type="submit"><i class="fa fa-search fa-lg"
+                        aria-hidden="true"></i></button>
+            </div>
+         
+        </form>
+    </div>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Tên danh mục</th>
+            <th scope="col">Số lượt đánh giá</th>
+            <th scope="col">Trung bình sao</th>
+           
+
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each sanpham}}
+        <tr>
+            <th scope="row">{{this.ten_sp}}</th>
+            <td>{{this.ten_dm}}</td>
+            <td>{{this.soluotdanhgia}}</td>
+            <td>{{this.trungbinhsao}}</td>
+          
+            <td class="text-end">
+                <a href="/admin/product-detail?id={{this.ma_sp}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>
+                    View Detail</a>
+            </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+
+</table>
+   <nav aria-label="Page navigation example">
+        {{{paginateHelper pagination paginationClass="pagination"}}}
+    </nav>

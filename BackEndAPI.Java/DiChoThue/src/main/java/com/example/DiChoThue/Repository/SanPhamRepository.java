@@ -1,6 +1,8 @@
 package com.example.DiChoThue.Repository;
 
 import com.example.DiChoThue.Entities.SanPham;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -376,3 +376,5 @@ FrontEnd.NodeJs/.history
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+.history

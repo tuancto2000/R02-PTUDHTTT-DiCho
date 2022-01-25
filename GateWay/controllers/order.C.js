@@ -19,7 +19,13 @@ router.get("/:id", async (req, res) => {
 router.put("/cancel/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.cancel(id);
-    res.status(200).res.send(data);
+    res.status(200).send(data);
+});
+router.put("/:id", async (req, res) => {
+    let id = req.params.id;
+    let shipperid = req.query.shipperid || -1;
+    const data = await model.nextstage(id,shipperid);
+    res.status(200).send(data);
 });
 router.get("/nextState/:id", async (req, res) => {
     let id = req.params.id;
@@ -34,7 +40,7 @@ router.post("/add", async (req, res) => {
 router.post("/add/:id/rate", async (req, res) => {
     let data = req.body;
     const result = await model.addRate(data);
-    res.status(200).res.send(result);
+    res.status(200).send(result);
 });
 router.get("/:id/shipper", async (req, res) => {
     let id = req.params.id;

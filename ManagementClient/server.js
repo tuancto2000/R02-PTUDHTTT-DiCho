@@ -8,14 +8,23 @@ const hbs = exphbs.create({
 app.engine("hbs", hbs.engine);
 app.set("view engine", "hbs");
 app.set("views", "./views");
-app.use(express.static("public"));
+
+app.use(express.static(__dirname+'/public'));
 app.use(
   express.urlencoded({
     extended: "true",
   })
 );
-app.use("/order", require("./controllers/order.C"));
-app.use("/", (req, res) => {
-  res.redirect("/order");
+
+var paginateHelper = require("express-handlebars-paginate");
+
+hbs.handlebars.registerHelper("paginateHelper", paginateHelper.createPagination);
+hbs.handlebars.registerHelper("cond", function (v1, v2, options) {
+  if (v1 === v2) {
+    return options.fn(this);
+  }
 });
+app.use("/shipper", require("./controllers/shipper.C"));
+app.use("/admin", require("./controllers/admin.C"));
+app.use("/shop", require("./controllers/shop.C"));
 app.listen(port);

@@ -39,6 +39,18 @@ exports.cancel = async (id) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
+
+exports.nextstage = async (id,shipperId) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "put",
+        url: "/orders/" + id + `?shipperId=${shipperId}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
 exports.nextState = async (id) => {
     const rs = await axios({
         baseURL: netBaseURL,

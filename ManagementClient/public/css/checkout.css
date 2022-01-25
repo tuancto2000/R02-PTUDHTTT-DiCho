@@ -1,0 +1,6 @@
+
+#momoQRCode{
+    z-index: 1;
+    height: 0px;
+    visibility: hidden;
+}

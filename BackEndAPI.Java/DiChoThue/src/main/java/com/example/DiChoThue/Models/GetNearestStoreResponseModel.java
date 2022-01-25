@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class GetNearestStoreResponseModel {
     int ma_cua_hang;
     String ten_cua_hang;
-    double distance;
+    double khoang_cach;
 }
