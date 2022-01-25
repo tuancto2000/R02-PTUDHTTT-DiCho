@@ -13,3 +13,15 @@ exports.getByType = async (type) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
+
+
+exports.getDetail = async (id) => {
+    const rs = await axios({
+    
+        method: "get",
+        url: `/contracts/detail/store/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};

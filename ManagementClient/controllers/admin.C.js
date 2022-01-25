@@ -4,6 +4,7 @@ const categoryModel = require("../models/category.M");
 const model = require("../models/order.M");
 const productModel = require("../models/product.M");
 const contractModel = require("../models/contract.M");
+const userModel = require("../models/user.M")
 const axios = require("axios");
 module.exports = router;
 
@@ -24,6 +25,45 @@ res.render('admin/product',{
 });
 
 
+router.get('/userlist', async (req,res)=>{
+  let user = await userModel.getbyrole(0);
+  
+  res.render('admin/userlist',{
+      user:user,
+      layout: 'adminLayout' ,
+      });
+  });
+
+  
+router.get("/getaccount-detail", async (req, res) => {
+  const data = await userModel.getAccount(req.query.id);
+  console.log(data);
+  res.render("admin/accountdetail", {
+    detail: data,
+    layout:'adminLayout',
+    
+  });
+});
+  
+router.get('/shipperlist', async (req,res)=>{
+  let user = await userModel.getbyrole(2);
+  
+  res.render('admin/shipperlist',{
+      user:user,
+      layout: 'adminLayout' ,
+      });
+  });
+
+  
+  
+router.get('/shoplist', async (req,res)=>{
+  let user = await userModel.getbyrole(1);
+  
+  res.render('admin/shipperlist',{
+      user:user,
+      layout: 'adminLayout' ,
+      });
+  });
 router.get('/register-shop', async (req,res)=>{
   
     
@@ -90,8 +130,18 @@ router.get("/shipper-detail", async (req, res) => {
       
     });
   });
-
   
+  
+router.get("/view-contract-detail", async (req, res) => {
+  console.log(req.query.id);
+  const data = await contractModel.getDetail(req.query.id);
+  
+  res.render("admin/shopregisterdetail", {
+    detail: data,
+    layout:'adminLayout',
+    
+  });
+});
 
 router.get("/item-detail", async (req, res) => {
   const data = await productModel.getAllByProductID(req.query.id);

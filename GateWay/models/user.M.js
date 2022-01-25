@@ -57,7 +57,7 @@ exports.getByRole = async (role) => {
     const rs = await axios({
         method: "get",
         baseURL: netBaseURL,
-        url: `/getbyrole/${id}`,
+        url: `Users/getbyrole/${role}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

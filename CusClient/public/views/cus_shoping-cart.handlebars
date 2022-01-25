@@ -37,29 +37,30 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {{#each cart}}
                                 <tr>
                                     <td class="shoping__cart__item">
-                                        <img src="img/cart/cart-1.jpg" alt="">
-                                        <h5>Vegetable’s Package</h5>
+                                        <img src="{{this.nguon_hinh_anh}}" style="width: 100px;height:100px" alt="">
+                                        <h5>{{this.ten_sp}}</h5>
                                     </td>
                                     <td class="shoping__cart__price">
-                                        $55.00
+                                       {{this.gia_sp}}
                                     </td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="text" value="1">
+                                                <input type="text" value="{{this.so_luong}}">
                                             </div>
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total">
-                                        $110.00
+                                        {{this.total}}
                                     </td>
                                     <td class="shoping__cart__item__close">
                                         <span class="icon_close"></span>
                                     </td>
                                 </tr>
-                                
+                                {{/each}}
                             </tbody>
                         </table>
                     </div>
@@ -79,7 +80,7 @@
                     <div class="shoping__checkout">
                         <h5>Hoá đơn</h5>
                         <ul>
-                            <li>Total <span>$454.98</span></li>
+                            <li>Tổng tiền<span>{{sum}}</span></li>
                         </ul>
                         <a href="/checkout" class="primary-btn">Thanh toán</a>
                     </div>

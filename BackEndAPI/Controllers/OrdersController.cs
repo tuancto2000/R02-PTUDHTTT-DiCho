@@ -225,7 +225,7 @@ namespace BackEndAPI.Controllers
         [HttpGet("getbyshipper/{shipperId}")]
         public async Task<IActionResult> GetByShipper(int shipperId)
         {
-            var donhang = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham).AsEnumerable();
+            var donhang = _context.DonHang.Include(x => x.NguoiMua).Include(x => x.CuaHang).Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham).AsEnumerable();
             if (shipperId == 0) donhang = donhang.Where(x => x.MaShipper == null && x.TrangThai == TrangThaiDonHang.DongGoi);
             else
             {

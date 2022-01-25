@@ -10,7 +10,6 @@ router.get('/', async (req,res)=>{
     const shopid = 2;
     let product = await productModel.getAllByStoreID(shopid);
    
-    console.log(product);
     res.render('shop/shop-details',{
         sanpham:product.sanphams,
      
@@ -82,6 +81,11 @@ router.get('/item-detail', async (req,res)=>{
    
 router.post("/newproduct",  upload.array("nguon_hinh_anh"), async (req, res) => {
   let data = req.body;
+  console.log(req.files);
+  const hinhanh = [];
+  req.files.forEach(element => {
+    
+  });
   var product = {
     ten_sanpham: data.ten_sp,
     gia_tien: data.gia_sp,

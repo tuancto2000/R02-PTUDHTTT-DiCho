@@ -16,12 +16,6 @@ router.get("/store/:id", async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
-    let id = req.query.id;
-    const data = await model.getAll();
-    res.send(data);
-});
-
 router.get("/pagenation", async (req, res) => {
     let page = req.query.page;
     let pagesize = req.query.size;
@@ -30,7 +24,6 @@ router.get("/pagenation", async (req, res) => {
 });
 
 router.get("/category-search", async (req, res) => {
-    console.log(req.query);
     let id = req.query.categoryId;
     let name = req.query.productName || "";
     let page = req.query.page || 0;
@@ -63,3 +56,5 @@ router.delete("/:id", async (req, res) => {
     const data = await model.deleteProduct(id);
     res.status(200).send(data);
 });
+
+

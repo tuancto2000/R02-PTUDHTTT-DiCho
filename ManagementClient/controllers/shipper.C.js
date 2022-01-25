@@ -41,6 +41,7 @@ router.get("/finish-deliver", async (req, res) => {
     res.redirect("/shipper/history?id=110")
   });
 
+
 router.get("/detail", async (req, res) => {
   let id = req.query.id;
   const data = await model.getById(id);
@@ -56,6 +57,7 @@ router.get("/accept", async (req, res) => {
   let id = req.query.id;
   let shiperid=req.query.shipperId;
   const data = await deliverModel.finishDeliver(id,shiperid);
+  console.log(shiperid);
   res.redirect("/shipper")
 });
 
