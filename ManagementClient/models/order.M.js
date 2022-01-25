@@ -38,6 +38,36 @@ exports.getById = async (id) => {
   return rs;
 };
 
+exports.accept = async (id) => {
+  const rs = await axios({
+      method: "put",
+      url: "/orders/" + id,
+  })
+      .then((response) => response.data)
+      .catch((error) => console.log("errrrrrrr : ", error));
+  return rs;
+};
+
+exports.cancel = async (id) => {
+  const rs = await axios({
+      method: "put",
+      url: "/orders/cancel/" + id,
+  })
+      .then((response) => response.data)
+      .catch((error) => console.log("errrrrrrr : ", error));
+  return rs;
+};
+
+exports.getByStoreId = async (id) => {
+  const rs = await axios({
+    method: "get",
+    url: "/orders/getbystore/" + id,
+  })
+    .then((response) => response.data)
+    .catch((error) => console.log("errrrrrrr : ", error));
+    console.log(rs);
+  return rs;
+};
 
 
 exports.orderShipper = async (id) => {

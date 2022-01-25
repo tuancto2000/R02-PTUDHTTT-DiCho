@@ -23,7 +23,7 @@ router.put("/cancel/:id", async (req, res) => {
 });
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
-    let shipperid = req.query.shipperid || -1;
+    let shipperid = req.query.shipperId || -1;
     const data = await model.nextstage(id,shipperid);
     res.status(200).send(data);
 });
@@ -62,6 +62,7 @@ router.get("/getbystore/:id", async (req, res) => {
     const data = await model.getByStoreId(id);
     res.send(data);
 });
+
 router.get("/getbyshipper/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.getByShipper(id);

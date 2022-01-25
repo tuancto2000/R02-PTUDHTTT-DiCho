@@ -1,0 +1,2031 @@
+﻿CREATE OR ALTER PROCEDURE GetNearestPostCode @east int, @north int
+AS
+DECLARE @ResultValue VARCHAR(10)
+BEGIN 
+  SELECT MA_DIA_CHI ,TEN_DIA_CHI , SQRT(
+    POWER(CONVERT(bigint,(TOA_DO_DONG - @east)), 2) +
+    POWER(CONVERT(bigint,(TOA_DO_BAC - @north)), 2)) AS distance
+FROM DIA_CHI WHERE SQRT(
+    POWER(CONVERT(bigint,(TOA_DO_DONG - @east)), 2) +
+    POWER(CONVERT(bigint,(TOA_DO_BAC - @north)), 2))  < 100000 ORDER BY distance
+
+END
+GO
+CREATE OR ALTER trigger UpdateDonGia_ChiTietDonHang
+ON dbo.CHI_TIET_DON_HANG
+AFTER INSERT, UPDATE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    DECLARE @gia as int;
+	DECLARE @machitietdonhang as int;
+	DECLARE @madonhang as int;
+	
+	SET @madonhang = (select MA_DON_HANG from inserted)
+	SET @machitietdonhang = (select id from inserted)
+	SET @gia = (select SAN_PHAM.GIA_SP FROM inserted join SAN_PHAM on inserted.MA_SP = SAN_PHAM.MA_SP where SAN_PHAM.MA_SP = inserted.MA_SP)
+	if(@gia is not null)
+	UPDATE CHI_TIET_DON_HANG
+	SET DON_GIA = SO_LUONG * @gia
+	where Id = @machitietdonhang
+
+	UPDATE DON_HANG
+	SET TongTien = (SELECT SUM(DON_GIA) FROM CHI_TIET_DON_HANG where MA_DON_HANG = @madonhang)
+	where MA_DON_HANG = @madonhang
+
+
+END;
+GO
+
+
+CREATE OR ALTER trigger UpdateDonGia_ChiTietDonHang_Delete
+ON dbo.CHI_TIET_DON_HANG
+AFTER DELETE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    DECLARE @gia as int;
+	DECLARE @machitietdonhang as int;
+	DECLARE @madonhang as int;
+	
+	SET @madonhang = (select MA_DON_HANG from deleted)
+	SET @machitietdonhang = (select id from deleted)
+	SET @gia = (select SAN_PHAM.GIA_SP FROM deleted join SAN_PHAM on deleted.MA_SP = SAN_PHAM.MA_SP where SAN_PHAM.MA_SP = deleted.MA_SP)
+	
+	
+
+	UPDATE DON_HANG
+	SET TongTien = (SELECT SUM(DON_GIA) FROM CHI_TIET_DON_HANG where MA_DON_HANG = @madonhang)
+	where MA_DON_HANG = @madonhang
+
+
+END;
+GO
+
+
+CREATE OR ALTER trigger UpdateTongTien_DonHang
+ON dbo.DON_HANG
+AFTER INSERT, UPDATE, DELETE
+AS 
+BEGIN
+	 DECLARE @gia as int;
+	DECLARE @madonhang as int;
+	IF EXISTS (SELECT *
+               FROM deleted
+               )
+	BEGIN
+		SET @madonhang = (select MA_DON_HANG from deleted)
+		SET @gia = (SELECT SUM(DON_GIA) FROM CHI_TIET_DON_HANG where MA_DON_HANG = @madonhang)
+		if(@gia is not null)
+		UPDATE DON_HANG
+		SET TongTien = @gia
+		where MA_DON_HANG = @madonhang
+	END
+	IF EXISTS (SELECT *
+               FROM inserted
+               )
+	BEGIN
+		SET @madonhang = (select MA_DON_HANG from inserted)
+		SET @gia = (SELECT SUM(DON_GIA) FROM CHI_TIET_DON_HANG where MA_DON_HANG = @madonhang)
+		if(@gia is not null)
+		UPDATE DON_HANG
+		SET TongTien = @gia
+		where MA_DON_HANG = @madonhang
+	END
+
+END
+GO
+CREATE OR ALTER trigger UpdateDonGia_ChiTietGioHang
+ON dbo.CHI_TIET_GIO_HANG
+AFTER INSERT, UPDATE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    DECLARE @gia as int;
+	DECLARE @machitietdonhang as int;
+	DECLARE @magiohang as int;
+	
+	SET @magiohang = (select MA_GIO_HANG from inserted)
+	SET @machitietdonhang = (select id from inserted)
+	SET @gia = (select SAN_PHAM.GIA_SP FROM inserted join SAN_PHAM on inserted.MA_SP = SAN_PHAM.MA_SP where SAN_PHAM.MA_SP = inserted.MA_SP)
+	
+
+	UPDATE GIO_HANG
+	SET TONG_TIEN = (SELECT SUM(GIA_SP * SO_LUONG) FROM CHI_TIET_GIO_HANG join SAN_PHAM on CHI_TIET_GIO_HANG.MA_SP = SAN_PHAM.MA_SP where MA_GIO_HANG = @magiohang)
+	where MA_GIO_HANG = @magiohang
+
+
+END;
+GO
+
+
+CREATE OR ALTER trigger UpdateDonGia_ChiTietGioHang_Delete
+ON dbo.CHI_TIET_GIO_HANG
+AFTER DELETE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    DECLARE @gia as int;
+	DECLARE @machitietdonhang as int;
+	DECLARE @magiohang as int;
+	
+	SET @magiohang = (select MA_GIO_HANG from deleted)
+	SET @machitietdonhang = (select id from deleted)
+	SET @gia = (select SAN_PHAM.GIA_SP FROM deleted join SAN_PHAM on deleted.MA_SP = SAN_PHAM.MA_SP where SAN_PHAM.MA_SP = deleted.MA_SP)
+	
+
+	UPDATE GIO_HANG
+	SET TONG_TIEN = (SELECT SUM(GIA_SP * SO_LUONG) FROM CHI_TIET_GIO_HANG join SAN_PHAM on CHI_TIET_GIO_HANG.MA_SP = SAN_PHAM.MA_SP where MA_GIO_HANG = @magiohang)
+	where MA_GIO_HANG = @magiohang
+
+
+END;
+GO
+
+
+
+
+
+CREATE OR ALTER trigger Update_DanhGia
+ON dbo.DANH_GIA
+AFTER INSERT, UPDATE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    
+	DECLARE @masp as int;
+	
+	SET @masp = (select MA_SAN_PHAM from inserted)
+	
+	UPDATE SAN_PHAM
+	SET SoLuotDanhGia = SoLuotDanhGia + 1
+	where MA_SP = @masp;
+	UPDATE SAN_PHAM
+	SET TrungBinhSao = (select SUM(SAO) from DANH_GIA where MA_SAN_PHAM = @masp)*1.00 / SoLuotDanhGia 
+	where MA_SP = @masp
+
+
+
+END;
+GO
+
+
+CREATE OR ALTER trigger Delete_DanhGia
+ON dbo.DANH_GIA
+AFTER DELETE
+AS 
+BEGIN
+
+    --
+    -- Check if this is an INSERT, UPDATE or DELETE Action.
+    -- 
+    
+	DECLARE @masp as int;
+	
+	SET @masp = (select MA_SAN_PHAM from deleted)
+	
+	UPDATE SAN_PHAM
+	SET SoLuotDanhGia = SoLuotDanhGia - 1
+	where MA_SP = @masp;
+	UPDATE SAN_PHAM
+	SET TrungBinhSao = (select SUM(SAO) from DANH_GIA where MA_SAN_PHAM = @masp)*1.00  / SoLuotDanhGia 
+	where MA_SP = @masp
+
+
+
+END;
+GO
+
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Hưng Hoà A',3456100,1267600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 13',4456500,1462300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 09',2464600,1537100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Hiệp Tân',3154100,2315600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 13',3466300,3452300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 10',1241600,2126300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 04',3466200,3511500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường Võ Thị Sáu',4532500,3232400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 14',1156500,4312400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 15',3443500,4531700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Lê Minh Xuân',3154600,3312800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường An Phú Đông',2234700,4244700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 04',3362700,4135600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Phú',2244200,2524400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 08',3131300,1134700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Tân Thới Hòa',2534800,2351600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Tân Hiệp',1444300,4154700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 01',3565800,2141600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 14',3451200,1261800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 13',1163200,2434600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Phạm Ngũ Lão',4451200,2421400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Trung',4362600,3526400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Cô Giang',1566400,1463600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 13',4317500,2543200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Tân Nhựt',1114400,2243100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 04',2115600,2527100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 01',2446200,2444700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 16',4351200,1467100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 15',2232200,1444400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 07',1517800,4154300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Hưng',2421500,1123100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 10',3126200,2235800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 11',2365600,1235200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Đông Thạnh',2564700,1445700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 06',4453600,3332800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Phước Bình',4454700,1115200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 16',1336800,2127700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 13',3547200,2553100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Thạnh Xuân',3241600,4556800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Bình Hưng',1536100,2413600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Phạm Văn Hai',1317200,1162800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 03',1361300,1416800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Thảo Điền',1541600,2542800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Hòa Phú',3345100,4165100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Trung Chánh',1513500,3364400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 15',4343300,3431700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 21',3235700,3445400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 08',4512100,3446600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 07',1337100,2147500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Thọ Hòa',2246200,4253500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 12',1564200,1332100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 26',3416100,4416400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Trưng Đông',2341700,3353300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Bình Lợi',3353200,2145500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Tân Tạo A',1245800,4211400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Hòa Phú',2317200,4525800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Nhuận Đức',1223100,1437100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Hiệp Phước',1152400,2163400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 14',4157200,4523200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Phạm Văn Hai',3351500,4121500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 12',4253700,3466400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 12',4522100,4311100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 13',3432100,1252800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 05',1125300,1513200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 07',3252400,1215200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân Thông Hội',2123200,1352800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 01',2335600,2363300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 08',2153600,4135400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 25',3447600,1327800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 03',3126700,3366500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 06',4252300,2424100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Tân Quý',4321600,3244600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Tân Định',2456800,3253200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 13',1163200,3264600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Tây Thạnh',4356700,3322500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Bình Chánh',2125500,1446700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã An Phú Tây',4561300,4516600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 05',4141400,1433800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân Thạnh Tây',4362400,1346600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường Võ Thị Sáu',3547200,1245400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Linh Trung',2113700,2513800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 01',2244600,3336800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Kiểng',4522300,3552700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Trung An',2117800,2217800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Tân Định',1535500,4127600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã Bình Khánh',3214800,2524300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 05',2431500,4446700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Đa Kao',1224700,3353200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 04',3165700,2317500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân Thông Hội',1166400,2451500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Tân Định',4422400,3567200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 10',2214100,4317600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Hưng Long',3162600,2264100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 6',4541300,1333400,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 16',4123700,3324400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 02',4444500,1413200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Thái Mỹ',1134200,3327800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã Long Hòa',2116600,3264600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 13',2513800,2447400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Tân Tạo A',2323600,1255200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 12',3356500,1251600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Vĩnh Lộc B',3223500,2525600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 09',1423800,4154600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 13',3151400,4243300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 03',4214700,2261100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Đông Thạnh',1316200,2543100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 07',4343100,4347700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 11',2536100,3563300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Đa Phước',4155200,2354500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 26',1246600,1331600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Thảo Điền',2264200,1237400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 01',2144500,3251600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 04',4112600,2253800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Tân Quý Tây',3421200,4363800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 10',4112500,2332200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 09',2544100,2461100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 12',1256500,3255700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Thạnh Lộc',4417700,3457600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường An Lạc A',1244400,2142700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 13',1456600,3261100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 08',1252700,3341600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Tăng Nhơn Phú A',2535500,3456300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 12',4352600,2241600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Phước Long A',2243500,4513400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Trưng Tây',4541600,2256300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 12',1256600,3531500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 04',3416600,1431500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 13',1242800,3253700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 14',3546200,2235200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Xuân Thới Sơn',3155300,1436800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Tân Hưng Thuận',3116300,3513200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 02',2512700,3563500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Tân Thành',4412500,3123100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 11',1437400,1152300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 13',4217700,4245100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường An Lạc',4344400,3316500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Chiểu',2242700,2436500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Bến Nghé',3326400,2445100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Tăng Nhơn Phú A',4225400,2445600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Hiệp Bình Phước',2336600,3244300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 08',4553200,4565200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Bình Thuận',2444200,1331100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 13',1132100,2133800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Cát Lái',3216800,3426500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 05',3416600,3522500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã An Phú',4152800,1563600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 15',1256100,1211300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 08',3223200,2326700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 11',2156500,3555500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 09',2417600,4161600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 10',4536300,4111400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Phú Mỹ',2565600,4236600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 03',4514700,2327400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Nguyễn Cư Trinh',4142700,2543500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Bình Mỹ',1365200,3237800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Phú Mỹ Hưng',3336300,2121700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Trung An',1211600,3424200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 09',4531200,2143200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 09',2227500,1427400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân Thạnh Đông',2225400,1263800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân Phú Trung',3444300,1544200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 27',2121100,1161800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 02',4161700,1213500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Xuân Thới Sơn',4427100,2524500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 10',1165600,1537100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Kiểng',3431400,1435600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Thuận Tây',4135700,1121800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 05',1245400,2413400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 21',2253800,3127500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 26',2236600,3144700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 07',2352800,1331200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Bình Thuận',4515500,3365100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 26',2453300,4444300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 12',1321600,3565800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Thảo Điền',1317100,4365100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 15',1431500,4517100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 11',3533700,1536700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Phú Thuận',3261600,3151800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 03',3347500,2251800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Cầu Ông Lãnh',1465500,4327100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Chiểu',1155600,4417700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Trường Thạnh',1143700,3532300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Long Phước',4335400,3434600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 02',4547600,2261700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 25',1255100,1334800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 09',3462100,1233500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Kiểng',4332600,1312600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Phong',1222200,1247700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 09',4334800,1435600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 08',3341700,2143400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Nhơn Đức',3134600,1332700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 07',4347100,4136700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân An Hội',3254400,2425600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Thạnh',1364800,2355500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 06',3335400,4444500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Xuân Thới Sơn',2464400,2227200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 12',4143700,4456600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 13',3531600,2461500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 03',1562800,2245400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 03',4132500,3421800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 02',3527200,1112300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã An Phú',1432100,1514100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Thị trấn Tân Túc',1316500,2245300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Phước Vĩnh An',3132400,4447300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Hiệp Phước',1415500,4414100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Trung Chánh',1343300,1251500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 03',2444300,3563600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Trị Đông B',4147200,2511200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Phạm Ngũ Lão',4436200,4223600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 10',3413600,2417800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Thạnh Mỹ Lợi',3343200,3451200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Hưng Hòa',4522800,2561100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Cầu Kho',4527100,2552700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Trung Lập Thượng',1124800,3564500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 05',1225500,3253400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Tân Hưng Thuận',3326800,1256500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 13',2157300,1437800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 07',3235500,1461200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Bình Thuận',3315400,4443200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 10',4112200,4344400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Phước Hiệp',3164200,4533600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 04',3123500,3434300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 10',4161800,2531700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 12',3461700,1565200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Xuân Thới Sơn',1551700,4231800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Thới Tam Thôn',1225800,3561700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Long Thới',3262100,4531100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Linh Đông',1126100,3523500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 03',4343200,4166800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 02',3335800,1267200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 12',2553200,1246600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Long Thạnh Mỹ',3112700,4354800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Hiệp Thành',1442500,4367600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 12',2134500,3545800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 12, Phường Thạnh Lộc',1122300,3316100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 02',2265400,2166200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 13',1556800,2113500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 07',2544200,1527700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Quy',4124500,3217100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 04',3263800,1226800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã Bình Khánh',2453500,1324200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 09',4252600,2542400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 14',3425100,2432200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Tân Nhựt',3557500,1132600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 08',4125400,1237300,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 01',2146300,4354400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Trung',4454700,4216800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Tam Bình',4267300,1136100,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Phú Xuân',4364700,3162500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã An Thới Đông',4354200,3264300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 8, Phường 15',3356200,3227200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Phong',1223300,1525600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 6',4422600,1254400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Hóc Môn, Xã Tân Hiệp',4214300,1267800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 14',3536200,1451400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 13',4165600,2434300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Tăng Nhơn Phú A',3425300,3227600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 16',3245100,2453600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Phú Nhuận, Phường 07',3114800,1125300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Tân Thới Hòa',2446600,1414400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 03',4327600,2161800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 06',1421300,4553300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 07',1246500,1337400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Trưng Đông',4536200,3344600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 01',4543100,3151600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 12',3432300,3331400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 07',2567200,1331400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 14',3326600,1462700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 7, Phường Tân Kiểng',2215400,4354500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 10',3242100,1541600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 07',3216800,4137100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 25',4555800,4561300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 13',1554100,2335300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Trung',2154800,3127500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 08',4324800,1151600,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 01',4437300,2437700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Tăng Nhơn Phú A',1441800,4237500,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 11',4465700,1321800,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 6',3421300,2325100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 04',1115600,2454100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Thái Mỹ',3225300,1563700,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 07',2425800,1332200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 09',1531200,4423800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Thị trấn Nhà Bè',2336500,3451500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 18',1316300,2432700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Trưng Đông',3416300,3231100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Thọ Hòa',2566600,4316600,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 13',1441600,4523800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 4, Phường 10',3422800,2357200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Vĩnh Lộc A',1151300,1336200,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Chiểu',1323800,3146200,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Trị Đông A',3214400,4253800,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 1, Phường Bến Thành',2512300,4456400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 13',3265700,4436200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Thái Mỹ',1442100,1334800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Trung Lập Hạ',1354700,3526100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Thái Mỹ',3145600,4563200,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Phong Phú',2335100,4234500,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 07',4415200,4211400,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 3, Phường 13',1515800,1226800,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường An Lợi Đông',4534100,4152300,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 10',2566200,3267100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 08',3217400,2417500,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 6, Phường 06',2534800,1555300,0)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã An Thới Đông',1263600,4215100,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 11, Phường 15',1513200,1313400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Cát Lái',2555800,2222700,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Hưng Long',2562100,3212600,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 5, Phường 07',3243600,1462400,2)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 01',3333300,4156100,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Nhơn Đức',3527700,1123700,1)
+INSERT INTO DIA_CHI VALUES(N'Thành phố Hồ Chí Minh, Quận 10, Phường 09',3545300,4111600,1)
+
+
+
+
+
+
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Lucilla Brian','2022-05-25','(555) 743-8290','emailKH10001@gmail.com',0,1,23)
+INSERT INTO NGUOI_DUNG VALUES(N'Cenric Lucilla Brian','2022-06-23','(676) 725-5053','emailKH10002@gmail.com',0,1,61)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Gaubert','2022-10-15','(446) 958-5896','emailKH10003@gmail.com',0,1,261)
+INSERT INTO NGUOI_DUNG VALUES(N'Gaubert Hypatia Iacomus','2022-01-20','(641) 748-0345','emailKH10004@gmail.com',0,1,188)
+INSERT INTO NGUOI_DUNG VALUES(N'Octavianus Dijana','2022-12-02','(641) 748-0345','emailKH10005@gmail.com',0,1,70)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Abe','2022-01-23','(702) 823-8668','emailKH10006@gmail.com',0,1,58)
+INSERT INTO NGUOI_DUNG VALUES(N'Ortwin Kubo Eleutherios Arnviðr Fujita','2022-10-17','(959) 246-7781','emailKH10007@gmail.com',0,1,284)
+INSERT INTO NGUOI_DUNG VALUES(N'Calvus Sasaki Jayadeva','2022-09-02','(702) 823-8668','emailKH10008@gmail.com',0,1,271)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Takenaka','2022-10-29','(915) 869-7966','emailKH10009@gmail.com',0,1,91)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Hammurabi','2022-07-22','(567) 884-1824','emailKH100010@gmail.com',0,1,159)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Genovefa','2022-04-27','(900) 874-7030','emailKH100011@gmail.com',0,1,292)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Mauro','2022-01-31','(319) 670-2959','emailKH100012@gmail.com',0,1,294)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Takenaka','2022-08-21','(998) 268-1400','emailKH100013@gmail.com',0,1,122)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Babirye','2022-02-28','(998) 268-1400','emailKH100014@gmail.com',0,1,186)
+INSERT INTO NGUOI_DUNG VALUES(N'Pope Fujioka','2022-06-24','(668) 270-8314','emailKH100015@gmail.com',0,1,4)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Dijana','2022-09-18','(496) 785-1217','emailKH100016@gmail.com',0,1,129)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Holzer','2022-12-05','(997) 710-4125','emailKH100017@gmail.com',0,1,132)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Renata Amandus','2022-07-12','(982) 829-7252','emailKH100018@gmail.com',0,1,268)
+INSERT INTO NGUOI_DUNG VALUES(N'Holzer Willabert','2022-10-17','(931) 688-8906','emailKH100019@gmail.com',0,1,191)
+INSERT INTO NGUOI_DUNG VALUES(N'Willabert Gaubert','2022-08-17','(998) 268-1400','emailKH100020@gmail.com',0,1,100)
+INSERT INTO NGUOI_DUNG VALUES(N'Abe Jayadeva','2022-09-27','(496) 785-1217','emailKH100021@gmail.com',0,1,133)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Iordanus Tsunoda','2022-02-07','(478) 612-5312','emailKH100022@gmail.com',0,1,275)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Renata Amandus','2022-07-22','(903) 236-8417','emailKH100023@gmail.com',0,1,163)
+INSERT INTO NGUOI_DUNG VALUES(N'Wilburh Bjartr Eleutherios Arnviðr Fujita','2022-10-01','(363) 358-4189','emailKH100024@gmail.com',0,1,309)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Genovefa','2022-07-17','(230) 705-3479','emailKH100025@gmail.com',0,1,199)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Dijana','2022-06-23','(463) 330-8001','emailKH100026@gmail.com',0,1,232)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Wilburh Bjartr','2022-09-18','(895) 242-3303','emailKH100027@gmail.com',0,1,20)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Agapetos Rikuto Himura','2022-09-12','(359) 626-1349','emailKH100028@gmail.com',0,1,106)
+INSERT INTO NGUOI_DUNG VALUES(N'Þórarinn Victorianus Ealdwine','2022-05-18','(302) 725-5643','emailKH100029@gmail.com',0,1,53)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Pope','2022-07-27','(628) 558-8950','emailKH100030@gmail.com',0,1,138)
+INSERT INTO NGUOI_DUNG VALUES(N'Farvald Katsu Itō Cenric','2022-01-10','(463) 330-8001','emailKH100031@gmail.com',0,1,38)
+INSERT INTO NGUOI_DUNG VALUES(N'Fabian Dijana','2022-08-04','(982) 829-7252','emailKH100032@gmail.com',0,1,8)
+INSERT INTO NGUOI_DUNG VALUES(N'Xanthippe Shingo Genovefa','2022-10-18','(319) 670-2959','emailKH100033@gmail.com',0,1,97)
+INSERT INTO NGUOI_DUNG VALUES(N'Gaubert Babirye','2022-08-26','(942) 527-4787','emailKH100034@gmail.com',0,1,185)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Dijana','2022-01-20','(697) 498-9239','emailKH100035@gmail.com',0,1,254)
+INSERT INTO NGUOI_DUNG VALUES(N'Tertius Genovefa','2022-07-25','(360) 807-7457','emailKH100036@gmail.com',0,1,309)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Silvija','2022-06-24','(302) 725-5643','emailKH100037@gmail.com',0,1,135)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Miyashita','2022-06-16','(951) 980-4228','emailKH100038@gmail.com',0,1,299)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Cyneburg','2022-10-10','(676) 725-5053','emailKH100039@gmail.com',0,1,202)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Michel','2022-01-25','(971) 363-2969','emailKH100040@gmail.com',0,1,231)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Hypatia Iacomus','2022-05-01','(496) 785-1217','emailKH100041@gmail.com',0,1,199)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Seraphina','2022-01-16','(413) 940-2275','emailKH100042@gmail.com',0,1,154)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Nicostrato','2022-08-26','(552) 975-5496','emailKH100043@gmail.com',0,1,132)
+INSERT INTO NGUOI_DUNG VALUES(N'Iordanus Tsunoda Silvija','2022-08-04','(265) 327-6645','emailKH100044@gmail.com',0,1,83)
+INSERT INTO NGUOI_DUNG VALUES(N'Lucilla Brian Pope','2022-11-18','(758) 604-6380','emailKH100045@gmail.com',0,1,231)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Sugiura','2022-09-14','(405) 395-9333','emailKH100046@gmail.com',0,1,20)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Mauro','2022-11-14','(570) 774-2944','emailKH100047@gmail.com',0,1,220)
+INSERT INTO NGUOI_DUNG VALUES(N'Lucilla Brian Calvus Sasaki','2022-01-20','(951) 980-4228','emailKH100048@gmail.com',0,1,183)
+INSERT INTO NGUOI_DUNG VALUES(N'Draženka Pope','2022-01-20','(833) 786-6665','emailKH100049@gmail.com',0,1,87)
+INSERT INTO NGUOI_DUNG VALUES(N'Jayadeva Hammurabi','2022-06-23','(895) 242-3303','emailKH100050@gmail.com',0,1,234)
+INSERT INTO NGUOI_DUNG VALUES(N'Draženka Calvus Sasaki','2022-08-27','(998) 268-1400','emailKH10001@gmail.com',1,1,3)
+INSERT INTO NGUOI_DUNG VALUES(N'Fabian Iordanus Tsunoda','2022-07-22','(997) 710-4125','emailKH10002@gmail.com',1,1,264)
+INSERT INTO NGUOI_DUNG VALUES(N'Hypatia Iacomus Genovefa','2022-11-13','(926) 650-4398','emailKH10003@gmail.com',1,1,251)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Dijana','2022-05-09','(288) 823-2241','emailKH10004@gmail.com',1,1,274)
+INSERT INTO NGUOI_DUNG VALUES(N'Þórarinn Miyashita','2022-01-02','(555) 743-8290','emailKH10005@gmail.com',1,1,136)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Lucilla Brian','2022-05-25','(668) 270-8314','emailKH10006@gmail.com',1,1,13)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Abe','2022-01-20','(676) 725-5053','emailKH10007@gmail.com',1,1,308)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Agapetos Rikuto Himura','2022-01-02','(697) 498-9239','emailKH10008@gmail.com',1,1,157)
+INSERT INTO NGUOI_DUNG VALUES(N'Þone Hiroto Hypatia Iacomus','2022-05-09','(676) 725-5053','emailKH10009@gmail.com',1,1,14)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Wilburh Bjartr','2021-12-13','(702) 823-8668','emailKH100010@gmail.com',1,1,186)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Renata Amandus','2022-03-11','(570) 774-2944','emailKH100011@gmail.com',1,1,87)
+INSERT INTO NGUOI_DUNG VALUES(N'Farvald Katsu Itō Þórarinn','2022-10-17','(478) 612-5312','emailKH100012@gmail.com',1,1,225)
+INSERT INTO NGUOI_DUNG VALUES(N'Willabert Þone Hiroto','2022-08-14','(421) 955-0156','emailKH100013@gmail.com',1,1,284)
+INSERT INTO NGUOI_DUNG VALUES(N'Silvija Iestyn','2022-02-14','(712) 451-2957','emailKH100014@gmail.com',1,1,38)
+INSERT INTO NGUOI_DUNG VALUES(N'Draženka Fujioka','2022-09-07','(552) 975-5496','emailKH100015@gmail.com',1,1,69)
+INSERT INTO NGUOI_DUNG VALUES(N'Genovefa Sugiura','2022-07-22','(997) 710-4125','emailKH100016@gmail.com',1,1,120)
+INSERT INTO NGUOI_DUNG VALUES(N'Koharu Babirye','2022-10-17','(551) 401-8663','emailKH100017@gmail.com',1,1,228)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Tertius','2022-09-18','(998) 268-1400','emailKH100018@gmail.com',1,1,93)
+INSERT INTO NGUOI_DUNG VALUES(N'Silvija Iestyn','2022-07-22','(359) 626-1349','emailKH100019@gmail.com',1,1,113)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Itō','2021-12-13','(463) 330-8001','emailKH100020@gmail.com',1,1,215)
+INSERT INTO NGUOI_DUNG VALUES(N'Abe Agi','2022-01-23','(745) 510-9791','emailKH100021@gmail.com',1,1,309)
+INSERT INTO NGUOI_DUNG VALUES(N'Itō Genovefa','2022-12-07','(712) 451-2957','emailKH100022@gmail.com',1,1,311)
+INSERT INTO NGUOI_DUNG VALUES(N'Itō Eleutherios Arnviðr Fujita','2022-06-07','(359) 626-1349','emailKH100023@gmail.com',1,1,253)
+INSERT INTO NGUOI_DUNG VALUES(N'Erastos Miyashita Erastos Miyashita','2022-04-06','(648) 214-0168','emailKH100024@gmail.com',1,1,41)
+INSERT INTO NGUOI_DUNG VALUES(N'Cenric Jayadeva','2022-04-27','(463) 330-8001','emailKH100025@gmail.com',1,1,282)
+INSERT INTO NGUOI_DUNG VALUES(N'Octavianus Ortwin Kubo','2022-07-27','(363) 358-4189','emailKH100026@gmail.com',1,1,79)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Mauro','2022-01-31','(496) 785-1217','emailKH100027@gmail.com',1,1,126)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Willabert','2022-03-03','(648) 214-0168','emailKH100028@gmail.com',1,1,97)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Calvus Sasaki','2022-07-13','(895) 242-3303','emailKH100029@gmail.com',1,1,248)
+INSERT INTO NGUOI_DUNG VALUES(N'Tertius Farvald Katsu Itō','2022-01-18','(718) 892-9484','emailKH100030@gmail.com',1,1,237)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Iestyn','2022-09-17','(997) 710-4125','emailKH100031@gmail.com',1,1,155)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Iestyn','2022-04-27','(446) 958-5896','emailKH100032@gmail.com',1,1,67)
+INSERT INTO NGUOI_DUNG VALUES(N'Michel Willabert','2022-10-15','(982) 829-7252','emailKH100033@gmail.com',1,1,123)
+INSERT INTO NGUOI_DUNG VALUES(N'Abe Genovefa','2022-01-16','(490) 348-8686','emailKH100034@gmail.com',1,1,284)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Michel','2022-09-08','(763) 605-0948','emailKH100035@gmail.com',1,1,146)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Iestyn','2022-10-29','(676) 725-5053','emailKH100036@gmail.com',1,1,52)
+INSERT INTO NGUOI_DUNG VALUES(N'Renata Amandus Holzer','2022-06-24','(997) 710-4125','emailKH100037@gmail.com',1,1,114)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Fujioka','2022-08-27','(833) 786-6665','emailKH100038@gmail.com',1,1,261)
+INSERT INTO NGUOI_DUNG VALUES(N'Holzer Fabian','2022-08-27','(283) 412-6976','emailKH100039@gmail.com',1,1,203)
+INSERT INTO NGUOI_DUNG VALUES(N'Pope Mauro','2022-06-09','(363) 358-4189','emailKH100040@gmail.com',1,1,133)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Cyneburg','2022-02-13','(982) 829-7252','emailKH100041@gmail.com',1,1,262)
+INSERT INTO NGUOI_DUNG VALUES(N'Calvus Sasaki Eleutherios Arnviðr Fujita','2022-12-05','(758) 604-6380','emailKH100042@gmail.com',1,1,138)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Abe','2022-01-02','(478) 612-5312','emailKH100043@gmail.com',1,1,34)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Cenric','2022-11-18','(767) 281-0204','emailKH100044@gmail.com',1,1,140)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Prosdokimos','2022-12-05','(951) 980-4228','emailKH100045@gmail.com',1,1,104)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Agi','2022-04-27','(998) 268-1400','emailKH100046@gmail.com',1,1,243)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Agi','2022-02-26','(359) 626-1349','emailKH100047@gmail.com',1,1,265)
+INSERT INTO NGUOI_DUNG VALUES(N'Michel Seraphina','2022-12-05','(971) 363-2969','emailKH100048@gmail.com',1,1,187)
+INSERT INTO NGUOI_DUNG VALUES(N'Xanthippe Shingo Koharu','2022-07-24','(903) 236-8417','emailKH100049@gmail.com',1,1,88)
+INSERT INTO NGUOI_DUNG VALUES(N'Iordanus Tsunoda Wilburh Bjartr','2022-08-17','(490) 348-8686','emailKH100050@gmail.com',1,1,133)
+INSERT INTO NGUOI_DUNG VALUES(N'Silvija Victorianus Ealdwine','2022-07-25','(323) 390-2905','emailKH10001@gmail.com',2,1,252)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Calvus Sasaki','2022-05-08','(895) 242-3303','emailKH10002@gmail.com',2,1,215)
+INSERT INTO NGUOI_DUNG VALUES(N'Fujioka Koharu','2022-09-07','(356) 277-7244','emailKH10003@gmail.com',2,1,142)
+INSERT INTO NGUOI_DUNG VALUES(N'Iordanus Tsunoda Koharu','2022-01-06','(926) 650-4398','emailKH10004@gmail.com',2,1,278)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Cenric','2022-03-09','(718) 892-9484','emailKH10005@gmail.com',2,1,140)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Draženka','2022-09-08','(356) 277-7244','emailKH10006@gmail.com',2,1,26)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Koharu','2022-01-23','(641) 748-0345','emailKH10007@gmail.com',2,1,204)
+INSERT INTO NGUOI_DUNG VALUES(N'Holzer Willabert','2022-03-24','(767) 281-0204','emailKH10008@gmail.com',2,1,146)
+INSERT INTO NGUOI_DUNG VALUES(N'Sugiura Silvija','2022-10-14','(702) 823-8668','emailKH10009@gmail.com',2,1,253)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Itō','2022-09-02','(230) 705-3479','emailKH100010@gmail.com',2,1,97)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Eleutherios Arnviðr Fujita','2022-07-13','(496) 785-1217','emailKH100011@gmail.com',2,1,106)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Agi','2022-02-26','(628) 558-8950','emailKH100012@gmail.com',2,1,225)
+INSERT INTO NGUOI_DUNG VALUES(N'Victorianus Ealdwine Pope','2022-09-15','(668) 270-8314','emailKH100013@gmail.com',2,1,112)
+INSERT INTO NGUOI_DUNG VALUES(N'Willabert Iordanus Tsunoda','2022-03-03','(900) 874-7030','emailKH100014@gmail.com',2,1,167)
+INSERT INTO NGUOI_DUNG VALUES(N'Ortwin Kubo Mauro','2022-03-09','(931) 688-8906','emailKH100015@gmail.com',2,1,193)
+INSERT INTO NGUOI_DUNG VALUES(N'Iestyn Xanthippe Shingo','2022-09-18','(570) 774-2944','emailKH100016@gmail.com',2,1,231)
+INSERT INTO NGUOI_DUNG VALUES(N'Willabert Agi','2021-12-22','(697) 498-9239','emailKH100017@gmail.com',2,1,162)
+INSERT INTO NGUOI_DUNG VALUES(N'Victorianus Ealdwine Fujioka','2022-02-12','(515) 581-4022','emailKH100018@gmail.com',2,1,97)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Prosdokimos','2022-09-07','(319) 670-2959','emailKH100019@gmail.com',2,1,17)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Michel','2022-02-07','(998) 268-1400','emailKH100020@gmail.com',2,1,243)
+INSERT INTO NGUOI_DUNG VALUES(N'Wilburh Bjartr Iestyn','2022-10-01','(283) 412-6976','emailKH100021@gmail.com',2,1,170)
+INSERT INTO NGUOI_DUNG VALUES(N'Koharu Miyashita','2022-10-10','(654) 375-8479','emailKH100022@gmail.com',2,1,128)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Itō','2022-01-03','(982) 829-7252','emailKH100023@gmail.com',2,1,4)
+INSERT INTO NGUOI_DUNG VALUES(N'Tertius Silvija','2022-02-17','(712) 451-2957','emailKH100024@gmail.com',2,1,225)
+INSERT INTO NGUOI_DUNG VALUES(N'Holzer Agi','2022-08-25','(490) 348-8686','emailKH100025@gmail.com',2,1,102)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Gaubert','2022-10-10','(478) 612-5312','emailKH100026@gmail.com',2,1,258)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Sugiura','2022-02-26','(551) 401-8663','emailKH100027@gmail.com',2,1,208)
+INSERT INTO NGUOI_DUNG VALUES(N'Iordanus Tsunoda Maki','2022-10-14','(697) 498-9239','emailKH100028@gmail.com',2,1,48)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Draženka','2022-04-28','(971) 363-2969','emailKH100029@gmail.com',2,1,199)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Ortwin Kubo','2022-01-02','(405) 395-9333','emailKH100030@gmail.com',2,1,217)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Octavianus','2022-08-24','(478) 612-5312','emailKH100031@gmail.com',2,1,176)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Koharu','2022-06-07','(363) 358-4189','emailKH100032@gmail.com',2,1,259)
+INSERT INTO NGUOI_DUNG VALUES(N'Gaubert Xanthippe Shingo','2022-04-16','(515) 581-4022','emailKH100033@gmail.com',2,1,25)
+INSERT INTO NGUOI_DUNG VALUES(N'Erastos Miyashita Iordanus Tsunoda','2022-04-27','(725) 686-6856','emailKH100034@gmail.com',2,1,242)
+INSERT INTO NGUOI_DUNG VALUES(N'Michel Miyashita','2022-03-09','(942) 527-4787','emailKH100035@gmail.com',2,1,292)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Abe','2022-04-04','(515) 581-4022','emailKH100036@gmail.com',2,1,44)
+INSERT INTO NGUOI_DUNG VALUES(N'Sugiura Erastos Miyashita','2022-02-28','(758) 604-6380','emailKH100037@gmail.com',2,1,204)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Lucilla Brian','2022-02-17','(405) 395-9333','emailKH100038@gmail.com',2,1,143)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Victorianus Ealdwine','2022-04-04','(931) 688-8906','emailKH100039@gmail.com',2,1,156)
+INSERT INTO NGUOI_DUNG VALUES(N'Erastos Miyashita Hypatia Iacomus','2022-09-01','(555) 743-8290','emailKH100040@gmail.com',2,1,277)
+INSERT INTO NGUOI_DUNG VALUES(N'Ortwin Kubo Takenaka','2022-02-26','(712) 451-2957','emailKH100041@gmail.com',2,1,270)
+INSERT INTO NGUOI_DUNG VALUES(N'Octavianus ﻿Gavin','2022-01-15','(915) 869-7966','emailKH100042@gmail.com',2,1,157)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita ﻿Gavin','2022-05-28','(265) 327-6645','emailKH100043@gmail.com',2,1,297)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Hypatia Iacomus','2022-01-06','(900) 874-7030','emailKH100044@gmail.com',2,1,269)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Daria','2022-01-06','(490) 348-8686','emailKH100045@gmail.com',2,1,183)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Willabert','2022-10-01','(654) 375-8479','emailKH100046@gmail.com',2,1,143)
+INSERT INTO NGUOI_DUNG VALUES(N'Lucilla Brian Sugiura','2022-09-27','(570) 774-2944','emailKH100047@gmail.com',2,1,45)
+INSERT INTO NGUOI_DUNG VALUES(N'Hypatia Iacomus Agi','2022-07-27','(570) 774-2944','emailKH100048@gmail.com',2,1,289)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Gaubert','2022-09-08','(931) 688-8906','emailKH100049@gmail.com',2,1,147)
+INSERT INTO NGUOI_DUNG VALUES(N'Fabian Sugiura','2022-11-13','(795) 762-2803','emailKH100050@gmail.com',2,1,129)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Holzer','2022-01-10','(641) 748-0345','emailKH10001@gmail.com',3,1,229)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Fabian','2022-07-22','(265) 327-6645','emailKH10002@gmail.com',3,1,273)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Lucilla Brian','2022-08-14','(833) 786-6665','emailKH10003@gmail.com',3,1,307)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura Calvus Sasaki','2022-07-22','(360) 807-7457','emailKH10004@gmail.com',3,1,262)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Pope','2022-07-25','(900) 874-7030','emailKH10005@gmail.com',3,1,182)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Fujioka','2022-12-05','(413) 940-2275','emailKH10006@gmail.com',3,1,223)
+INSERT INTO NGUOI_DUNG VALUES(N'Holzer Renata Amandus','2022-09-15','(971) 363-2969','emailKH10007@gmail.com',3,1,36)
+INSERT INTO NGUOI_DUNG VALUES(N'Itō Willabert','2022-07-17','(230) 705-3479','emailKH10008@gmail.com',3,1,179)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Willabert','2022-08-12','(915) 869-7966','emailKH10009@gmail.com',3,1,254)
+INSERT INTO NGUOI_DUNG VALUES(N'Farvald Katsu Itō Holzer','2022-10-27','(463) 330-8001','emailKH100010@gmail.com',3,1,251)
+INSERT INTO NGUOI_DUNG VALUES(N'Willabert Nicostrato','2022-01-16','(323) 390-2905','emailKH100011@gmail.com',3,1,190)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Genovefa','2022-02-12','(648) 214-0168','emailKH100012@gmail.com',3,1,234)
+INSERT INTO NGUOI_DUNG VALUES(N'Cenric Erastos Miyashita','2022-08-27','(356) 277-7244','emailKH100013@gmail.com',3,1,86)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Iestyn','2021-12-22','(668) 270-8314','emailKH100014@gmail.com',3,1,121)
+INSERT INTO NGUOI_DUNG VALUES(N'Koharu ﻿Gavin','2022-01-20','(763) 605-0948','emailKH100015@gmail.com',3,1,311)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Draženka','2022-03-24','(951) 980-4228','emailKH100016@gmail.com',3,1,88)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Hadewidis Shun Shinoda','2022-02-17','(915) 869-7966','emailKH100017@gmail.com',3,1,295)
+INSERT INTO NGUOI_DUNG VALUES(N'Iestyn Holzer','2022-04-06','(356) 277-7244','emailKH100018@gmail.com',3,1,305)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Hadewidis Shun Shinoda','2022-10-29','(654) 375-8479','emailKH100019@gmail.com',3,1,22)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Octavianus','2022-06-19','(490) 348-8686','emailKH100020@gmail.com',3,1,278)
+INSERT INTO NGUOI_DUNG VALUES(N'Calvus Sasaki Silvija','2022-04-06','(405) 395-9333','emailKH100021@gmail.com',3,1,210)
+INSERT INTO NGUOI_DUNG VALUES(N'Agapetos Rikuto Himura ﻿Gavin','2022-01-08','(997) 710-4125','emailKH100022@gmail.com',3,1,38)
+INSERT INTO NGUOI_DUNG VALUES(N'Sugiura Statham','2022-07-22','(302) 725-5643','emailKH100023@gmail.com',3,1,16)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Hypatia Iacomus','2022-01-27','(895) 242-3303','emailKH100024@gmail.com',3,1,260)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Prosdokimos','2022-04-27','(283) 412-6976','emailKH100025@gmail.com',3,1,221)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Agapetos Rikuto Himura','2022-06-09','(718) 892-9484','emailKH100026@gmail.com',3,1,9)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana ﻿Gavin','2022-07-14','(654) 375-8479','emailKH100027@gmail.com',3,1,134)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Tertius','2022-10-17','(895) 242-3303','emailKH100028@gmail.com',3,1,73)
+INSERT INTO NGUOI_DUNG VALUES(N'Þórarinn Hammurabi','2022-01-16','(230) 705-3479','emailKH100029@gmail.com',3,1,261)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Seraphina','2022-02-07','(567) 884-1824','emailKH100030@gmail.com',3,1,219)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Dijana','2022-05-28','(496) 785-1217','emailKH100031@gmail.com',3,1,133)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Holzer','2022-03-22','(230) 705-3479','emailKH100032@gmail.com',3,1,13)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Iordanus Tsunoda','2022-06-24','(833) 786-6665','emailKH100033@gmail.com',3,1,23)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Willabert','2022-10-15','(496) 785-1217','emailKH100034@gmail.com',3,1,190)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Octavianus','2022-02-14','(964) 239-8482','emailKH100035@gmail.com',3,1,277)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Hammurabi','2021-12-13','(998) 268-1400','emailKH100036@gmail.com',3,1,184)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Fujioka','2022-01-15','(359) 626-1349','emailKH100037@gmail.com',3,1,22)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Tertius','2022-01-27','(356) 277-7244','emailKH100038@gmail.com',3,1,60)
+INSERT INTO NGUOI_DUNG VALUES(N'Sugiura Eleutherios Arnviðr Fujita','2022-09-08','(654) 375-8479','emailKH100039@gmail.com',3,1,51)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Prosdokimos','2022-01-04','(363) 358-4189','emailKH100040@gmail.com',3,1,263)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Mauro','2022-10-01','(926) 650-4398','emailKH100041@gmail.com',3,1,25)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Wilburh Bjartr','2022-09-17','(413) 940-2275','emailKH100042@gmail.com',3,1,262)
+INSERT INTO NGUOI_DUNG VALUES(N'Draženka Erastos Miyashita','2022-02-14','(421) 955-0156','emailKH100043@gmail.com',3,1,79)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Þórarinn','2022-06-07','(718) 892-9484','emailKH100044@gmail.com',3,1,70)
+INSERT INTO NGUOI_DUNG VALUES(N'Renata Amandus Farvald Katsu Itō','2022-05-25','(982) 829-7252','emailKH100045@gmail.com',3,1,169)
+INSERT INTO NGUOI_DUNG VALUES(N'Iestyn ﻿Gavin','2022-06-19','(648) 214-0168','emailKH100046@gmail.com',3,1,167)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Sugiura','2022-09-15','(718) 892-9484','emailKH100047@gmail.com',3,1,270)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Victorianus Ealdwine','2022-03-03','(982) 829-7252','emailKH100048@gmail.com',3,1,9)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Pope','2022-10-18','(718) 892-9484','emailKH100049@gmail.com',3,1,135)
+INSERT INTO NGUOI_DUNG VALUES(N'Renata Amandus Itō','2022-09-18','(763) 605-0948','emailKH100050@gmail.com',3,1,30)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Gaubert','2022-07-17','(767) 281-0204','emailKH10001@gmail.com',4,1,249)
+INSERT INTO NGUOI_DUNG VALUES(N'Mauro Hypatia Iacomus','2022-02-07','(496) 785-1217','emailKH10002@gmail.com',4,1,170)
+INSERT INTO NGUOI_DUNG VALUES(N'Silvija Abe','2022-04-16','(356) 277-7244','emailKH10003@gmail.com',4,1,300)
+INSERT INTO NGUOI_DUNG VALUES(N'Takenaka Octavianus','2022-05-18','(982) 829-7252','emailKH10004@gmail.com',4,1,55)
+INSERT INTO NGUOI_DUNG VALUES(N'Iestyn Koharu','2022-02-13','(702) 823-8668','emailKH10005@gmail.com',4,1,84)
+INSERT INTO NGUOI_DUNG VALUES(N'Victorianus Ealdwine Agi','2022-07-12','(745) 510-9791','emailKH10006@gmail.com',4,1,238)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Prosdokimos','2022-05-01','(230) 705-3479','emailKH10007@gmail.com',4,1,63)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Xanthippe Shingo','2022-08-27','(363) 358-4189','emailKH10008@gmail.com',4,1,187)
+INSERT INTO NGUOI_DUNG VALUES(N'Babirye Lucilla Brian','2022-09-02','(763) 605-0948','emailKH10009@gmail.com',4,1,199)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Daria','2022-10-01','(302) 725-5643','emailKH100010@gmail.com',4,1,207)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Victorianus Ealdwine','2022-07-25','(463) 330-8001','emailKH100011@gmail.com',4,1,27)
+INSERT INTO NGUOI_DUNG VALUES(N'Abe Cenric','2022-02-13','(745) 510-9791','emailKH100012@gmail.com',4,1,220)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Itō','2022-01-04','(668) 270-8314','emailKH100013@gmail.com',4,1,281)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Statham','2022-08-21','(959) 246-7781','emailKH100014@gmail.com',4,1,76)
+INSERT INTO NGUOI_DUNG VALUES(N'Prosdokimos Maki','2022-04-26','(718) 892-9484','emailKH100015@gmail.com',4,1,94)
+INSERT INTO NGUOI_DUNG VALUES(N'Wilburh Bjartr Itō','2022-03-11','(323) 390-2905','emailKH100016@gmail.com',4,1,298)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Maki','2022-09-01','(964) 239-8482','emailKH100017@gmail.com',4,1,184)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Dijana','2022-09-29','(363) 358-4189','emailKH100018@gmail.com',4,1,20)
+INSERT INTO NGUOI_DUNG VALUES(N'Ortwin Kubo Draženka','2021-12-28','(490) 348-8686','emailKH100019@gmail.com',4,1,147)
+INSERT INTO NGUOI_DUNG VALUES(N'﻿Gavin Genovefa','2022-01-15','(964) 239-8482','emailKH100020@gmail.com',4,1,137)
+INSERT INTO NGUOI_DUNG VALUES(N'Dijana Fujioka','2022-05-18','(515) 581-4022','emailKH100021@gmail.com',4,1,203)
+INSERT INTO NGUOI_DUNG VALUES(N'Statham Gaubert','2022-03-22','(356) 277-7244','emailKH100022@gmail.com',4,1,119)
+INSERT INTO NGUOI_DUNG VALUES(N'Agi Hadewidis Shun Shinoda','2022-05-01','(230) 705-3479','emailKH100023@gmail.com',4,1,89)
+INSERT INTO NGUOI_DUNG VALUES(N'Jayadeva Fujioka','2022-01-25','(964) 239-8482','emailKH100024@gmail.com',4,1,272)
+INSERT INTO NGUOI_DUNG VALUES(N'Hypatia Iacomus Cyneburg','2022-01-18','(903) 236-8417','emailKH100025@gmail.com',4,1,184)
+INSERT INTO NGUOI_DUNG VALUES(N'Eleutherios Arnviðr Fujita Babirye','2022-12-05','(676) 725-5053','emailKH100026@gmail.com',4,1,54)
+INSERT INTO NGUOI_DUNG VALUES(N'Koharu Calvus Sasaki','2022-01-06','(767) 281-0204','emailKH100027@gmail.com',4,1,10)
+INSERT INTO NGUOI_DUNG VALUES(N'Octavianus Genovefa','2022-09-02','(760) 210-5641','emailKH100028@gmail.com',4,1,51)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Gaubert','2022-08-12','(760) 210-5641','emailKH100029@gmail.com',4,1,142)
+INSERT INTO NGUOI_DUNG VALUES(N'Maki Genovefa','2022-01-02','(567) 884-1824','emailKH100030@gmail.com',4,1,109)
+INSERT INTO NGUOI_DUNG VALUES(N'Fujioka Tertius','2022-09-01','(997) 710-4125','emailKH100031@gmail.com',4,1,268)
+INSERT INTO NGUOI_DUNG VALUES(N'Farvald Katsu Itō Itō','2022-01-06','(552) 975-5496','emailKH100032@gmail.com',4,1,242)
+INSERT INTO NGUOI_DUNG VALUES(N'Genovefa Victorianus Ealdwine','2021-12-21','(230) 705-3479','emailKH100033@gmail.com',4,1,140)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Draženka','2022-02-12','(413) 940-2275','emailKH100034@gmail.com',4,1,16)
+INSERT INTO NGUOI_DUNG VALUES(N'Fabian ﻿Gavin','2021-12-13','(496) 785-1217','emailKH100035@gmail.com',4,1,204)
+INSERT INTO NGUOI_DUNG VALUES(N'Cyneburg Hammurabi','2022-01-25','(552) 975-5496','emailKH100036@gmail.com',4,1,184)
+INSERT INTO NGUOI_DUNG VALUES(N'Michel Miyashita','2022-08-03','(555) 743-8290','emailKH100037@gmail.com',4,1,296)
+INSERT INTO NGUOI_DUNG VALUES(N'Fujioka Sugiura','2022-10-10','(359) 626-1349','emailKH100038@gmail.com',4,1,67)
+INSERT INTO NGUOI_DUNG VALUES(N'Hammurabi Victorianus Ealdwine','2022-08-17','(763) 605-0948','emailKH100039@gmail.com',4,1,158)
+INSERT INTO NGUOI_DUNG VALUES(N'Sugiura Michel','2022-07-22','(648) 214-0168','emailKH100040@gmail.com',4,1,125)
+INSERT INTO NGUOI_DUNG VALUES(N'Koharu Iestyn','2022-08-27','(964) 239-8482','emailKH100041@gmail.com',4,1,138)
+INSERT INTO NGUOI_DUNG VALUES(N'Iordanus Tsunoda Abe','2022-04-16','(265) 327-6645','emailKH100042@gmail.com',4,1,305)
+INSERT INTO NGUOI_DUNG VALUES(N'Wilburh Bjartr Hammurabi','2022-08-03','(551) 401-8663','emailKH100043@gmail.com',4,1,262)
+INSERT INTO NGUOI_DUNG VALUES(N'Miyashita Lucilla Brian','2022-01-18','(446) 958-5896','emailKH100044@gmail.com',4,1,28)
+INSERT INTO NGUOI_DUNG VALUES(N'Erastos Miyashita Þone Hiroto','2022-06-24','(628) 558-8950','emailKH100045@gmail.com',4,1,294)
+INSERT INTO NGUOI_DUNG VALUES(N'Seraphina Takenaka','2022-04-06','(697) 498-9239','emailKH100046@gmail.com',4,1,190)
+INSERT INTO NGUOI_DUNG VALUES(N'Hadewidis Shun Shinoda Þone Hiroto','2022-02-28','(994) 920-5199','emailKH100047@gmail.com',4,1,50)
+INSERT INTO NGUOI_DUNG VALUES(N'Daria Maki','2022-10-17','(515) 581-4022','emailKH100048@gmail.com',4,1,125)
+INSERT INTO NGUOI_DUNG VALUES(N'Fabian Jayadeva','2022-07-22','(903) 236-8417','emailKH100049@gmail.com',4,1,301)
+INSERT INTO NGUOI_DUNG VALUES(N'Abe Miyashita','2022-10-29','(971) 363-2969','emailKH100050@gmail.com',4,1,36)
+
+
+
+
+
+INSERT INTO TAI_KHOAN VALUES(1,'123456','user1')
+INSERT INTO TAI_KHOAN VALUES(2,'123456','user2')
+INSERT INTO TAI_KHOAN VALUES(3,'123456','user3')
+INSERT INTO TAI_KHOAN VALUES(4,'123456','user4')
+INSERT INTO TAI_KHOAN VALUES(5,'123456','user5')
+INSERT INTO TAI_KHOAN VALUES(6,'123456','user6')
+INSERT INTO TAI_KHOAN VALUES(7,'123456','user7')
+INSERT INTO TAI_KHOAN VALUES(8,'123456','user8')
+INSERT INTO TAI_KHOAN VALUES(9,'123456','user9')
+INSERT INTO TAI_KHOAN VALUES(10,'123456','user10')
+INSERT INTO TAI_KHOAN VALUES(11,'123456','user11')
+INSERT INTO TAI_KHOAN VALUES(12,'123456','user12')
+INSERT INTO TAI_KHOAN VALUES(13,'123456','user13')
+INSERT INTO TAI_KHOAN VALUES(14,'123456','user14')
+INSERT INTO TAI_KHOAN VALUES(15,'123456','user15')
+INSERT INTO TAI_KHOAN VALUES(16,'123456','user16')
+INSERT INTO TAI_KHOAN VALUES(17,'123456','user17')
+INSERT INTO TAI_KHOAN VALUES(18,'123456','user18')
+INSERT INTO TAI_KHOAN VALUES(19,'123456','user19')
+INSERT INTO TAI_KHOAN VALUES(20,'123456','user20')
+INSERT INTO TAI_KHOAN VALUES(21,'123456','user21')
+INSERT INTO TAI_KHOAN VALUES(22,'123456','user22')
+INSERT INTO TAI_KHOAN VALUES(23,'123456','user23')
+INSERT INTO TAI_KHOAN VALUES(24,'123456','user24')
+INSERT INTO TAI_KHOAN VALUES(25,'123456','user25')
+INSERT INTO TAI_KHOAN VALUES(26,'123456','user26')
+INSERT INTO TAI_KHOAN VALUES(27,'123456','user27')
+INSERT INTO TAI_KHOAN VALUES(28,'123456','user28')
+INSERT INTO TAI_KHOAN VALUES(29,'123456','user29')
+INSERT INTO TAI_KHOAN VALUES(30,'123456','user30')
+INSERT INTO TAI_KHOAN VALUES(31,'123456','user31')
+INSERT INTO TAI_KHOAN VALUES(32,'123456','user32')
+INSERT INTO TAI_KHOAN VALUES(33,'123456','user33')
+INSERT INTO TAI_KHOAN VALUES(34,'123456','user34')
+INSERT INTO TAI_KHOAN VALUES(35,'123456','user35')
+INSERT INTO TAI_KHOAN VALUES(36,'123456','user36')
+INSERT INTO TAI_KHOAN VALUES(37,'123456','user37')
+INSERT INTO TAI_KHOAN VALUES(38,'123456','user38')
+INSERT INTO TAI_KHOAN VALUES(39,'123456','user39')
+INSERT INTO TAI_KHOAN VALUES(40,'123456','user40')
+INSERT INTO TAI_KHOAN VALUES(41,'123456','user41')
+INSERT INTO TAI_KHOAN VALUES(42,'123456','user42')
+INSERT INTO TAI_KHOAN VALUES(43,'123456','user43')
+INSERT INTO TAI_KHOAN VALUES(44,'123456','user44')
+INSERT INTO TAI_KHOAN VALUES(45,'123456','user45')
+INSERT INTO TAI_KHOAN VALUES(46,'123456','user46')
+INSERT INTO TAI_KHOAN VALUES(47,'123456','user47')
+INSERT INTO TAI_KHOAN VALUES(48,'123456','user48')
+INSERT INTO TAI_KHOAN VALUES(49,'123456','user49')
+INSERT INTO TAI_KHOAN VALUES(50,'123456','user50')
+
+
+
+
+
+
+
+
+
+INSERT INTO CUA_HANG VALUES(51,'(641) 748-0345','CH1000+1@gmail.com',N'Cua hang 1',70)
+INSERT INTO CUA_HANG VALUES(52,'(931) 688-8906','CH1000+2@gmail.com',N'Cua hang 2',106)
+INSERT INTO CUA_HANG VALUES(53,'(265) 327-6645','CH1000+3@gmail.com',N'Cua hang 3',174)
+INSERT INTO CUA_HANG VALUES(54,'(964) 239-8482','CH1000+4@gmail.com',N'Cua hang 4',75)
+INSERT INTO CUA_HANG VALUES(55,'(405) 395-9333','CH1000+5@gmail.com',N'Cua hang 5',179)
+INSERT INTO CUA_HANG VALUES(56,'(463) 330-8001','CH1000+6@gmail.com',N'Cua hang 6',219)
+INSERT INTO CUA_HANG VALUES(57,'(998) 268-1400','CH1000+7@gmail.com',N'Cua hang 7',125)
+INSERT INTO CUA_HANG VALUES(58,'(903) 236-8417','CH1000+8@gmail.com',N'Cua hang 8',129)
+INSERT INTO CUA_HANG VALUES(59,'(931) 688-8906','CH1000+9@gmail.com',N'Cua hang 9',157)
+INSERT INTO CUA_HANG VALUES(60,'(959) 246-7781','CH1000+10@gmail.com',N'Cua hang 10',264)
+INSERT INTO CUA_HANG VALUES(61,'(356) 277-7244','CH1000+11@gmail.com',N'Cua hang 11',50)
+INSERT INTO CUA_HANG VALUES(62,'(552) 975-5496','CH1000+12@gmail.com',N'Cua hang 12',103)
+INSERT INTO CUA_HANG VALUES(63,'(712) 451-2957','CH1000+13@gmail.com',N'Cua hang 13',200)
+INSERT INTO CUA_HANG VALUES(64,'(552) 975-5496','CH1000+14@gmail.com',N'Cua hang 14',71)
+INSERT INTO CUA_HANG VALUES(65,'(496) 785-1217','CH1000+15@gmail.com',N'Cua hang 15',150)
+INSERT INTO CUA_HANG VALUES(66,'(323) 390-2905','CH1000+16@gmail.com',N'Cua hang 16',45)
+INSERT INTO CUA_HANG VALUES(67,'(405) 395-9333','CH1000+17@gmail.com',N'Cua hang 17',54)
+INSERT INTO CUA_HANG VALUES(68,'(496) 785-1217','CH1000+18@gmail.com',N'Cua hang 18',194)
+INSERT INTO CUA_HANG VALUES(69,'(964) 239-8482','CH1000+19@gmail.com',N'Cua hang 19',64)
+INSERT INTO CUA_HANG VALUES(70,'(926) 650-4398','CH1000+20@gmail.com',N'Cua hang 20',87)
+INSERT INTO CUA_HANG VALUES(71,'(982) 829-7252','CH1000+21@gmail.com',N'Cua hang 21',289)
+INSERT INTO CUA_HANG VALUES(72,'(702) 823-8668','CH1000+22@gmail.com',N'Cua hang 22',130)
+INSERT INTO CUA_HANG VALUES(73,'(997) 710-4125','CH1000+23@gmail.com',N'Cua hang 23',154)
+INSERT INTO CUA_HANG VALUES(74,'(302) 725-5643','CH1000+24@gmail.com',N'Cua hang 24',229)
+INSERT INTO CUA_HANG VALUES(75,'(551) 401-8663','CH1000+25@gmail.com',N'Cua hang 25',119)
+INSERT INTO CUA_HANG VALUES(76,'(356) 277-7244','CH1000+26@gmail.com',N'Cua hang 26',11)
+INSERT INTO CUA_HANG VALUES(77,'(725) 686-6856','CH1000+27@gmail.com',N'Cua hang 27',203)
+INSERT INTO CUA_HANG VALUES(78,'(356) 277-7244','CH1000+28@gmail.com',N'Cua hang 28',241)
+INSERT INTO CUA_HANG VALUES(79,'(745) 510-9791','CH1000+29@gmail.com',N'Cua hang 29',142)
+INSERT INTO CUA_HANG VALUES(80,'(900) 874-7030','CH1000+30@gmail.com',N'Cua hang 30',105)
+INSERT INTO CUA_HANG VALUES(81,'(570) 774-2944','CH1000+31@gmail.com',N'Cua hang 31',157)
+INSERT INTO CUA_HANG VALUES(82,'(915) 869-7966','CH1000+32@gmail.com',N'Cua hang 32',200)
+INSERT INTO CUA_HANG VALUES(83,'(702) 823-8668','CH1000+33@gmail.com',N'Cua hang 33',121)
+INSERT INTO CUA_HANG VALUES(84,'(496) 785-1217','CH1000+34@gmail.com',N'Cua hang 34',114)
+INSERT INTO CUA_HANG VALUES(85,'(446) 958-5896','CH1000+35@gmail.com',N'Cua hang 35',33)
+INSERT INTO CUA_HANG VALUES(86,'(964) 239-8482','CH1000+36@gmail.com',N'Cua hang 36',195)
+INSERT INTO CUA_HANG VALUES(87,'(319) 670-2959','CH1000+37@gmail.com',N'Cua hang 37',291)
+INSERT INTO CUA_HANG VALUES(88,'(900) 874-7030','CH1000+38@gmail.com',N'Cua hang 38',285)
+INSERT INTO CUA_HANG VALUES(89,'(982) 829-7252','CH1000+39@gmail.com',N'Cua hang 39',1)
+INSERT INTO CUA_HANG VALUES(90,'(998) 268-1400','CH1000+40@gmail.com',N'Cua hang 40',79)
+INSERT INTO CUA_HANG VALUES(91,'(515) 581-4022','CH1000+41@gmail.com',N'Cua hang 41',242)
+INSERT INTO CUA_HANG VALUES(92,'(997) 710-4125','CH1000+42@gmail.com',N'Cua hang 42',194)
+INSERT INTO CUA_HANG VALUES(93,'(413) 940-2275','CH1000+43@gmail.com',N'Cua hang 43',205)
+INSERT INTO CUA_HANG VALUES(94,'(702) 823-8668','CH1000+44@gmail.com',N'Cua hang 44',195)
+INSERT INTO CUA_HANG VALUES(95,'(552) 975-5496','CH1000+45@gmail.com',N'Cua hang 45',199)
+INSERT INTO CUA_HANG VALUES(96,'(903) 236-8417','CH1000+46@gmail.com',N'Cua hang 46',3)
+INSERT INTO CUA_HANG VALUES(97,'(446) 958-5896','CH1000+47@gmail.com',N'Cua hang 47',305)
+INSERT INTO CUA_HANG VALUES(98,'(648) 214-0168','CH1000+48@gmail.com',N'Cua hang 48',153)
+INSERT INTO CUA_HANG VALUES(99,'(668) 270-8314','CH1000+49@gmail.com',N'Cua hang 49',300)
+INSERT INTO CUA_HANG VALUES(100,'(712) 451-2957','CH1000+50@gmail.com',N'Cua hang 50',283)
+
+
+
+
+
+INSERT INTO DANH_MUC VALUES(N'Đồ điện tử')
+INSERT INTO DANH_MUC VALUES(N'dụng cụ hằng ngày phục vụ gia đình')
+INSERT INTO DANH_MUC VALUES(N'Gói sản phẩm')
+INSERT INTO DANH_MUC VALUES(N'Lương thực')
+INSERT INTO DANH_MUC VALUES(N'Nhu yếu phẩm cần thiết')
+INSERT INTO DANH_MUC VALUES(N'Thực phẩm tươi sống')
+INSERT INTO DANH_MUC VALUES(N'Thuốc và thiết bị y tế')
+INSERT INTO DANH_MUC VALUES(N'Trái cây')
+
+
+INSERT INTO SAN_PHAM VALUES(15,1,N'Băng keo cách điện',940000,10,null,15,3,1);
+INSERT INTO SAN_PHAM VALUES(46,1,N'Bếp từ',379000,10,null,46,4,1);
+INSERT INTO SAN_PHAM VALUES(23,1,N'Bóng đèn',552000,10,null,23,2,1);
+INSERT INTO SAN_PHAM VALUES(42,1,N'Dây điện',494000,10,null,42,5,1);
+INSERT INTO SAN_PHAM VALUES(27,1,N'Máy lạnh',563000,10,null,27,3,1);
+INSERT INTO SAN_PHAM VALUES(46,1,N'Máy lọc không khí',936000,10,null,46,0,1);
+INSERT INTO SAN_PHAM VALUES(45,1,N'Nồi cơm',539000,10,null,45,3,1);
+INSERT INTO SAN_PHAM VALUES(30,2,N'Bàn chải chà sàn',705000,10,null,30,1,1);
+INSERT INTO SAN_PHAM VALUES(50,2,N'Cây chà bồn cầu',335000,10,null,50,3,1);
+INSERT INTO SAN_PHAM VALUES(23,2,N'Cây lau nhà',402000,10,null,23,0,1);
+INSERT INTO SAN_PHAM VALUES(36,2,N'Cây chổi',974000,10,null,36,1,1);
+INSERT INTO SAN_PHAM VALUES(19,2,N'Dao cạo râu',1090000,10,null,19,4,1);
+INSERT INTO SAN_PHAM VALUES(45,2,N'Khăn tắm',1204000,10,null,45,4,1);
+INSERT INTO SAN_PHAM VALUES(24,2,N'Ky hốt rác',279000,10,null,24,1,1);
+INSERT INTO SAN_PHAM VALUES(19,3,N'Combo rau củ quả',529000,10,null,19,5,1);
+INSERT INTO SAN_PHAM VALUES(22,3,N'Combo đồ ăn thiết yếu 1',421000,10,null,22,4,1);
+INSERT INTO SAN_PHAM VALUES(29,3,N'Combo đồ ăn thiết yếu 2',1191000,10,null,29,2,1);
+INSERT INTO SAN_PHAM VALUES(11,3,N'Combo dụng cụ điện',1221000,10,null,11,2,1);
+INSERT INTO SAN_PHAM VALUES(20,3,N'Combo dụng cụ y tế',495000,10,null,20,3,1);
+INSERT INTO SAN_PHAM VALUES(10,3,N'Combo Sữa uống',290000,10,null,10,5,1);
+INSERT INTO SAN_PHAM VALUES(2,3,N'Combo thực phẩm đông lạnh',495000,10,null,2,0,1);
+INSERT INTO SAN_PHAM VALUES(7,4,N'Bắp ngô',971000,10,null,7,1,1);
+INSERT INTO SAN_PHAM VALUES(31,4,N'Bún',886000,10,null,31,1,1);
+INSERT INTO SAN_PHAM VALUES(29,4,N'Gạo',291000,10,null,29,0,1);
+INSERT INTO SAN_PHAM VALUES(39,4,N'Nếp',615000,10,null,39,2,1);
+INSERT INTO SAN_PHAM VALUES(11,4,N'Hủ Tiếu',497000,10,null,11,1,1);
+INSERT INTO SAN_PHAM VALUES(8,4,N'Lương khô',1084000,10,null,8,3,1);
+INSERT INTO SAN_PHAM VALUES(47,4,N'Mì quảng',798000,10,null,47,4,1);
+INSERT INTO SAN_PHAM VALUES(18,5,N'Cồn rửa tay',1095000,10,null,18,3,1);
+INSERT INTO SAN_PHAM VALUES(40,5,N'Giấy ăn',334000,10,null,40,5,1);
+INSERT INTO SAN_PHAM VALUES(25,5,N'Giấy vệ sinh',1275000,10,null,25,3,1);
+INSERT INTO SAN_PHAM VALUES(38,5,N'Kem đánh răng',245000,10,null,38,2,1);
+INSERT INTO SAN_PHAM VALUES(42,5,N'Khẩu trang',1090000,10,null,42,1,1);
+INSERT INTO SAN_PHAM VALUES(32,5,N'Nước giặt đồ',881000,10,null,32,4,1);
+INSERT INTO SAN_PHAM VALUES(31,5,N'Bàn chải đánh răng',636000,10,null,31,0,1);
+INSERT INTO SAN_PHAM VALUES(38,6,N'Bạch tuộc',106000,10,null,38,2,1);
+INSERT INTO SAN_PHAM VALUES(26,6,N'Cá',669000,10,null,26,1,1);
+INSERT INTO SAN_PHAM VALUES(50,6,N'Mực',499000,10,null,50,0,1);
+INSERT INTO SAN_PHAM VALUES(18,6,N'Ngêu sò',281000,10,null,18,1,1);
+INSERT INTO SAN_PHAM VALUES(38,6,N'Thịt bò',830000,10,null,38,4,1);
+INSERT INTO SAN_PHAM VALUES(45,6,N'Thịt gà',332000,10,null,45,4,1);
+INSERT INTO SAN_PHAM VALUES(23,6,N'Thịt heo',518000,10,null,23,0,1);
+INSERT INTO SAN_PHAM VALUES(10,7,N'Thuốc cảm cúm',1292000,10,null,10,0,1);
+INSERT INTO SAN_PHAM VALUES(16,7,N'Gói bù nước',1303000,10,null,16,2,1);
+INSERT INTO SAN_PHAM VALUES(26,7,N'Thuốc hạ sốt',1021000,10,null,26,3,1);
+INSERT INTO SAN_PHAM VALUES(9,7,N'Máy đo huyết áp',1131000,10,null,9,2,1);
+INSERT INTO SAN_PHAM VALUES(7,7,N'Máy đo nhịp tim',194000,10,null,7,3,1);
+INSERT INTO SAN_PHAM VALUES(41,7,N'Máy đo thân nhiệt',1086000,10,null,41,1,1);
+INSERT INTO SAN_PHAM VALUES(37,7,N'Thuốc xông mũi(bạc hà,1)',876000,10,null,37,2,1);
+INSERT INTO SAN_PHAM VALUES(32,8,N'Bưởi',494000,10,null,32,2,1);
+INSERT INTO SAN_PHAM VALUES(49,8,N'Cam',659000,10,null,49,0,1);
+INSERT INTO SAN_PHAM VALUES(11,8,N'Chuối',110000,10,null,11,4,1);
+INSERT INTO SAN_PHAM VALUES(23,8,N'Dâu tây',1240000,10,null,23,1,1);
+INSERT INTO SAN_PHAM VALUES(5,8,N'Dưa hấu',591000,10,null,5,3,1);
+INSERT INTO SAN_PHAM VALUES(2,8,N'Kiwi',1038000,10,null,2,1,1);
+INSERT INTO SAN_PHAM VALUES(24,8,N'Na',753000,10,null,24,2,1);
+
+UPDATE SAN_PHAM SET Trungbinhsao = 0, soluotdanhgia = 0;
+
+
+
+
+INSERT INTO GIO_HANG VALUES(1,0)
+INSERT INTO GIO_HANG VALUES(2,0)
+INSERT INTO GIO_HANG VALUES(3,0)
+INSERT INTO GIO_HANG VALUES(4,0)
+INSERT INTO GIO_HANG VALUES(5,0)
+INSERT INTO GIO_HANG VALUES(6,0)
+INSERT INTO GIO_HANG VALUES(7,0)
+INSERT INTO GIO_HANG VALUES(8,0)
+INSERT INTO GIO_HANG VALUES(9,0)
+INSERT INTO GIO_HANG VALUES(10,0)
+INSERT INTO GIO_HANG VALUES(11,0)
+INSERT INTO GIO_HANG VALUES(12,0)
+INSERT INTO GIO_HANG VALUES(13,0)
+INSERT INTO GIO_HANG VALUES(14,0)
+INSERT INTO GIO_HANG VALUES(15,0)
+INSERT INTO GIO_HANG VALUES(16,0)
+INSERT INTO GIO_HANG VALUES(17,0)
+INSERT INTO GIO_HANG VALUES(18,0)
+INSERT INTO GIO_HANG VALUES(19,0)
+INSERT INTO GIO_HANG VALUES(20,0)
+INSERT INTO GIO_HANG VALUES(21,0)
+INSERT INTO GIO_HANG VALUES(22,0)
+INSERT INTO GIO_HANG VALUES(23,0)
+INSERT INTO GIO_HANG VALUES(24,0)
+INSERT INTO GIO_HANG VALUES(25,0)
+INSERT INTO GIO_HANG VALUES(26,0)
+INSERT INTO GIO_HANG VALUES(27,0)
+INSERT INTO GIO_HANG VALUES(28,0)
+INSERT INTO GIO_HANG VALUES(29,0)
+INSERT INTO GIO_HANG VALUES(30,0)
+INSERT INTO GIO_HANG VALUES(31,0)
+INSERT INTO GIO_HANG VALUES(32,0)
+INSERT INTO GIO_HANG VALUES(33,0)
+INSERT INTO GIO_HANG VALUES(34,0)
+INSERT INTO GIO_HANG VALUES(35,0)
+INSERT INTO GIO_HANG VALUES(36,0)
+INSERT INTO GIO_HANG VALUES(37,0)
+INSERT INTO GIO_HANG VALUES(38,0)
+INSERT INTO GIO_HANG VALUES(39,0)
+INSERT INTO GIO_HANG VALUES(40,0)
+INSERT INTO GIO_HANG VALUES(41,0)
+INSERT INTO GIO_HANG VALUES(42,0)
+INSERT INTO GIO_HANG VALUES(43,0)
+INSERT INTO GIO_HANG VALUES(44,0)
+INSERT INTO GIO_HANG VALUES(45,0)
+INSERT INTO GIO_HANG VALUES(46,0)
+INSERT INTO GIO_HANG VALUES(47,0)
+INSERT INTO GIO_HANG VALUES(48,0)
+INSERT INTO GIO_HANG VALUES(49,0)
+INSERT INTO GIO_HANG VALUES(50,0)
+
+
+
+
+
+INSERT INTO Hinh_Anh VALUES(1,N'img/BangKeocachdien.jpg',0);
+INSERT INTO Hinh_Anh VALUES(1,N'img/BangKeocachdien1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(1,N'img/BangKeocachdien2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(1,N'img/BangKeocachdien3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(1,N'img/BangKeocachdien4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(2,N'img/beptu.jpg',0);
+INSERT INTO Hinh_Anh VALUES(2,N'img/beptu1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(2,N'img/beptu2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(2,N'img/beptu3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(2,N'img/beptu4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(3,N'img/bongden.jpg',0);
+INSERT INTO Hinh_Anh VALUES(3,N'img/bongden1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(3,N'img/bongden2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(3,N'img/bongden3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(3,N'img/bongden4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(4,N'img/daydien.jpg',0);
+INSERT INTO Hinh_Anh VALUES(4,N'img/daydien1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(4,N'img/daydien2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(4,N'img/daydien3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(4,N'img/daydien4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(5,N'img/may-lanh-panasonic.jpg',0);
+INSERT INTO Hinh_Anh VALUES(5,N'img/may-lanh-panasonic1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(5,N'img/may-lanh-panasonic2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(5,N'img/may-lanh-panasonic3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(5,N'img/may-lanh-panasonic4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(6,N'img/maylockhongkhi.jpg',0);
+INSERT INTO Hinh_Anh VALUES(6,N'img/maylockhongkhi1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(6,N'img/maylockhongkhi2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(6,N'img/maylockhongkhi3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(6,N'img/maylockhongkhi4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(7,N'img/noicom.jpg',0);
+INSERT INTO Hinh_Anh VALUES(7,N'img/noicom1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(7,N'img/noicom2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(7,N'img/noicom3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(7,N'img/noicom4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(8,N'img/banChaiChaSan.jpg',0);
+INSERT INTO Hinh_Anh VALUES(8,N'img/banChaiChaSan1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(8,N'img/banChaiChaSan2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(8,N'img/banChaiChaSan3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(8,N'img/banChaiChaSan4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(9,N'img/caychaboncau.jpg',0);
+INSERT INTO Hinh_Anh VALUES(9,N'img/caychaboncau1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(9,N'img/caychaboncau2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(9,N'img/caychaboncau3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(9,N'img/caychaboncau4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(10,N'img/caylaunha.jpg',0);
+INSERT INTO Hinh_Anh VALUES(10,N'img/caylaunha1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(10,N'img/caylaunha2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(10,N'img/caylaunha3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(10,N'img/caylaunha4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(11,N'img/choi.jpg',0);
+INSERT INTO Hinh_Anh VALUES(11,N'img/choi1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(11,N'img/choi2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(11,N'img/choi3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(11,N'img/choi4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(12,N'img/dao cao rau.jpg',0);
+INSERT INTO Hinh_Anh VALUES(12,N'img/dao cao rau1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(12,N'img/dao cao rau2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(12,N'img/dao cao rau3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(12,N'img/dao cao rau4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(13,N'img/khantam.jpg',0);
+INSERT INTO Hinh_Anh VALUES(13,N'img/khantam1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(13,N'img/khantam2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(13,N'img/khantam3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(13,N'img/khantam4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(14,N'img/kyHotRac.jpg',0);
+INSERT INTO Hinh_Anh VALUES(14,N'img/kyHotRac1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(14,N'img/kyHotRac2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(14,N'img/kyHotRac3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(14,N'img/kyHotRac4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(15,N'img/combo-do-an-thiet-yeu(1).jpg',0);
+INSERT INTO Hinh_Anh VALUES(15,N'img/combo-do-an-thiet-yeu(2).jpg',1);
+INSERT INTO Hinh_Anh VALUES(15,N'img/combo-do-an-thiet-yeu3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(15,N'img/combo-do-an-thiet-yeu4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(15,N'img/combo-do-an-thiet-yeu5.jpg',0);
+INSERT INTO Hinh_Anh VALUES(16,N'img/ComboDungCuDien.jpg',0);
+INSERT INTO Hinh_Anh VALUES(16,N'img/ComboDungCuDien1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(16,N'img/ComboDungCuDien2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(16,N'img/ComboDungCuDien3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(16,N'img/ComboDungCuDien4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(17,N'img/ComboDungCuYTe.jpg',0);
+INSERT INTO Hinh_Anh VALUES(17,N'img/ComboDungCuYTe1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(17,N'img/ComboDungCuYTe2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(17,N'img/ComboDungCuYTe3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(17,N'img/ComboDungCuYTe4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(18,N'img/ComboSua.jpg',0);
+INSERT INTO Hinh_Anh VALUES(18,N'img/ComboSua1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(18,N'img/ComboSua2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(18,N'img/ComboSua3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(18,N'img/ComboSua4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(19,N'img/Combothucphamdonglanh.jpg',0);
+INSERT INTO Hinh_Anh VALUES(19,N'img/Combothucphamdonglanh1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(19,N'img/Combothucphamdonglanh2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(19,N'img/Combothucphamdonglanh3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(19,N'img/Combothucphamdonglanh4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(20,N'img/ComboTraiCay.jpg',0);
+INSERT INTO Hinh_Anh VALUES(20,N'img/ComboTraiCay1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(20,N'img/ComboTraiCay2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(20,N'img/ComboTraiCay3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(20,N'img/ComboTraiCay4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(21,N'img/ComboVeSinhCaNhan.jpg',0);
+INSERT INTO Hinh_Anh VALUES(21,N'img/ComboVeSinhCaNhan1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(21,N'img/ComboVeSinhCaNhan2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(21,N'img/ComboVeSinhCaNhan3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(21,N'img/ComboVeSinhCaNhan4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(22,N'img/bapngo.jpg',0);
+INSERT INTO Hinh_Anh VALUES(22,N'img/bapngo1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(22,N'img/bapngo2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(22,N'img/bapngo3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(22,N'img/bapngo4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(23,N'img/bun.jpg',0);
+INSERT INTO Hinh_Anh VALUES(23,N'img/bun1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(23,N'img/bun2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(23,N'img/bun3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(23,N'img/bun4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(24,N'img/gao.jpg',0);
+INSERT INTO Hinh_Anh VALUES(24,N'img/gao1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(24,N'img/gao2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(24,N'img/gao3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(24,N'img/gao4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(25,N'img/gaonep.jpg',0);
+INSERT INTO Hinh_Anh VALUES(25,N'img/gaonep1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(25,N'img/gaonep2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(25,N'img/gaonep3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(25,N'img/gaonep4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(26,N'img/hutieu.jpg',0);
+INSERT INTO Hinh_Anh VALUES(26,N'img/hutieu1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(26,N'img/hutieu2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(26,N'img/hutieu3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(26,N'img/hutieu4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(27,N'img/luongkho.jpg',0);
+INSERT INTO Hinh_Anh VALUES(27,N'img/luongkho1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(27,N'img/luongkho2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(27,N'img/luongkho3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(27,N'img/luongkho4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(28,N'img/miquang.jpg',0);
+INSERT INTO Hinh_Anh VALUES(28,N'img/miquang1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(28,N'img/miquang2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(28,N'img/miquang3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(28,N'img/miquang4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(29,N'img/ban-chai-danh-rang.jpg',0);
+INSERT INTO Hinh_Anh VALUES(29,N'img/ban-chai-danh-rang1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(29,N'img/ban-chai-danh-rang2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(29,N'img/ban-chai-danh-rang3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(29,N'img/ban-chai-danh-rang4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(30,N'img/conruatay.jpg',0);
+INSERT INTO Hinh_Anh VALUES(30,N'img/conruatay1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(30,N'img/conruatay2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(30,N'img/conruatay3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(30,N'img/conruatay4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(31,N'img/giayan.jpg',0);
+INSERT INTO Hinh_Anh VALUES(31,N'img/giayan1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(31,N'img/giayan2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(31,N'img/giayan3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(31,N'img/giayan4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(32,N'img/giayvesinh.jpg',0);
+INSERT INTO Hinh_Anh VALUES(32,N'img/giayvesinh1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(32,N'img/giayvesinh2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(32,N'img/giayvesinh3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(32,N'img/giayvesinh4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(33,N'img/kemdanhrang.jpg',0);
+INSERT INTO Hinh_Anh VALUES(33,N'img/kemdanhrang1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(33,N'img/kemdanhrang2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(33,N'img/kemdanhrang3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(33,N'img/kemdanhrang4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(34,N'img/khau-trang.jpg',0);
+INSERT INTO Hinh_Anh VALUES(34,N'img/khau-trang1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(34,N'img/khau-trang2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(34,N'img/khau-trang3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(34,N'img/khau-trang4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(35,N'img/nuoc-giat.jpg',0);
+INSERT INTO Hinh_Anh VALUES(35,N'img/nuoc-giat1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(35,N'img/nuoc-giat2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(35,N'img/nuoc-giat3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(35,N'img/nuoc-giat4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(36,N'img/Bachtuot.jpg',0);
+INSERT INTO Hinh_Anh VALUES(36,N'img/Bachtuot1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(36,N'img/Bachtuot2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(36,N'img/Bachtuot3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(36,N'img/Bachtuot4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(37,N'img/Ca.jpg',0);
+INSERT INTO Hinh_Anh VALUES(37,N'img/Ca1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(37,N'img/Ca2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(37,N'img/Ca3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(37,N'img/Ca4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(38,N'img/MucNang.jpg',0);
+INSERT INTO Hinh_Anh VALUES(38,N'img/MucNang1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(38,N'img/MucNang2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(38,N'img/MucNang3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(38,N'img/MucNang4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(39,N'img/NgeuSo.jpg',0);
+INSERT INTO Hinh_Anh VALUES(39,N'img/NgeuSo1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(39,N'img/NgeuSo2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(39,N'img/NgeuSo3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(39,N'img/NgeuSo4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(40,N'img/thitbo.jpg',0);
+INSERT INTO Hinh_Anh VALUES(40,N'img/thitbo1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(40,N'img/thitbo2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(40,N'img/thitbo3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(40,N'img/thitbo4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(41,N'img/Thitga.jpg',0);
+INSERT INTO Hinh_Anh VALUES(41,N'img/Thitga1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(41,N'img/Thitga2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(41,N'img/Thitga3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(41,N'img/Thitga4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(42,N'img/Thitheo.jpg',0);
+INSERT INTO Hinh_Anh VALUES(42,N'img/Thitheo1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(42,N'img/Thitheo2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(42,N'img/Thitheo3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(42,N'img/Thitheo4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(43,N'img/camcumdecolgen.jpg',0);
+INSERT INTO Hinh_Anh VALUES(43,N'img/camcumdecolgen1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(43,N'img/camcumdecolgen2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(43,N'img/camcumdecolgen3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(43,N'img/camcumdecolgen4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(44,N'img/GoiBuNuoc.jpg',0);
+INSERT INTO Hinh_Anh VALUES(44,N'img/GoiBuNuoc1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(44,N'img/GoiBuNuoc2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(44,N'img/GoiBuNuoc3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(44,N'img/GoiBuNuoc4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(45,N'img/hapacolcamcum.jpg',0);
+INSERT INTO Hinh_Anh VALUES(45,N'img/hapacolcamcum1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(45,N'img/hapacolcamcum2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(45,N'img/hapacolcamcum3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(45,N'img/hapacolcamcum4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(46,N'img/maydohuyetap.jpg',0);
+INSERT INTO Hinh_Anh VALUES(46,N'img/maydohuyetap1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(46,N'img/maydohuyetap2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(46,N'img/maydohuyetap3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(46,N'img/maydohuyetap4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(47,N'img/maydonhiptim.jpg',0);
+INSERT INTO Hinh_Anh VALUES(47,N'img/maydonhiptim1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(47,N'img/maydonhiptim2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(47,N'img/maydonhiptim3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(47,N'img/maydonhiptim4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(48,N'img/maydothannhiet.jpg',0);
+INSERT INTO Hinh_Anh VALUES(48,N'img/maydothannhiet1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(48,N'img/maydothannhiet2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(48,N'img/maydothannhiet3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(48,N'img/maydothannhiet4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(49,N'img/panadolhasot.jpg',0);
+INSERT INTO Hinh_Anh VALUES(49,N'img/panadolhasot1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(49,N'img/panadolhasot2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(49,N'img/panadolhasot3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(49,N'img/panadolhasot4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(50,N'img/buoi.jpg',0);
+INSERT INTO Hinh_Anh VALUES(50,N'img/buoi1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(50,N'img/buoi2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(50,N'img/buoi3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(50,N'img/buoi4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(51,N'img/cam.jpg',0);
+INSERT INTO Hinh_Anh VALUES(51,N'img/cam1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(51,N'img/cam2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(51,N'img/cam3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(51,N'img/cam4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(52,N'img/chuoi.jpg',0);
+INSERT INTO Hinh_Anh VALUES(52,N'img/chuoi1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(52,N'img/chuoi2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(52,N'img/chuoi3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(52,N'img/chuoi4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(53,N'img/dautay.jpg',0);
+INSERT INTO Hinh_Anh VALUES(53,N'img/dautay1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(53,N'img/dautay2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(53,N'img/dautay3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(53,N'img/dautay4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(54,N'img/duahau.jpg',0);
+INSERT INTO Hinh_Anh VALUES(54,N'img/duahau1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(54,N'img/duahau2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(54,N'img/duahau3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(54,N'img/duahau4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(55,N'img/kiwi.jpg',0);
+INSERT INTO Hinh_Anh VALUES(55,N'img/kiwi1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(55,N'img/kiwi2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(55,N'img/kiwi3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(55,N'img/kiwi4.jpg',0);
+INSERT INTO Hinh_Anh VALUES(56,N'img/na.jpg',0);
+INSERT INTO Hinh_Anh VALUES(56,N'img/na1.jpg',1);
+INSERT INTO Hinh_Anh VALUES(56,N'img/na2.jpg',0);
+INSERT INTO Hinh_Anh VALUES(56,N'img/na3.jpg',0);
+INSERT INTO Hinh_Anh VALUES(56,N'img/na4.jpg',0);
+
+
+
+
+INSERT INTO CHI_TIET_GIO_HANG VALUES(1,50,17)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(2,16,13)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(3,13,3)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(4,26,16)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(5,1,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(6,23,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(7,8,1)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(8,2,2)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(9,35,4)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(10,5,12)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(11,21,6)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(12,28,20)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(13,16,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(14,33,18)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(15,2,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(16,18,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(17,6,20)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(18,42,7)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(19,9,3)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(20,33,13)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(21,2,1)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(22,23,3)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(23,50,10)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(24,9,3)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(25,46,12)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(26,43,6)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(27,30,15)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(28,8,20)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(29,2,19)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(30,12,13)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(31,29,15)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(32,11,8)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(33,6,9)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(34,25,16)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(35,34,15)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(36,26,10)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(37,24,2)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(38,31,18)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(39,48,6)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(40,27,7)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(41,2,3)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(42,4,6)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(43,4,5)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(44,22,13)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(45,41,9)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(46,45,16)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(47,12,13)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(48,26,20)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(49,33,14)
+INSERT INTO CHI_TIET_GIO_HANG VALUES(50,9,9)
+
+
+
+
+
+INSERT INTO DON_HANG VALUES(1,33,null,N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Chiểu','2022-01-20',1,'2022-01-20',N'Dijana Tertius','(359) 626-1349',null,0)
+INSERT INTO DON_HANG VALUES(2,31,null,N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Xã Long Hòa','2022-03-03',1,'2022-03-03',N'Gaubert Lucilla Brian','(413) 940-2275',null,0)
+INSERT INTO DON_HANG VALUES(3,2,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 06','2022-03-03',1,'2022-03-03',N'Abe Koharu','(725) 686-6856',null,0)
+INSERT INTO DON_HANG VALUES(4,40,null,N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 02','2021-12-28',1,'2021-12-28',N'Seraphina Fujioka','(421) 955-0156',null,0)
+INSERT INTO DON_HANG VALUES(5,50,null,N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 05','2022-01-15',1,'2022-01-15',N'Michel ﻿Gavin','(413) 940-2275',null,0)
+INSERT INTO DON_HANG VALUES(6,21,null,N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Chiểu','2022-06-09',1,'2022-06-09',N'Agi Prosdokimos','(230) 705-3479',null,0)
+INSERT INTO DON_HANG VALUES(7,18,null,N'Thành phố Hồ Chí Minh, Quận 10, Phường 10','2022-01-06',1,'2022-01-06',N'Abe Genovefa','(654) 375-8479',null,0)
+INSERT INTO DON_HANG VALUES(8,45,null,N'Thành phố Hồ Chí Minh, Quận Bình Thạnh, Phường 01','2022-08-14',1,'2022-08-14',N'Iordanus Tsunoda Mauro','(446) 958-5896',null,0)
+INSERT INTO DON_HANG VALUES(9,49,null,N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã An Phú','2022-07-13',1,'2022-07-13',N'﻿Gavin Calvus Sasaki','(551) 401-8663',null,0)
+INSERT INTO DON_HANG VALUES(10,38,null,N'Thành phố Hồ Chí Minh, Quận 3, Phường Võ Thị Sáu','2022-08-27',1,'2022-08-27',N'Itō Calvus Sasaki','(265) 327-6645',null,0)
+INSERT INTO DON_HANG VALUES(11,32,null,N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Hưng Hoà B','2022-07-14',1,'2022-07-14',N'Iordanus Tsunoda Abe','(359) 626-1349',null,0)
+INSERT INTO DON_HANG VALUES(12,20,null,N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 6','2022-08-24',1,'2022-08-24',N'Prosdokimos Silvija','(421) 955-0156',null,0)
+INSERT INTO DON_HANG VALUES(13,5,null,N'Thành phố Hồ Chí Minh, Quận 4, Phường 08','2022-08-21',1,'2022-08-21',N'Eleutherios Arnviðr Fujita Abe','(994) 920-5199',null,0)
+INSERT INTO DON_HANG VALUES(14,44,null,N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 13','2022-11-18',1,'2022-11-18',N'Babirye Genovefa','(760) 210-5641',null,0)
+INSERT INTO DON_HANG VALUES(15,10,null,N'Thành phố Hồ Chí Minh, Thành phố Thủ Đức, Phường Bình Trưng Đông','2022-10-27',1,'2022-10-27',N'Genovefa Fabian','(648) 214-0168',null,0)
+INSERT INTO DON_HANG VALUES(16,21,null,N'Thành phố Hồ Chí Minh, Quận 1, Phường Cầu Kho','2022-11-14',1,'2022-11-14',N'Jayadeva Miyashita','(648) 214-0168',null,0)
+INSERT INTO DON_HANG VALUES(17,41,null,N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 03','2022-08-21',1,'2022-08-21',N'Dijana Xanthippe Shingo','(758) 604-6380',null,0)
+INSERT INTO DON_HANG VALUES(18,49,null,N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Thị trấn Nhà Bè','2022-05-01',1,'2022-05-01',N'Fujioka Agapetos Rikuto Himura','(552) 975-5496',null,0)
+INSERT INTO DON_HANG VALUES(19,9,null,N'Thành phố Hồ Chí Minh, Quận 12, Phường Thạnh Lộc','2022-06-10',1,'2022-06-10',N'Nicostrato Maki','(676) 725-5053',null,0)
+INSERT INTO DON_HANG VALUES(20,28,null,N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 10','2022-08-27',1,'2022-08-27',N'Hadewidis Shun Shinoda Eleutherios Arnviðr Fujita','(356) 277-7244',null,0)
+INSERT INTO DON_HANG VALUES(21,22,null,N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Vĩnh Lộc A','2022-08-17',1,'2022-08-17',N'Miyashita Dijana','(668) 270-8314',null,0)
+INSERT INTO DON_HANG VALUES(22,11,null,N'Thành phố Hồ Chí Minh, Quận 5, Phường 11','2022-04-16',1,'2022-04-16',N'Cyneburg Agapetos Rikuto Himura','(363) 358-4189',null,0)
+INSERT INTO DON_HANG VALUES(23,23,null,N'Thành phố Hồ Chí Minh, Quận 1, Phường Bến Thành','2022-08-14',1,'2022-08-14',N'Erastos Miyashita Nicostrato','(359) 626-1349',null,0)
+INSERT INTO DON_HANG VALUES(24,40,null,N'Thành phố Hồ Chí Minh, Quận Gò Vấp, Phường 07','2022-03-24',1,'2022-03-24',N'Nicostrato Nicostrato','(265) 327-6645',null,0)
+INSERT INTO DON_HANG VALUES(25,42,null,N'Thành phố Hồ Chí Minh, Quận 6, Phường 12','2022-10-18',1,'2022-10-18',N'Pope Itō','(478) 612-5312',null,0)
+INSERT INTO DON_HANG VALUES(26,26,null,N'Thành phố Hồ Chí Minh, Quận Tân Phú, Phường Phú Thọ Hòa','2022-05-25',1,'2022-05-25',N'Ortwin Kubo Statham','(265) 327-6645',null,0)
+INSERT INTO DON_HANG VALUES(27,50,null,N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 04','2022-11-18',1,'2022-11-18',N'Victorianus Ealdwine Itō','(971) 363-2969',null,0)
+INSERT INTO DON_HANG VALUES(28,23,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 01','2022-09-27',1,'2022-09-27',N'Iestyn Sugiura','(718) 892-9484',null,0)
+INSERT INTO DON_HANG VALUES(29,13,null,N'Thành phố Hồ Chí Minh, Quận 10, Phường 13','2022-02-12',1,'2022-02-12',N'Wilburh Bjartr Tertius','(702) 823-8668',null,0)
+INSERT INTO DON_HANG VALUES(30,30,null,N'Thành phố Hồ Chí Minh, Quận 11, Phường 06','2022-09-08',1,'2022-09-08',N'Hypatia Iacomus Mauro','(758) 604-6380',null,0)
+INSERT INTO DON_HANG VALUES(31,14,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 12','2022-01-18',1,'2022-01-18',N'Genovefa Iestyn','(515) 581-4022',null,0)
+INSERT INTO DON_HANG VALUES(32,28,null,N'Thành phố Hồ Chí Minh, Quận 1, Phường Cầu Ông Lãnh','2022-09-12',1,'2022-09-12',N'Octavianus ﻿Gavin','(265) 327-6645',null,0)
+INSERT INTO DON_HANG VALUES(33,13,null,N'Thành phố Hồ Chí Minh, Quận 12, Phường An Phú Đông','2022-12-05',1,'2022-12-05',N'Michel Seraphina','(931) 688-8906',null,0)
+INSERT INTO DON_HANG VALUES(34,6,null,N'Thành phố Hồ Chí Minh, Huyện Nhà Bè, Xã Phước Lộc','2022-01-16',1,'2022-01-16',N'Þone Hiroto Dijana','(570) 774-2944',null,0)
+INSERT INTO DON_HANG VALUES(35,15,null,N'Thành phố Hồ Chí Minh, Quận 3, Phường Võ Thị Sáu','2022-09-14',1,'2022-09-14',N'Fabian Draženka','(421) 955-0156',null,0)
+INSERT INTO DON_HANG VALUES(36,36,null,N'Thành phố Hồ Chí Minh, Quận 5, Phường 11','2022-01-23',1,'2022-01-23',N'Tertius Farvald Katsu Itō','(982) 829-7252',null,0)
+INSERT INTO DON_HANG VALUES(37,23,null,N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Phong Phú','2022-10-15',1,'2022-10-15',N'Cyneburg Renata Amandus','(994) 920-5199',null,0)
+INSERT INTO DON_HANG VALUES(38,10,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 11','2022-03-11',1,'2022-03-11',N'Dijana Pope','(997) 710-4125',null,0)
+INSERT INTO DON_HANG VALUES(39,49,null,N'Thành phố Hồ Chí Minh, Quận 5, Phường 05','2022-01-16',1,'2022-01-16',N'Victorianus Ealdwine Iordanus Tsunoda','(915) 869-7966',null,0)
+INSERT INTO DON_HANG VALUES(40,30,null,N'Thành phố Hồ Chí Minh, Huyện Cần Giờ, Thị trấn Cần Thạnh','2022-06-27',1,'2022-06-27',N'Prosdokimos Willabert','(421) 955-0156',null,0)
+INSERT INTO DON_HANG VALUES(41,9,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 13','2022-01-02',1,'2022-01-02',N'Babirye Ortwin Kubo','(725) 686-6856',null,0)
+INSERT INTO DON_HANG VALUES(42,3,null,N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 06','2022-11-14',1,'2022-11-14',N'Silvija Dijana','(758) 604-6380',null,0)
+INSERT INTO DON_HANG VALUES(43,20,null,N'Thành phố Hồ Chí Minh, Quận 8, Phường 10','2022-04-06',1,'2022-04-06',N'Nicostrato Erastos Miyashita','(833) 786-6665',null,0)
+INSERT INTO DON_HANG VALUES(44,2,null,N'Thành phố Hồ Chí Minh, Quận 12, Phường Thới An','2022-12-07',1,'2022-12-07',N'Prosdokimos Hadewidis Shun Shinoda','(515) 581-4022',null,0)
+INSERT INTO DON_HANG VALUES(45,10,null,N'Thành phố Hồ Chí Minh, Quận Bình Tân, Phường Bình Hưng Hoà B','2022-06-07',1,'2022-06-07',N'Þone Hiroto Renata Amandus','(628) 558-8950',null,0)
+INSERT INTO DON_HANG VALUES(46,41,null,N'Thành phố Hồ Chí Minh, Quận Tân Bình, Phường 05','2022-09-27',1,'2022-09-27',N'Fabian Miyashita','(405) 395-9333',null,0)
+INSERT INTO DON_HANG VALUES(47,50,null,N'Thành phố Hồ Chí Minh, Quận 12, Phường Tân Thới Hiệp','2021-12-13',1,'2021-12-13',N'Hypatia Iacomus Willabert','(959) 246-7781',null,0)
+INSERT INTO DON_HANG VALUES(48,2,null,N'Thành phố Hồ Chí Minh, Quận 3, Phường 01','2022-03-24',1,'2022-03-24',N'Agapetos Rikuto Himura Wilburh Bjartr','(230) 705-3479',null,0)
+INSERT INTO DON_HANG VALUES(49,49,null,N'Thành phố Hồ Chí Minh, Huyện Củ Chi, Xã Tân An Hội','2022-05-01',1,'2022-05-01',N'Cenric Fabian','(697) 498-9239',null,0)
+INSERT INTO DON_HANG VALUES(50,41,null,N'Thành phố Hồ Chí Minh, Huyện Bình Chánh, Xã Vĩnh Lộc A','2022-09-27',1,'2022-09-27',N'Holzer Ortwin Kubo','(265) 327-6645',null,0)
+
+
+
+
+
+INSERT INTO CHI_TIET_DON_HANG VALUES(1,1,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(2,2,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(3,3,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(4,4,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(5,5,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(6,6,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(7,7,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(8,8,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(9,9,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(10,10,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(11,11,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(12,12,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(13,13,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(14,14,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(15,15,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(16,16,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(17,17,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(18,18,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(19,19,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(20,20,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(21,21,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(22,22,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(23,23,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(24,24,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(25,25,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(26,26,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(27,27,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(28,28,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(29,29,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(30,30,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(31,31,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(32,32,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(33,33,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(34,34,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(35,35,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(36,36,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(37,37,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(38,38,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(39,39,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(40,40,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(41,41,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(42,42,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(43,43,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(44,44,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(45,45,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(46,46,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(47,47,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(48,48,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(49,49,2,0)
+INSERT INTO CHI_TIET_DON_HANG VALUES(50,50,2,0)
+
+
+
+
+
+INSERT INTO HOP_DONG VALUES(51,'2022-01-18','2022-01-02','2022-02-07',null,null,null,'2022-07-13')
+INSERT INTO HOP_DONG VALUES(52,'2022-03-22','2022-10-17','2022-06-09',null,null,null,'2022-05-18')
+INSERT INTO HOP_DONG VALUES(53,'2022-11-14','2022-10-17','2022-06-19',null,null,null,'2022-05-28')
+INSERT INTO HOP_DONG VALUES(54,'2022-09-02','2022-06-09','2021-12-21',null,null,null,'2022-10-27')
+INSERT INTO HOP_DONG VALUES(55,'2022-10-17','2022-05-09','2022-04-26',null,null,null,'2022-04-04')
+INSERT INTO HOP_DONG VALUES(56,'2022-05-08','2022-10-07','2022-06-24',null,null,null,'2022-06-09')
+INSERT INTO HOP_DONG VALUES(57,'2022-01-15','2022-06-07','2022-09-12',null,null,null,'2021-12-22')
+INSERT INTO HOP_DONG VALUES(58,'2021-12-22','2022-08-17','2022-08-17',null,null,null,'2022-08-04')
+INSERT INTO HOP_DONG VALUES(59,'2022-09-01','2022-08-17','2022-08-21',null,null,null,'2022-07-24')
+INSERT INTO HOP_DONG VALUES(60,'2022-06-07','2022-07-24','2022-08-14',null,null,null,'2022-05-08')
+INSERT INTO HOP_DONG VALUES(61,'2022-04-04','2022-08-17','2022-03-11',null,null,null,'2022-10-18')
+INSERT INTO HOP_DONG VALUES(62,'2022-10-10','2022-07-14','2022-10-01',null,null,null,'2022-05-28')
+INSERT INTO HOP_DONG VALUES(63,'2022-08-12','2022-01-06','2022-04-04',null,null,null,'2022-01-20')
+INSERT INTO HOP_DONG VALUES(64,'2022-01-06','2022-08-12','2022-08-27',null,null,null,'2022-01-20')
+INSERT INTO HOP_DONG VALUES(65,'2022-04-26','2022-07-12','2021-12-21',null,null,null,'2022-10-29')
+INSERT INTO HOP_DONG VALUES(66,'2022-02-13','2022-04-27','2022-10-10',null,null,null,'2022-06-18')
+INSERT INTO HOP_DONG VALUES(67,'2022-05-08','2022-08-21','2022-10-10',null,null,null,'2022-06-27')
+INSERT INTO HOP_DONG VALUES(68,'2022-05-25','2022-04-04','2022-08-27',null,null,null,'2022-06-24')
+INSERT INTO HOP_DONG VALUES(69,'2022-04-26','2022-06-23','2022-09-29',null,null,null,'2022-01-16')
+INSERT INTO HOP_DONG VALUES(70,'2022-05-08','2022-08-17','2022-09-18',null,null,null,'2022-05-08')
+INSERT INTO HOP_DONG VALUES(71,'2022-10-17','2022-10-27','2022-01-25',null,null,null,'2021-12-13')
+INSERT INTO HOP_DONG VALUES(72,'2022-10-15','2022-01-15','2022-01-10',null,null,null,'2022-08-14')
+INSERT INTO HOP_DONG VALUES(73,'2022-04-04','2022-03-22','2022-05-01',null,null,null,'2022-05-08')
+INSERT INTO HOP_DONG VALUES(74,'2022-10-01','2022-07-25','2022-02-07',null,null,null,'2022-01-31')
+INSERT INTO HOP_DONG VALUES(75,'2022-02-12','2022-02-09','2022-09-29',null,null,null,'2022-06-19')
+INSERT INTO HOP_DONG VALUES(76,'2022-04-16','2022-01-23','2022-09-07',null,null,null,'2022-02-26')
+INSERT INTO HOP_DONG VALUES(77,'2022-03-09','2022-02-09','2022-03-03',null,null,null,'2022-10-29')
+INSERT INTO HOP_DONG VALUES(78,'2022-10-07','2022-01-12','2022-06-09',null,null,null,'2021-12-28')
+INSERT INTO HOP_DONG VALUES(79,'2022-10-18','2022-10-17','2022-07-14',null,null,null,'2022-05-01')
+INSERT INTO HOP_DONG VALUES(80,'2022-08-26','2022-07-24','2022-08-24',null,null,null,'2022-02-14')
+INSERT INTO HOP_DONG VALUES(81,'2022-09-29','2022-01-06','2022-03-22',null,null,null,'2022-09-18')
+INSERT INTO HOP_DONG VALUES(82,'2022-01-16','2022-07-24','2022-05-08',null,null,null,'2022-08-03')
+INSERT INTO HOP_DONG VALUES(83,'2022-06-27','2022-09-07','2022-07-27',null,null,null,'2022-01-08')
+INSERT INTO HOP_DONG VALUES(84,'2022-09-12','2022-02-12','2022-09-08',null,null,null,'2022-01-31')
+INSERT INTO HOP_DONG VALUES(85,'2022-10-29','2022-02-28','2022-11-14',null,null,null,'2022-01-15')
+INSERT INTO HOP_DONG VALUES(86,'2022-09-02','2022-02-26','2022-03-24',null,null,null,'2022-10-10')
+INSERT INTO HOP_DONG VALUES(87,'2022-02-09','2022-10-10','2022-09-07',null,null,null,'2022-02-09')
+INSERT INTO HOP_DONG VALUES(88,'2022-01-12','2022-01-10','2022-10-17',null,null,null,'2022-09-15')
+INSERT INTO HOP_DONG VALUES(89,'2022-06-23','2022-05-18','2021-12-13',null,null,null,'2022-01-18')
+INSERT INTO HOP_DONG VALUES(90,'2022-07-12','2022-07-22','2022-02-12',null,null,null,'2022-05-28')
+INSERT INTO HOP_DONG VALUES(91,'2022-06-07','2022-02-17','2021-12-21',null,null,null,'2022-07-25')
+INSERT INTO HOP_DONG VALUES(92,'2022-09-12','2022-01-20','2022-07-12',null,null,null,'2021-12-28')
+INSERT INTO HOP_DONG VALUES(93,'2022-01-02','2022-03-24','2022-11-21',null,null,null,'2022-03-03')
+INSERT INTO HOP_DONG VALUES(94,'2022-12-02','2022-04-04','2022-03-11',null,null,null,'2022-11-18')
+INSERT INTO HOP_DONG VALUES(95,'2022-01-08','2022-07-25','2022-08-25',null,null,null,'2021-12-13')
+INSERT INTO HOP_DONG VALUES(96,'2022-08-25','2022-05-28','2022-06-09',null,null,null,'2022-06-10')
+INSERT INTO HOP_DONG VALUES(97,'2022-05-01','2022-07-27','2022-08-03',null,null,null,'2022-09-08')
+INSERT INTO HOP_DONG VALUES(98,'2022-01-08','2022-09-01','2022-01-18',null,null,null,'2022-01-18')
+INSERT INTO HOP_DONG VALUES(99,'2022-03-22','2022-11-18','2021-12-28',null,null,null,'2022-01-12')
+INSERT INTO HOP_DONG VALUES(100,'2022-03-03','2022-01-16','2022-06-16',null,null,null,'2022-06-24')
+
+
+
+
+
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(1,1,1,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(2,2,2,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(3,3,3,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(4,4,4,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(5,5,5,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(6,6,6,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(7,7,7,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(8,8,8,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(9,9,9,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(10,10,10,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(11,11,11,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(12,12,12,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(13,13,13,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(14,14,14,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(15,15,15,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(16,16,16,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(17,17,17,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(18,18,18,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(19,19,19,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(20,20,20,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(21,21,21,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(22,22,22,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(23,23,23,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(24,24,24,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(25,25,25,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(26,26,26,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(27,27,27,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(28,28,28,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(29,29,29,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(30,30,30,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(31,31,31,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(32,32,32,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(33,33,33,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(34,34,34,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(35,35,35,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(36,36,36,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(37,37,37,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(38,38,38,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(39,39,39,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(40,40,40,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(41,41,41,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(42,42,42,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(43,43,43,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(44,44,44,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(45,45,45,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(46,46,46,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(47,47,47,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(48,48,48,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(49,49,49,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')

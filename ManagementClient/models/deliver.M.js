@@ -20,6 +20,7 @@ exports.finishDeliver = async (id,shipperid) => {
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
+        console.log(rs);
     return rs;
   };
 

@@ -1,0 +1,33 @@
+<div class="row" style="margin-bottom: 10px;">
+<div class="col-12 d-grid">
+    <a href="/admin"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>
+</div>
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Mã hợp đồng</th>
+            <th scope="col">Ngày đăng ký</th>
+            <th scope="col">Giấy phép kinh doanh</th>
+            <th scope="col">Giấy chứng nhận an toàn thực phẩm</th>
+            <th scope="col">Hợp đồng</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>{{detail.maHopDong}}</td>
+            <td>{{detail.ngayDangKy}}</td>
+            <td><img src="{{detail.giayPhepKinhDoanhImg}}"></td>
+            <td><img src="{{detail.chungNhanAnToanImg}}"></td>
+            <td><img src="{{detail.hopDongImg}}"></td>
+         
+        </tr>
+
+    </tbody>
+</table>
+    
+<div class="col-12 d-grid" style="text-align: end;">
+    <a href="/admin/register-shop-accept?id={{detail.maHopDong}}"><button class="btn btn-primary" type="button">Ký hợp đồng</button></a>
+</div>

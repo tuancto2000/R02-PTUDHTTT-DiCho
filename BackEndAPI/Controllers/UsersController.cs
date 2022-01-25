@@ -65,6 +65,7 @@ namespace BackEndAPI.Controllers
                 throw new Exception($"Can not find user with Id {cusId}");
             var model = new NguoiDungVM
             {
+                Username = taikhoan.Username,
                 MaNguoiDung = taikhoan.MaNguoiDung,
                 MatKhau = taikhoan.MatKhau,
                 DiaChi = taikhoan.NguoiDung.DiaChi.TenDiaChi,

@@ -1,0 +1,25 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detail User</li>
+    </ol>
+</nav>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên tài khoản</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>{{detail.username}}</td>
+            <td><a href="/admin/resetpassword?id={{detail.maNguoiDung}}&&username={{detail.username}}">Reset mật khẩu</a></td>
+        </tr>
+
+    </tbody>
+</table>
+<div class="col-12 d-grid">
+    <a href="/admin/orderlist"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>

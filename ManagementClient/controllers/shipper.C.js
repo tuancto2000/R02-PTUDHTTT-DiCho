@@ -40,11 +40,24 @@ router.get("/finish-deliver", async (req, res) => {
     const data = await deliverModel.finishDeliver(id,shiperid);
     res.redirect("/shipper/history?id=110")
   });
+
+
 router.get("/detail", async (req, res) => {
   let id = req.query.id;
   const data = await model.getById(id);
   res.render("shipper/detail", {
     layout:'shipperLayout',
+    orderid:id,
     detail: data.dsChiTietDonHang,
   });
 });
+
+
+router.get("/accept", async (req, res) => {
+  let id = req.query.id;
+  let shiperid=req.query.shipperId;
+  const data = await deliverModel.finishDeliver(id,shiperid);
+  console.log(shiperid);
+  res.redirect("/shipper")
+});
+

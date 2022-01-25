@@ -71,6 +71,7 @@ exports.getAllByProductCategory = async (id,name,page,size) => {
 };
 
 
+
 exports.getProductPagnation = async (page,pagesize) => {
     const rs = await axios({
         method: "get",

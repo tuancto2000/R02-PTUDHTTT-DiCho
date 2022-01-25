@@ -38,11 +38,13 @@ exports.getAll= async () => {
 
 
 exports.getAllByProductCategory = async (id,name,page,size) => {
-    
+    let url = `/product/category-search?categoryId=${id}&productName=${name}&page=${page}&size=${size}`;
+    if(!id)
+    url = `/product/category-search?categoryId=&productName=${name}&page=${page}&size=${size}`
     const rs = await axios({
         method: "get",
         baseURL: BaseURL,
-        url: `/product/category-search?categoryId=${id}&productName=${name}&page=${page}&size=${size}`,
+        url: url,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
@@ -55,6 +57,17 @@ exports.getProductPagnation = async (page,pagesize) => {
         method: "get",
         baseURL: BaseURL,
         url: `/product/pagenation?page=${page}&size=${pagesize}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.searchProduct = async (search,page,pagesize) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: BaseURL,
+        url: `/product/search?productName=${search}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
