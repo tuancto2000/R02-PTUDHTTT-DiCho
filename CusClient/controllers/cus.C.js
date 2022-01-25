@@ -4,6 +4,7 @@ const categoryModel = require("../model/category.M");
 const productModel = require("../model/product.M");
 const orderModel = require("../model/order.M");
 const cartModel = require("../model/cart.M");
+const storeModel = require("../model/store.M");
 module.exports = router;
 router.get('/', async (req,res)=>{
   const page = +req.query.page || 1;
@@ -125,16 +126,56 @@ router.get('/checkout', async (req,res)=>{
 
 
 router.get('/shop-near',async (req,res)=>{
+  var data = {};
+  data.ma_nguoi_dung = 5;
+  let stores = await storeModel.getNearestStore(data);
   res.render('cus_nearest-shop',{
+    stores:stores,
     layout: 'customer_layout' 
   })
 });
 
 
+router.get('/shop', async (req,res)=>{
+  const page = +req.query.page || 1;
+  const pagesize = +req.query.pagesize || 8;
+  const shopid = req.query.id;
+  let product = await productModel.getAllByStoreID(shopid);
+ 
+  res.render('cus_shop-details',{
+      sanpham:product.sanphams,
+   
+      pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
+
+      layout: 'customer_layout' 
+      })
+});
+
+
+router.get('/my-shop', async (req,res)=>{
+  const check = await storeModel.checkStore(1);
+  if(!check) res.redirect("/shop-grid1");
+  else{
+    //REDIRECT Manager;
+  }
+});
 router.get('/shop-grid1', async (req,res)=>{
   res.render('cus_shop-details-not-exists',{
       layout: 'customer_layout' 
     })
+});
+
+router.get('/shop-register', async (req,res)=>{
+  res.render('cus_shop-register',{
+      layout: 'customer_layout' 
+    })
+});
+
+router.post('/shop-register', async (req,res)=>{
+  const data = req.body;
+  data.maNguoiDung = 2;
+  storeModel.addStore(data);
+  res.redirect("/");
 });
 
 router.get('/item-detail', async (req,res)=>{

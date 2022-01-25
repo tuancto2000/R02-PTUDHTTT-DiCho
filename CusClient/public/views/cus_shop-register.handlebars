@@ -1,0 +1,62 @@
+<head>
+    <link rel="stylesheet" href="../css/signup.css" type="text/css">
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden">
+          
+          <div class="card-body p-4 p-sm-5">
+            <h5 class="card-title text-center mb-5 fw-light fs-5">Đăng ký mở shop</h5>
+            <form method="post">
+
+              <div class="form-floating mb-3">
+                <label for="tenCuaHang">Tên cửa hàng</label>
+                <input name ="tench" type="text" class="form-control" id="tencuahang" placeholder="Tên cửa hàng" required autofocus>
+              </div>
+
+              <div class="form-floating mb-3">
+                <label for="floatingInputEmail">Địa chỉ email</label>
+                <input name="email" type="email" class="form-control" id="floatingInputEmail" placeholder="name@example.com">
+              </div>
+
+
+              <div class="form-floating mb-3">
+                <label for="sdt">Số điện thoại liên lạc của shop</label>
+                <input name="sdt" type="text" class="form-control" id="sdt" required placeholder="0123456678">
+              </div>
+
+              <div class="form-floating mb-3">
+                <label for="address">Địa chỉ của shop</label>
+
+                <input name="diachi" type="text" class="form-control" id="address" required placeholder="Nhập địa chỉ shop">
+              </div>
+              <hr>
+              <div class="form-floating mb-3">
+                <label for="ChungNhanAnToanImg">Giấy chứng nhận an toàn thực phẩm</label>
+                <img src="img/HD1.jpg"> 
+                <input name="chungNhanAnToanImg" style="display:none" type="text" value="img/HD1.jpg" class="form-control" id="ChungNhanAnToanImg" >
+              </div>
+              <hr>
+              <div class="form-floating mb-3">
+                <label for="GiayPhepKinhDoanhImg">Giấy phép kinh doanh</label>
+                <img src="img/HD2.jpg"> 
+                <input name="giayPhepKinhDoanhImg" style="display:none" type="text" value="img/HD2.jpg" class="form-control" id="GiayPhepKinhDoanhImg" >
+              </div>
+              <hr>
+              
+              <input type="checkbox" id="confirm" name="confirm" value="true" required>
+              <label for="confirm"> Tôi đã đọc và đồng ý với <a href="#"> các điều điều khoản</a></label><br>
+
+              <div class="d-grid mb-2">
+                <button class="btn btn-lg site-btn fw-bold text-uppercase" type="submit">Mở shop ngay</button>
+              </div>
+              <hr class="my-4">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

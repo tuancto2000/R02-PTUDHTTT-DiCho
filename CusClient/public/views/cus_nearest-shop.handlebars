@@ -26,100 +26,32 @@
     <section class="product spad">
         <div class="container">
             <div class="row">
-                <div class="col-lg-2 col-md-5">
-                    <div class="sidebar">
+               <table class="table table-bordered">
+                <thead >
+                    <tr>
+                        <th scope="col">Tên cửa hàng</th>
+                        <th scope="col">Khoảng cách</th>
+                        <th scope="col" >Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {{#each stores}}
+                    <tr>
+                        <td>{{this.ten_cua_hang}}</td>
+                        <td>{{this.khoang_cach}}m</td>
+                        <td>
+                            <a href ="/shop?id={{ma_cua_hang}}" class="site-btn" type="button">Mua hàng</a>
+                        </td>
                         
-                    </div>
-                </div>
-                <div class="col-lg-9 col-md-7">
-                    <div class ="row justify-content-center">
-                        <div class="col">
-                                <form action="#">
-                                    <div class="form-row" style="height: 40px; !important">
-                                    <div class="form-group offset-md-1 col-md-3">
-                                        <select class="form-select form-select-lg mb-3" aria-label="Chọn Quận">
-                                            <option selected>Chọn Quận</option>
-                                            <option value="1">Quận 1</option>
-                                            <option value="2">Quận 2</option>
-                                            <option value="3">Quận 3</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-md-3">
-                                        <select class="form-select form-select-lg mb-3" aria-label="Chọn Phường">
-                                            <option selected>Chọn Phường</option>
-                                            <option value="1">Quận 1</option>
-                                            <option value="2">Quận 2</option>
-                                            <option value="3">Quận 3</option>
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="site-btn" style="height:44px; !important">SEARCH</button>
-                                    </div>
-                                </form>
-                        </div>
-                    </div>
-                    
-                    <div class="filter__item" style="border-top:0">
-                        <div class="row">
-                            <div class="col">
-                                <div class="filter__found">
-                                    <h6><span>16</span> Results found</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/product/product-1.jpg">
-                                    <ul class="product__item__pic__hover">
-                                        <li><a href="/item-detail"><i class="fa fa-shopping-cart"></i></a></li>
-                                    </ul>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Crab Pool Security</a></h6>
-                                    <h5>$30.00</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/product/product-2.jpg">
-                                    <ul class="product__item__pic__hover">
-                                        <li><a href="/item-detail"><i class="fa fa-shopping-cart"></i></a></li>
-                                    </ul>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Crab Pool Security</a></h6>
-                                    <h5>$30.00</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item">
-                                <div class="product__item__pic set-bg" data-setbg="img/product/product-2.jpg">
-                                    <ul class="product__item__pic__hover">
-                                        <li><a href="/item-detail"><i class="fa fa-shopping-cart"></i></a></li>
-                                    </ul>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6><a href="#">Crab Pool Security</a></h6>
-                                    <h5>$30.00</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="product__pagination">
-                                <a href="#">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                    </tr>
+                    {{/each}}
+
+                </tbody>
+
+            </table>
+              
             </div>
         </div>
     </section>

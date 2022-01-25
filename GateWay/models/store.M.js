@@ -14,11 +14,12 @@ exports.getCommission = async (id, data) => {
     return rs;
 };
 
-exports.getNearestStore = async () => {
+exports.getNearestStore = async (data) => {
     const rs = await axios({
         baseURL: javaBaseURL,
-        method: "get",
+        method: "post",
         url: `/stores/nearest-stores`,
+        data: data,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

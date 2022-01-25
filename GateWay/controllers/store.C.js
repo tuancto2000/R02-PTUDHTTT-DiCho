@@ -10,7 +10,8 @@ router.get("/getCommission/:id", async (req, res) => {
     res.send(data);
 });
 
-router.get("/nearest-store", async (req, res) => {
-    const data = await model.getNearestStore();
+router.post("/nearest-store", async (req, res) => {
+    const data = await model.getNearestStore(req.body);
+    console.log(req.body);
     res.send(data);
 });

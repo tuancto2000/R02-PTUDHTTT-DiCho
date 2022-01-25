@@ -47,7 +47,7 @@
                                         <input type="text" name="ma_sp" value="{{this.ma_sp}}" style="display: none;">
                                     </td>
                                     <td class="shoping__cart__price">
-                                       {{this.gia_sp}}
+                                       {{#formatMoney this.gia_sp}}{{/formatMoney}}
                                     </td>
                                     <td class="shoping__cart__quantity">
                                         <input type="text" name="so_luong" value="{{this.ma_sp}}" style="display: none;">
@@ -58,7 +58,7 @@
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total">
-                                        {{this.total}}
+                                        {{#formatMoney this.total}}{{/formatMoney}}
                                     </td>
                                     <td class="shoping__cart__item__close">
                                         <span class="icon_close"></span>
@@ -85,7 +85,7 @@
                     <div class="shoping__checkout">
                         <h5>Hoá đơn</h5>
                         <ul>
-                            <li>Tổng tiền<span>{{sum}}</span></li>
+                            <li>Tổng tiền<span>{{#formatMoney sum}}{{/formatMoney}}</span></li>
                         </ul>
                         <button type="submit" class="primary-btn">Thanh toán</button>
                     </div>
