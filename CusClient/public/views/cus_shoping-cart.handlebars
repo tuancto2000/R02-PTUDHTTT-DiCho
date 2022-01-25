@@ -22,7 +22,9 @@
 
     <!-- Shoping Cart Section Begin -->
     <section class="shoping-cart spad">
+        <form method="post">
         <div class="container">
+            
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__table">
@@ -42,11 +44,13 @@
                                     <td class="shoping__cart__item">
                                         <img src="{{this.nguon_hinh_anh}}" style="width: 100px;height:100px" alt="">
                                         <h5>{{this.ten_sp}}</h5>
+                                        <input type="text" name="ma_sp" value="{{this.ma_sp}}" style="display: none;">
                                     </td>
                                     <td class="shoping__cart__price">
                                        {{this.gia_sp}}
                                     </td>
                                     <td class="shoping__cart__quantity">
+                                        <input type="text" name="so_luong" value="{{this.ma_sp}}" style="display: none;">
                                         <div class="quantity">
                                             <div class="pro-qty">
                                                 <input type="text" value="{{this.so_luong}}">
@@ -66,6 +70,7 @@
                     </div>
                 </div>
             </div>
+           
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
@@ -82,11 +87,12 @@
                         <ul>
                             <li>Tổng tiền<span>{{sum}}</span></li>
                         </ul>
-                        <a href="/checkout" class="primary-btn">Thanh toán</a>
+                        <button type="submit" class="primary-btn">Thanh toán</button>
                     </div>
                 </div>
             </div>
         </div>
+        </form>
     </section>
     <!-- Shoping Cart Section End -->
 

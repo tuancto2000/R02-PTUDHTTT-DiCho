@@ -81,6 +81,10 @@ router.get('/shoping-cart', async (req,res)=>{
     })
 });
 
+router.post('/shoping-cart', async (req,res)=>{
+  console.log(JSON.parse(JSON.stringify(req.body)));
+  res.redirect("/shopping-cart")
+});
 
 
 router.get('/shoping-cart-history', async (req,res)=>{
