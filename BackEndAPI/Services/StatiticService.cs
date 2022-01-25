@@ -23,14 +23,28 @@ namespace BackEndAPI.Services
 
         public async Task<List<DanhMucThietYeuVM>> ThongKeDanhMucThietYeu()
         {
-            var reports = await _context.DanhMuc.Include(x => x.DSSanPham).ThenInclude(x => x.DSChiTietDonHang)
-                 .Select(x => new DanhMucThietYeuVM()
-                 {
-                     Ten = x.TenDm,
-                     SoLoaiSanPham = x.DSSanPham.Count(),
-                     SoLuongBanRa = x.DSSanPham.Select(x => new { count = x.DSChiTietDonHang.Sum(y => y.SoLuong) }).Sum(x => x.count),
-                     SoLuongConLai = x.DSSanPham.Sum(x => x.SoLuongConLai)
-                 }).ToListAsync();
+            var reports = _context.DanhMuc.Join(_context.SanPham, dm => dm.MaDm, sp => sp.MaDm, (dm, sp) =>
+            new
+            {
+                MaSp = sp.MaSp,
+                MaDm = dm.MaDm,
+                TenDm = dm.TenDm,
+                ConLai = sp.SoLuongConLai
+            }).Join(_context.ChiTietDonHang, sp => sp.MaSp, ct => ct.MaSp, (sp, ct) => new
+            {
+                MaDm = sp.MaDm,
+                TenDm = sp.TenDm,
+                SoLuong = ct.SoLuong,
+                MaSp = ct.MaSp,
+                ConLai = sp.ConLai
+            }).GroupBy(x => new { MaDm = x.MaDm, TenDm = x.TenDm })
+                    .Select(g => new DanhMucThietYeuVM()
+                    {
+                        Ten = g.Key.TenDm,
+                        SoLoaiSanPham = g.Select(i => i.MaSp).Distinct().Count(),
+                        SoLuongBanRa = g.Sum(i => i.SoLuong),
+                        SoLuongConLai = g.Sum(i => i.ConLai)
+                    }).ToList();
             return reports;
         }
         public async Task<List<NguoiDungTheoVungVM>> ThongKeNguoiDung()
@@ -165,7 +179,7 @@ namespace BackEndAPI.Services
             if (thoigian == "thang")
             {
                 reports = query.Where(x => x.NgayMua.Month == DateTime.Now.Month && x.NgayMua.Year == DateTime.Now.Year)
-                    .GroupBy(x => new { x.MaCuaHang, x.TenCuaHang})
+                    .GroupBy(x => new { x.MaCuaHang, x.TenCuaHang })
                     .Select(x => new DoanhThuVM
                     {
                         Ten = x.Key.TenCuaHang,

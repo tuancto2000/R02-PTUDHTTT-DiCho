@@ -167,11 +167,11 @@ namespace BackEndAPI.Controllers
                 default: return state;
             }
         }
-        [HttpGet("test/{storeId}")]
-        public async Task<IActionResult> Test(int storeId)
+        [HttpGet("getbystore/{storeId}")]
+        public async Task<IActionResult> GetByStore(int storeId)
         {
-            var product = _context.SanPham.Include(x => x.CuaHang).Where(x => x.MaCuaHang == storeId);
-            return Ok(product);
+            var donhang = _context.DonHang.Include(x => x.DSChiTietDonHang).Where(x => x.MaCuaHang == storeId);
+            return Ok(donhang);
         }
     }
 }

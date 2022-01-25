@@ -22,10 +22,11 @@ namespace BackEndAPI.Controllers
         {
             _context = context;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("getbyrole/{role}")]
+        public async Task<IActionResult> GetUsersByRole(int role)
         {
-            return Ok();
+            var nguoidung = _context.NguoiDung.Where(x => (int)x.VaiTro == role).ToList();
+            return Ok(nguoidung);
         }
         [HttpPost("getUser")]
         public async Task<IActionResult> getUser(string username)
