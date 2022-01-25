@@ -13,7 +13,7 @@ namespace BackEndAPI.Entities
         public int MaCuaHang { get; set; }
         public int? MaShipper { get; set; }
         public string DiaChi { get; set; }
-        public DateTime? NgayMua { get; set; }
+        public DateTime NgayMua { get; set; }
         public TrangThaiDonHang TrangThai { get; set; }
         public DateTime? NgayCapNhat { get; set; }
         public string TenNguoiNhan { get; set; }

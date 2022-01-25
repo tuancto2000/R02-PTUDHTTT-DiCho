@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-6">
+        <h1>Order</h1>
+    </div>
+
+</div>
+<div class="row">
+        <form  method="GET" class="form-inline md-form">
+            <div class="col-2 m-0 pl-0">
+                <input class="form-control mr-sm-2 border border-secondary " type="text" placeholder="Tìm kiếm theo địa chỉ"
+                    aria-label="Search" name="search" value="{{search}}" style="width: 100%;">
+            </div>
+           
+            <div class="col-1">
+                <button class="btn btn-outline-primary align-self-center" type="submit"><i class="fa fa-search fa-lg"
+                        aria-hidden="true"></i></button>
+            </div>
+            
+        </form>
+</div>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Địa chỉ</th>
+            <th scope="col">Ngày mua</th>
+            <th scope="col">Tên người nhận</th>
+            <th scope="col">SĐT người nhận</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Trạng thái</th>
+
+            <th scope="col" class="text-end">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each orders}}
+        <tr>
+            <th scope="row">{{this.diaChi}}</th>
+            <td>{{this.ngayMua}}</td>
+            <td>{{this.tenNguoiNhan}}</td>
+            <td>{{this.sdt}}</td>
+            <td>{{this.tongTien}}</td>
+            <td>{{this.trangThai}}</td>
+            <td class="text-end">
+                <a href="/admin/shipper-detail?id={{this.maDonHang}}" type="button" class="btn btn-light btn-small"><i class="bi bi-eye"></i>
+                    View Detail</a>
+            </td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+
+</table>
+   <nav aria-label="Page navigation example">
+        {{{paginateHelper pagination paginationClass="pagination"}}}
+    </nav>

@@ -273,7 +273,7 @@ namespace BackEndAPI.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAY_CAP_NHAT");
 
-                    b.Property<DateTime?>("NgayMua")
+                    b.Property<DateTime>("NgayMua")
                         .HasColumnType("datetime2")
                         .HasColumnName("NGAY_MUA");
 

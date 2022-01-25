@@ -1,0 +1,7 @@
+select {
+    width: 20rem;
+}
+
+input[type='number']{
+    width: 20rem;
+} 

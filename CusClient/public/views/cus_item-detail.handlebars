@@ -9,24 +9,20 @@
                     <div class="product__details__pic">
                         <div class="product__details__pic__item">
                             <img class="product__details__pic__item--large"
-                                src="img/product/details/product-details-1.jpg" alt="">
+                                src="{{sanpham.nguon_hinh_anh}}" alt="" style="width: 520px; height:350px">
                         </div>
                         <div class="product__details__pic__slider owl-carousel">
-                            <img data-imgbigurl="img/product/details/product-details-2.jpg"
-                                src="img/product/details/thumb-1.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-3.jpg"
-                                src="img/product/details/thumb-2.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-5.jpg"
-                                src="img/product/details/thumb-3.jpg" alt="">
-                            <img data-imgbigurl="img/product/details/product-details-4.jpg"
-                                src="img/product/details/thumb-4.jpg" alt="">
+                            {{#each hinhanh}}
+                            <img data-imgbigurl="{{this.nguon_hinh_anh}}"
+                                src="{{this.nguon_hinh_anh}}" alt="" style="width: 100px; height:100px">
+                            {{/each}}
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__text">
-                        <h3>Vetgetable’s Package</h3>
-                        <div class="product__details__price">$50.00</div>
+                        <h3>{{sanpham.ten_sp}}</h3>
+                        <div class="product__details__price">{{sanpham.gia_sp}}</div>
                         <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
                             quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
@@ -37,12 +33,10 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">ADD TO CARD</a>
+                        <a href="#" class="primary-btn">Thêm vào giỏ hàng</a>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                         <ul>
-                            <li><b>Availability</b> <span>In Stock</span></li>
-                            <li><b>Shipping</b> <span>01 day shipping. <samp>Free pickup today</samp></span></li>
-                            <li><b>Weight</b> <span>0.5 kg</span></li>
+                            <li><b>Số lượng còn lại</b> <span>{{sanpham.so_luong_con_lai}}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -142,66 +136,23 @@
                 </div>
             </div>
             <div class="row">
+                {{#each sanphams}}
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/product/product-1.jpg">
+                        <div class="product__item__pic set-bg" data-setbg="{{this.nguon_hinh_anh}}">
                             <ul class="product__item__pic__hover">
                                
                                 
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                                <li><a href="/item-detail?id={{this.ma_sp}}"><i class="fa fa-shopping-cart"></i></a></li>
                             </ul>
                         </div>
                         <div class="product__item__text">
-                            <h6><a href="#">Crab Pool Security</a></h6>
-                            <h5>$30.00</h5>
+                            <h6><a href="#">{{this.ten_sp}}</a></h6>
+                            <h5>{{this.gia_sp}}</h5>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/product/product-2.jpg">
-                            <ul class="product__item__pic__hover">
-                               
-                                
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Crab Pool Security</a></h6>
-                            <h5>$30.00</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/product/product-3.jpg">
-                            <ul class="product__item__pic__hover">
-                               
-                                
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Crab Pool Security</a></h6>
-                            <h5>$30.00</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="img/product/product-7.jpg">
-                            <ul class="product__item__pic__hover">
-                               
-                                
-                                <li><a href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                            </ul>
-                        </div>
-                        <div class="product__item__text">
-                            <h6><a href="#">Crab Pool Security</a></h6>
-                            <h5>$30.00</h5>
-                        </div>
-                    </div>
-                </div>
+                {{/each}}
             </div>
         </div>
     </section>

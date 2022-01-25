@@ -1,4 +1,5 @@
 using BackEndAPI.Entities;
+using BackEndAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,6 +43,7 @@ namespace BackEndAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "BackEndAPI", Version = "v1" });
             });
+            services.AddTransient<IStatiticService, StatiticService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

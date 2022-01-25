@@ -39,6 +39,18 @@ exports.cancel = async (id) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
+
+exports.nextstage = async (id,shipperId) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "put",
+        url: "/orders/" + id + `?shipperId=${shipperId}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
 exports.nextState = async (id) => {
     const rs = await axios({
         baseURL: netBaseURL,
@@ -100,6 +112,28 @@ exports.getOrderDetail = async (id) => {
         baseURL: javaBaseURL,
         method: "get",
         url: `/orders/${id}/detail`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.getByStoreId = async (id) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "get",
+        url: `/orders/getbystore/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.getByShipper = async (id) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "get",
+        url: `/orders/getbyshipper/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

@@ -1,13 +1,7 @@
 
 <body>
    
-    <!-- Hero Section Begin -->
-    <section class="hero hero-normal">
-        <div class="container">
-            
-        </div>
-    </section>
-    <!-- Hero Section End -->
+    
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
@@ -36,33 +30,36 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Id</th>
-                                    <th>Ngày đặt hàng</th>
+                                    <th>Tên cửa hàng</th>
                                     <th>Giá</th>
-                                    <th>Ngày nhận hàng</th>
+                                    <th>Ngày mua</th>
+                                    <th>Tình trạng đơn</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {{#each history}}
                                 <tr>
+                                 
                                     <td>
-                                        <h5>1</h5>
-                                    </td>
-                                    <td>
-                                        12/12/2021
+                                        {{this.ten_cua_hang}}
                                     </td>
                                     
                                     <td>
-                                        $110.00
+                                        {{this.tongtien}}
                                     </td>
                                     <td>
-                                        null
+                                        {{this.ngay_mua}}
+                                    </td>
+                                    <td>
+                                        {{this.trang_thai}}
                                     </td>
                                     <td class ="shoping__cart__item__close">
-                                        <span class="icon_close"></span>
+                                        <span class="icon_open"></span>
                                         <span class="icon_close"></span>
                                     </td>
                                 </tr>
+                                {{/each}}
                             </tbody>
                         </table>
                     </div>
@@ -82,7 +79,7 @@
                     <div class="shoping__checkout">
                         <h5>Tổng chi</h5>
                         <ul>
-                            <li><span>$454.98</span></li>
+                            <li><span>{{sumtien}}</span></li>
                         </ul>
                     </div>
                 </div>

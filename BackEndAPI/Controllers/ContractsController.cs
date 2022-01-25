@@ -112,6 +112,7 @@ namespace BackEndAPI.Controllers
                 .Where(x => x.NguoiDung.KichHoat == false && x.NguoiDung.VaiTro == loainguoidung)
                             .Select(x => new
                             {
+                                MaHopDong = x.MaHopDong,
                                 TenNguoiDung = x.NguoiDung.TenNguoiDung,
                                 Sdt = x.NguoiDung.Sdt,
                                 Email = x.NguoiDung.Email,
@@ -133,6 +134,16 @@ namespace BackEndAPI.Controllers
             var contract = await _context.HopDong.Include(x => x.NguoiDung).ThenInclude(x => x.CuaHang)
                 .FirstOrDefaultAsync(x => x.MaHopDong == contractId && x.NguoiDung.VaiTro == LoaiNguoiDung.CuaHang);
             return Ok(contract);
+        }
+        [HttpGet("/check-store/{userId}")]
+        public async Task<IActionResult> CheckStore(int userId)
+        {
+            var nguoidung = await _context.NguoiDung.FindAsync(userId);
+            if (nguoidung == null)
+                throw new Exception($"Khong tim thay nguoi dung voi Id : {userId}");
+            if (nguoidung.VaiTro == LoaiNguoiDung.CuaHang && nguoidung.KichHoat == true)
+                return Ok(true);
+            else return Ok(false);
         }
     }
 }

@@ -33,7 +33,7 @@ exports.addUser = async (data) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.getPassword= async (username)=>{
+exports.getPassword = async (username) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
@@ -42,8 +42,8 @@ exports.getPassword= async (username)=>{
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
-}
-exports.getUser= async (username)=>{
+};
+exports.getUser = async (username) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
@@ -52,4 +52,39 @@ exports.getUser= async (username)=>{
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
-}
+};
+exports.getByRole = async (role) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: netBaseURL,
+        url: `/Users/getbyrole/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+exports.paging = async (role) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: netBaseURL,
+        url: `/Users/paging`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+exports.changePassword = async (data) => {
+    const { username, password } = data;
+    const rs = await axios({
+        method: "post",
+        baseURL: netBaseURL,
+        url: `/Users/changePassword`,
+        data: {
+            username: username,
+            password: password,
+        },
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};

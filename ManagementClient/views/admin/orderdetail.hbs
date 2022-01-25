@@ -1,0 +1,29 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detail User</li>
+    </ol>
+</nav>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên shipper</th>
+            <th scope="col">Ngày sinh</th>
+            <th scope="col">Email</th>
+            <th scope="col">SDT</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>{{detail.ten_NGUOI_DUNG}}</td>
+            <td>{{detail.ngay_SINH}}</td>
+            <td>{{detail.email}}</td>
+            <td>{{detail.sdt}}</td>
+        </tr>
+
+    </tbody>
+</table>
+<div class="col-12 d-grid">
+    <a href="/admin/orderlist"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>

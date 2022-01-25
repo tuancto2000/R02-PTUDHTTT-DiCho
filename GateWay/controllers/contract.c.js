@@ -3,7 +3,7 @@ const router = express.Router();
 const model = require("../models/contract.M");
 module.exports = router;
 router.get("/", async (req, res) => {
-    let page = req.query.type;
+    let type = req.query.type;
     const data = await model.getByType(type);
     res.send(data);
 });
@@ -31,4 +31,9 @@ router.post("/store", async (req, res) => {
     let data = req.body;
     const result = await model.addStore(data);
     res.status(200).res.send(result);
+});
+router.get("/check-store/:id", async (req, res) => {
+    let id = req.params.id;
+    const data = await model.checkStore(id);
+    res.send(data);
 });

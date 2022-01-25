@@ -7,9 +7,10 @@ namespace BackEndAPI.ViewModels.Statitics
 {
     public class MatHangThietYeuVM
     {
-        public string TenDanhMuc { get; set; }
-        public int TongSoLuongBanRa { get; set; }
-        public int TongDoanhThu { get; set; }
-        public List<DoanhThuSanPhamVM> DsSanPham { get; set; }
+        public string TenSp { get; set; }
+        public int? SoLuongConLai { get; set; }
+        public double TrungBinhSao { get; set; }
+        public int SoLuongBanRa { get; set; }
+        public int SoLuotDanhGia { get; set; }
     }
 }

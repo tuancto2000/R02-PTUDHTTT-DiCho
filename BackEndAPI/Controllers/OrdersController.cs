@@ -24,41 +24,69 @@ namespace BackEndAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DonHangCreateRequest request)
         {
-            var chitiet = new List<ChiTietDonHang>();
+            var checkout = new List<CheckOutVM>();
             foreach (var item in request.DSChiTietDonHang)
             {
-                chitiet.Add(new ChiTietDonHang
+                var sanpham = await _context.SanPham.FindAsync(item.MaSp);
+                if (sanpham == null) return BadRequest("Khong tim thay san pham");
+                var maCuaHang = sanpham.MaCuaHang;
+                var rs = checkout.FirstOrDefault(x => x.MaCuaHang == maCuaHang);
+                if (rs != null)
                 {
-                    MaSp = item.MaSp,
-                    SoLuong = item.SoLuong,
-                    DonGia = item.DonGia
-                });
+                    checkout.FirstOrDefault(x => x.MaCuaHang == maCuaHang).DsChiTiet.Add(new ChiTietDonHang
+                    {
+                        MaSp = item.MaSp,
+                        SoLuong = item.SoLuong,
+                        DonGia = item.DonGia
+                    });
+                }
+                else
+                {
+                    var ds = new List<ChiTietDonHang>();
+                    ds.Add(new ChiTietDonHang
+                    {
+                        MaSp = item.MaSp,
+                        SoLuong = item.SoLuong,
+                        DonGia = item.DonGia
+                    });
+                    var c = new CheckOutVM
+                    {
+                        MaCuaHang = maCuaHang,
+                        DsChiTiet = ds
+                    };
+                    checkout.Add(c);
+                }
             }
-            var donhang = new DonHang
+            foreach (var item in checkout)
             {
-                MaNguoiDung = request.MaNguoiDung,
-                MaCuaHang = request.MaCuaHang,
-                //DiaChi = request.DiaChi,
-                NgayMua = DateTime.Now,
-                TrangThai = TrangThaiDonHang.ChoXacNhan,
-                TenNguoiNhan = request.TenNguoiNhan,
-                Sdt = request.Sdt,
-                PhanHoi = request.PhanHoi,
-                DSChiTietDonHang = chitiet,
-                TongTien = chitiet.Sum(x => x.SoLuong * x.DonGia)
-            };
-            _context.DonHang.Add(donhang);
+                var donhang = new DonHang
+                {
+                    MaNguoiDung = request.MaNguoiDung,
+                    MaCuaHang = item.MaCuaHang,
+                    DiaChi = request.DiaChi,
+                    NgayMua = DateTime.Now,
+                    TrangThai = TrangThaiDonHang.ChoXacNhan,
+                    TenNguoiNhan = request.TenNguoiNhan,
+                    Sdt = request.Sdt,
+                    PhanHoi = request.PhanHoi,
+                    DSChiTietDonHang = item.DsChiTiet,
+                    TongTien = item.DsChiTiet.Sum(x => x.SoLuong * x.DonGia)
+                };
+                _context.DonHang.Add(donhang);
+            }
 
             if (await _context.SaveChangesAsync() > 0)
-                return Ok(donhang.MaDonHang);
+                return Ok();
             return BadRequest("Co loi trong qua trinh tao don hang");
         }
         [HttpGet("paging")]
-        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1, int pageSize = 7)
+        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1,
+            int pageSize = 7, int maKhachHang = 0)
         {
             var orders = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
                .Include(x => x.NguoiMua).Include(x => x.Shipper).Include(x => x.CuaHang).AsQueryable();
-            if (!String.IsNullOrEmpty(search)) orders = orders.Where(x => x.NguoiMua.TenNguoiDung.Contains(search) || x.TenNguoiNhan.Contains(search));
+            if (maKhachHang != 0) orders = orders.Where(x => x.MaNguoiDung == maKhachHang);
+            if (!String.IsNullOrEmpty(search)) orders = orders.Where(x => x.DiaChi.Contains(search));
             if (state != -1) orders = orders.Where(x => (int)x.TrangThai == state);
             var total = await orders.CountAsync();
             orders = orders.Skip((page - 1) * pageSize).Take(pageSize);
@@ -167,11 +195,63 @@ namespace BackEndAPI.Controllers
                 default: return state;
             }
         }
-        [HttpGet("test/{storeId}")]
-        public async Task<IActionResult> Test(int storeId)
+        [HttpGet("getbystore/{storeId}")]
+        public async Task<IActionResult> GetByStore(int storeId)
         {
-            var product = _context.SanPham.Include(x => x.CuaHang).Where(x => x.MaCuaHang == storeId);
-            return Ok(product);
+            var donhang = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
+                .Where(x => x.MaCuaHang == storeId).Select(x => new DonHangVM
+                {
+                    MaDonHang = x.MaDonHang,
+                    TenNguoiDung = x.NguoiMua.TenNguoiDung,
+                    TenCuaHang = x.CuaHang.TenCuaHang,
+                    DiaChi = x.DiaChi,
+                    NgayMua = x.NgayMua,
+                    TrangThai = x.TrangThai.ToString(),
+                    TenNguoiNhan = x.TenNguoiNhan,
+                    Sdt = x.Sdt,
+                    PhanHoi = x.PhanHoi,
+                    TongTien = x.TongTien,
+                    DSChiTietDonHang = x.DSChiTietDonHang.Select(x => new ChiTietVM
+                    {
+                        DonGia = x.DonGia,
+                        MaSp = x.MaSp,
+                        SoLuong = x.SoLuong,
+                        TenSp = x.SanPham.TenSp
+                    }).ToList()
+                }).ToList();
+
+            return Ok(donhang);
+        }
+        [HttpGet("getbyshipper/{shipperId}")]
+        public async Task<IActionResult> GetByShipper(int shipperId)
+        {
+            var donhang = _context.DonHang.Include(x => x.NguoiMua).Include(x => x.CuaHang).Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham).AsEnumerable();
+            if (shipperId == 0) donhang = donhang.Where(x => x.MaShipper == null && x.TrangThai == TrangThaiDonHang.DongGoi);
+            else
+            {
+                donhang = donhang.Where(x => x.MaShipper == shipperId);
+            };
+            var data = donhang.Select(x => new DonHangVM
+            {
+                MaDonHang = x.MaDonHang,
+                TenNguoiDung = x.NguoiMua.TenNguoiDung,
+                TenCuaHang = x.CuaHang.TenCuaHang,
+                DiaChi = x.DiaChi,
+                NgayMua = x.NgayMua,
+                TrangThai = x.TrangThai.ToString(),
+                TenNguoiNhan = x.TenNguoiNhan,
+                Sdt = x.Sdt,
+                PhanHoi = x.PhanHoi,
+                TongTien = x.TongTien,
+                DSChiTietDonHang = x.DSChiTietDonHang.Select(x => new ChiTietVM
+                {
+                    DonGia = x.DonGia,
+                    MaSp = x.MaSp,
+                    SoLuong = x.SoLuong,
+                    TenSp = x.SanPham.TenSp
+                }).ToList()
+            }).ToList();
+            return Ok(data);
         }
     }
 }
