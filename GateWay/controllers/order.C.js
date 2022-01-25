@@ -62,3 +62,9 @@ router.get("/getbystore/:id", async (req, res) => {
     const data = await model.getByStoreId(id);
     res.send(data);
 });
+
+router.get("/getbyshipper/:id", async (req, res) => {
+    let id = req.params.id;
+    const data = await model.getByShipper(id);
+    res.send(data);
+});

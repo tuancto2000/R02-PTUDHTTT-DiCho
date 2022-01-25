@@ -22,6 +22,12 @@ namespace BackEndAPI.Controllers
         {
             _context = context;
         }
+        [HttpGet("paging")]
+        public async Task<IActionResult> GetPaging(int role)
+        {
+            var nguoidung = _context.NguoiDung.Where(x => (int)x.VaiTro == role).ToList();
+            return Ok(nguoidung);
+        }
         [HttpGet("getbyrole/{role}")]
         public async Task<IActionResult> GetUsersByRole(int role)
         {
@@ -99,8 +105,19 @@ namespace BackEndAPI.Controllers
                 return Ok(taikhoan.MaNguoiDung);
             return BadRequest("Co loi trong qua trinh tao tai khoan");
         }
-
-
+        [HttpPost("changePassword")]
+        public async Task<IActionResult> ChangePassword(string username,string password)
+        {
+            var taikhoan = await _context.TaiKhoan.FirstOrDefaultAsync(x => x.Username == username);
+            if (taikhoan == null)
+                return BadRequest($"Khong tim thay ten dang nhap");
+            var user = await _context.TaiKhoan.FindAsync(taikhoan.MaNguoiDung);
+            if (user == null)
+                return BadRequest("Khong tim that nguoi dung");
+            taikhoan.MatKhau = password;
+            await _context.SaveChangesAsync();
+            return Ok(user.MaNguoiDung);
+        }
     }
 
 }

@@ -31,7 +31,7 @@ namespace BackEndAPI.Controllers
                 if (sanpham == null) return BadRequest("Khong tim thay san pham");
                 var maCuaHang = sanpham.MaCuaHang;
                 var rs = checkout.FirstOrDefault(x => x.MaCuaHang == maCuaHang);
-                if(rs != null)
+                if (rs != null)
                 {
                     checkout.FirstOrDefault(x => x.MaCuaHang == maCuaHang).DsChiTiet.Add(new ChiTietDonHang
                     {
@@ -74,13 +74,13 @@ namespace BackEndAPI.Controllers
                 };
                 _context.DonHang.Add(donhang);
             }
-           
+
             if (await _context.SaveChangesAsync() > 0)
                 return Ok();
             return BadRequest("Co loi trong qua trinh tao don hang");
         }
         [HttpGet("paging")]
-        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1, 
+        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1,
             int pageSize = 7, int maKhachHang = 0)
         {
             var orders = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
@@ -218,7 +218,7 @@ namespace BackEndAPI.Controllers
                         SoLuong = x.SoLuong,
                         TenSp = x.SanPham.TenSp
                     }).ToList()
-                }).ToList(); 
+                }).ToList();
 
             return Ok(donhang);
         }
