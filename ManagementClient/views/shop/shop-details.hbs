@@ -30,8 +30,7 @@
                             <p>hello@colorlib.com</p>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-6 text-center">
-                            <a type="button" class="site-btn">Danh sách đơn hàng</a>
-
+                            <a href ="/shop/orderlist" type="button" class="site-btn">Danh sách đơn hàng</a>
                         </div>
                     </div>
                 </div>
@@ -47,6 +46,10 @@
                     <div class="section-title">
                         <h2>Danh sách sản phẩm</h2>
                     </div>
+                    <div class="section-title">
+                        <a href ="/shop/newproduct" type="button" class="site-btn">Thêm sản phẩm</a>
+                    </div>
+
                 </div>
             </div>
             <div class="row featured__filter">
@@ -55,7 +58,7 @@
                         <div class="featured__item">
                             <div class="featured__item__pic set-bg" data-setbg="{{this.nguon_hinh_anh}}">
                                 <ul class="featured__item__pic__hover">
-                                    <li><a href="/item-detail?id={{this.ma_sp}}"><i class="fa fa-shopping-cart"></i></a></li>
+                                    <li><a href="/shop/edit-product?id={{this.ma_sp}}"><i class="fa fa-shopping-cart"></i></a></li>
                                 </ul>
                             </div>
                             <div class="featured__item__text">

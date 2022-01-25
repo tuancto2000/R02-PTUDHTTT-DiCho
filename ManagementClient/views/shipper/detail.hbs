@@ -4,6 +4,12 @@
         <li class="breadcrumb-item active" aria-current="page">Detail User</li>
     </ol>
 </nav>
+<div class="row">
+    <div class="col">
+        <a href="/shipper"><button class="btn btn-primary" type="submit">Back</button></a>
+    </div>
+   
+</div>
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -25,9 +31,6 @@
 
     </tbody>
 </table>
-<div class="col-12 d-grid">
-    <a href="/shipper"><button class="btn btn-primary" type="submit">Back</button></a>
-</div>
-<div class="col-12 d-grid">
-    <a href="/shipper"><button class="btn btn-primary" type="submit">Nhận đơn hàng</button></a>
+ <div class="col" style="text-align: end;">
+        <a href="/shipper/accept?id={{orderid}}&shipperId=110"><button class="btn btn-primary" type="submit">Nhận đơn hàng</button></a>
 </div>

@@ -90,3 +90,15 @@ router.get("/shipper-detail", async (req, res) => {
       
     });
   });
+
+  
+
+router.get("/item-detail", async (req, res) => {
+  const data = await productModel.getAllByProductID(req.query.id);
+  console.log(data);
+  res.render("admin/itemdetail", {
+    detail: data.sanpham,
+    layout:'adminLayout',
+    images: data.hinhanh,
+  });
+});

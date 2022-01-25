@@ -122,7 +122,7 @@ exports.getByStoreId = async (id) => {
     const rs = await axios({
         baseURL: netBaseURL,
         method: "get",
-        url: `/getbystore/${id}`,
+        url: `Orders/getbystore/${id}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

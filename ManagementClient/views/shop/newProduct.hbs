@@ -1,0 +1,55 @@
+<div class="container-fluid mt-3">
+    <h1 class="mt-4">Thêm Nhu Yếu Phẩm</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Tên sản phẩm</label>
+                    <input type="text" class="form-control" id="title" name="ten_sp">
+                </div>
+                <div class="form-group" style="display: none;">
+                    <input type="text" class="form-control"  name="ma_cua_hang" value="{{macuahang}}">
+                </div>
+                 <div class="form-group">
+                    <label for="danhmuc">Danh mục</label>
+                     <select id="danhmuc" name="danhmuc" class="form-select form-select-md border border-secondary ">
+                         <option value="">Tên danh mục</option>
+                    {{#each danhmuc}}
+                       <option value="{{this.ma_dm}}">{{this.ten_dm}}</option>
+                    {{/each}}
+                </select>
+                </div>
+               
+                <div class="form-group">
+                    <label for="basePrice">Giá</label>
+                    <input type="number" class="form-control" id="basePrice" name="gia_sp">
+                </div>
+                <div class="form-group">
+                    <label for="description">Số lượng còn lại</label>
+                    <input type="number" class="form-control" id="basePrice" name="so_luong_con_lai">
+                </div>
+                 <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea class="form-control" id="description" rows="3" name="mo_ta"></textarea>
+                </div>
+                <div class="col-6">
+                    <label for="floatingInput"> Hình ảnh </label>
+                    <div class="form-floating mb-3">
+                        <input data-preview-file-type="text" class='file' type="file" required type="text"
+                            class="form-control" id='image' name="nguon_hinh_anh" multiple>
+                    </div>
+                </div>
+                <a href="/shop">
+                    <button type="button" class="btn btn-lg btn-primary align-self-center" onclick="goBack()">Trở
+                        lại</button>
+                </a>
+                <button type="submit" class="btn btn-lg btn-primary align-self-center">Thêm sản phẩm</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function goBack() {
+        window.history.back();
+    }
+</script>

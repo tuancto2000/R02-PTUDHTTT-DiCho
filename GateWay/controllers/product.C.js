@@ -49,17 +49,17 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
     let data = req.body;
     const result = await model.addProduct(data);
-    res.status(200).res.send(result);
+    res.status(200).send(result);
 });
 
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.updateProduct(id);
-    res.status(200).res.send(data);
+    res.status(200).send(data);
 });
 
 router.delete("/:id", async (req, res) => {
     let id = req.params.id;
     const data = await model.deleteProduct(id);
-    res.status(200).res.send(data);
+    res.status(200).send(data);
 });

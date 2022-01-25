@@ -1,171 +1,96 @@
-<!DOCTYPE html>
-<html lang="zxx">
+<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Ogani Template">
-    <meta name="keywords" content="Ogani, unica, creative, html">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Ogani | Template</title>
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
-
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="../css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="../css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="../css/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="../css/jquery-ui.min.css" type="text/css">
-    <link rel="stylesheet" href="../css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="../css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="../css/style.css" type="text/css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Website Quản lý thông tin Covid</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/fileinput.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="../js/plugins/piexif.min.js"></script>
+    <script src="../js/plugins/sortable.min.js"></script>
+    <script src="../js/themes/fas/theme.min.js"></script>
+    <script src="../js/fileinput.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script src="../js/datatables-simple-demo.js"></script>
     {{{head}}}
-</head>
+  </head>
 
-<body>
-    <!-- Page Preloder -->
-    <div id="preloder">
-        <div class="loader"></div>
+  <body>
+    <div class="sb-nav-fixed">
+      <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="/">Home</a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+            class="fas fa-bars"
+          ></i></button>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        </form>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+          <li id="logout">
+            <a class="nav-link" role="button">Đăng xuất</a>
+          </li>
+        </ul>
+      </nav>
+
     </div>
-
-    <!-- Humberger Begin -->
-    <div class="humberger__menu__overlay"></div>
-    <div class="humberger__menu__wrapper">
-        <div class="humberger__menu__logo">
-            <a href="#"><img src="img/logo.png" alt=""></a>
-        </div>
-        <div class="humberger__menu__cart">
-           
-        </div>
-        <div class="humberger__menu__widget">
-            <div class="header__top__right__language">
-                <img src="img/language.png" alt="">
-                <div>English</div>
+    <div id="layoutSidenav">
+      <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+          <div class="sb-sidenav-menu">
+            <div class="nav">
+              <div class="sb-sidenav-menu-heading">Core</div>
+              <a class="nav-link" href="#">
+                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                Dashboard
+              </a>
+              <div class="sb-sidenav-menu-heading">Quản trị</div>
+              <a class="nav-link collapsed" href="/shipper">
+                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                Danh sách đơn hàng
+              </a>
+              <a class="nav-link collapsed" href="/shipper/history?id=110">
+                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                Lịch sử giao hàng
+              </a>
+              
             </div>
-            <div class="header__top__right__auth">
-                <a href="/login-form"><i class="fa fa-user"></i> Đăng nhập</a>
-            </div>
-        </div>
-        <nav class="humberger__menu__nav mobile-menu">
-            <ul>
-                <li class="active"><a href="/shop">Trang chủ</a></li>
-            </ul>
+          </div>
+          <div class="sb-sidenav-footer">
+            Người quản trị
+          </div>
         </nav>
-        <div id="mobile-menu-wrap"></div>
-        <div class="humberger__menu__contact">
-            <ul>
-                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-            </ul>
-        </div>
+      </div>
+      <div id="layoutSidenav_content" class="p-3">
+        <main>
+          {{{body}}}
+        </main>
+      </div>
     </div>
-    <!-- Humberger End -->
+    <div class="container-fluid">
 
-    <!-- Header Section Begin -->
-    <header class="header">
-        <div class="header__top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                        <div class="header__top__left">
-                            <ul>
-                                <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                        <div class="header__top__right">
-                            <div class="header__top__right__auth">
-                                <a href="/login-form"><i class="fa fa-user"></i> Login</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="header__logo">
-                        <a href="/"><img src="img/logo.png" alt=""></a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <nav class="header__menu">
-                        <ul>
-                            <li class="active"><a href="/shop">Trang chủ</a></li>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="col-lg-3">
-                </div>
-            </div>
-            <div class="humberger__open">
-                <i class="fa fa-bars"></i>
-            </div>
-        </div>
-    </header>
-    <!-- Header Section End -->
-    <!-- Hero Section Begin -->
-    <section class="hero">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    
-                </div>
-                <div class="col-lg-9">
-                    <div class="hero__search">
-                        <div class="hero__search__form">
-                            <form action="#">
-                                <input type="text" placeholder="Bạn cần tìm gì?">
-                                <button type="submit" class="site-btn">Tìm kiếm trong shop</button>
-                            </form>
-                        </div>
-                        <div class="hero__search__phone">
-                            <div class="hero__search__phone__icon">
-                                <i class="fa fa-phone"></i>
-                            </div>
-                            <div class="hero__search__phone__text">
-                                <h5>+65 11.188.888</h5>
-                                <span>Hỗ trợ 24/7</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Hero Section End -->
-    {{{body}}}
-    <!-- Footer Section Begin -->
-    <footer class="footer spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="footer__copyright">
-                        <div class="footer__copyright__text"><p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- Footer Section End -->
-
-    <!-- Js Plugins -->
-    <script src="../js/jquery-3.3.1.min.js"></script>
-    <script src="../js/bootstrap.min.js"></script>
-    <script src="../js/jquery.nice-select.min.js"></script>
-    <script src="../js/jquery-ui.min.js"></script>
-    <script src="../js/jquery.slicknav.js"></script>
-    <script src="../js/mixitup.min.js"></script>
-    <script src="../js/owl.carousel.min.js"></script>
+    </div>
     <script src="../js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script type="text/javascript" src="/js/logout.js"></script>
 
-
-
-</body>
+  </body>
 
 </html>
