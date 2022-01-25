@@ -80,7 +80,8 @@ namespace BackEndAPI.Controllers
             return BadRequest("Co loi trong qua trinh tao don hang");
         }
         [HttpGet("paging")]
-        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1, int pageSize = 7, int maKhachHang = 0)
+        public async Task<IActionResult> GetPaging(string search, int state = -1, int page = 1, 
+            int pageSize = 7, int maKhachHang = 0)
         {
             var orders = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham)
                .Include(x => x.NguoiMua).Include(x => x.Shipper).Include(x => x.CuaHang).AsQueryable();
@@ -220,6 +221,37 @@ namespace BackEndAPI.Controllers
                 }).ToList(); 
 
             return Ok(donhang);
+        }
+        [HttpGet("getbyshipper/{shipperId}")]
+        public async Task<IActionResult> GetByShipper(int shipperId)
+        {
+            var donhang = _context.DonHang.Include(x => x.DSChiTietDonHang).ThenInclude(x => x.SanPham).AsEnumerable();
+            if (shipperId == 0) donhang = donhang.Where(x => x.MaShipper == null && x.TrangThai == TrangThaiDonHang.DongGoi);
+            else
+            {
+                donhang = donhang.Where(x => x.MaShipper == shipperId);
+            };
+            var data = donhang.Select(x => new DonHangVM
+            {
+                MaDonHang = x.MaDonHang,
+                TenNguoiDung = x.NguoiMua.TenNguoiDung,
+                TenCuaHang = x.CuaHang.TenCuaHang,
+                DiaChi = x.DiaChi,
+                NgayMua = x.NgayMua,
+                TrangThai = x.TrangThai.ToString(),
+                TenNguoiNhan = x.TenNguoiNhan,
+                Sdt = x.Sdt,
+                PhanHoi = x.PhanHoi,
+                TongTien = x.TongTien,
+                DSChiTietDonHang = x.DSChiTietDonHang.Select(x => new ChiTietVM
+                {
+                    DonGia = x.DonGia,
+                    MaSp = x.MaSp,
+                    SoLuong = x.SoLuong,
+                    TenSp = x.SanPham.TenSp
+                }).ToList()
+            }).ToList();
+            return Ok(data);
         }
     }
 }

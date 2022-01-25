@@ -30,7 +30,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<NguoiDungTheoVungVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = "http://localhost:18291/api/statitics/export/nguoidung"
             };
             return Ok(result);
         }
@@ -41,7 +41,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<MatHangThietYeuVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = "http://localhost:18291/api/statitics/export/mat-hang-thiet-yeu?maCuaHang=" + maCuaHang
             };
             return Ok(result);
         }
@@ -52,7 +52,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<DanhMucThietYeuVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = "http://localhost:18291/api/statitics/export/danh-muc-thiet-yeu"
             };
             return Ok(result);
         }
@@ -65,7 +65,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<SanPhamCungKyVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = ""
             };
             return Ok(result);
         }
@@ -78,7 +78,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<DoanhThuVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = ""
             };
             return Ok(result);
         }
@@ -91,7 +91,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<DoanhThuVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/statitics/export/nguoidung"
+                UrlDownload = ""
             };
             return Ok(result);
         }
