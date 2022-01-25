@@ -1,8 +1,6 @@
-
-
 <body>
-   
-    
+
+
 
     <!-- Categories Section Begin -->
     <section class="categories">
@@ -29,12 +27,12 @@
                             <h5><a href="#">Đồ uống</a></h5>
                         </div>
                     </div>
-                   <div class="col-lg-3">
+                    <div class="col-lg-3">
                         <div class="categories__item set-bg" data-setbg="img/categories/cat-4.jpg">
                             <h5><a href="#">Đồ uống</a></h5>
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
         </div>
@@ -49,27 +47,28 @@
                     <div class="section-title">
                         <h2>Danh sách sản phẩm</h2>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="row featured__filter">
                 {{#each sanpham}}
-                    <div class="col-lg-3 col-md-4 col-sm-6 ">
-                        <div class="featured__item">
-                            <div class="featured__item__pic set-bg" data-setbg="{{this.nguon_hinh_anh}}">
-                                <ul class="featured__item__pic__hover">
-                                    
-                                    
-                                    <li><a href="/item-detail?id={{this.ma_sp}}"><i class="fa fa-shopping-cart"></i></a></li>
-                                </ul>
-                            </div>
-                            <div class="featured__item__text">
-                                <h6><a href="#">{{this.ten_sp}}</a></h6>
-                                <h5>{{this.gia_sp}}</h5>
-                                <span>Còn lại: {{this.so_luong_con_lai}}</span>
-                            </div>
+                <div class="col-lg-3 col-md-4 col-sm-6 ">
+                    <div class="featured__item">
+                        <div class="featured__item__pic set-bg" data-setbg="{{this.nguon_hinh_anh}}">
+                            <ul class="featured__item__pic__hover">
+
+
+                                <li><a href="/item-detail?id={{this.ma_sp}}"><i class="fa fa-shopping-cart"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="featured__item__text">
+                            <h6><a href="#">{{this.ten_sp}}</a></h6>
+                            <h5>{{this.gia_sp}}</h5>
+                            <span>Còn lại: {{this.so_luong_con_lai}}</span>
                         </div>
                     </div>
+                </div>
                 {{/each}}
             </div>
                 <nav aria-label="Page navigation example">
@@ -89,31 +88,31 @@
                         <h4>Lương thực</h4>
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item">
-                                
+
                                 {{#each product1}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
-                                
+
                             </div>
                             <div class="latest-prdouct__slider__item">
-                                 {{#each product12}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                {{#each product12}}
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
                             </div>
                         </div>
@@ -124,35 +123,35 @@
                         <h4>Nhu yếu phẩm</h4>
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item">
-                               
+
                                 {{#each product2}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
-                                
-                                
+
+
                             </div>
                             <div class="latest-prdouct__slider__item">
 
-                               {{#each product22}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                {{#each product22}}
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -163,32 +162,32 @@
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item">
                                 {{#each product3}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
-                               
-                                
+
+
                             </div>
                             <div class="latest-prdouct__slider__item">
                                 {{#each product32}}
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="{{this.nguon_hinh_anh}}" alt="">
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>{{this.ten_sp}}</h6>
-                                            <span>{{this.gia_sp}}</span>
-                                        </div>
-                                    </a>
+                                <a href="#" class="latest-product__item">
+                                    <div class="latest-product__item__pic">
+                                        <img src="{{this.nguon_hinh_anh}}" alt="">
+                                    </div>
+                                    <div class="latest-product__item__text">
+                                        <h6>{{this.ten_sp}}</h6>
+                                        <span>{{this.gia_sp}}</span>
+                                    </div>
+                                </a>
                                 {{/each}}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -199,6 +198,6 @@
 
     <!-- Latest Product Section End -->
 
-   
+
 
 </body>
