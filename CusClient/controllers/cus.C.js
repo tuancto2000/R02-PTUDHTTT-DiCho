@@ -34,6 +34,13 @@ router.get('/', async (req,res)=>{
   });
 
 
+  router.get('/login', async (req,res)=>{
+    
+    res.render('cus_login',{
+        layout: 'main' ,
+      });
+    });
+  
   router.get('/search', async (req,res)=>{
     const page = +req.query.page || 1;
     const pagesize = +req.query.pagesize || 8;
@@ -82,8 +89,20 @@ router.get('/shoping-cart', async (req,res)=>{
 });
 
 router.post('/shoping-cart', async (req,res)=>{
-  console.log(JSON.parse(JSON.stringify(req.body)));
-  res.redirect("/shopping-cart")
+  var temparr = {};
+  var chitietgiohang_list = [];
+  temparr = JSON.parse(JSON.stringify(req.body));
+  for(let i = 0 ; i <temparr.ma_sp.length;i++)
+  {
+      let tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
+      chitietgiohang_list.push(tempitem);
+  }
+  var data = {};
+  data.ma_nguoi_dung = 1;
+  data.chitietgiohang_list = chitietgiohang_list;
+  console.log(data);
+  await cartModel.updateCart(data);
+  res.redirect("/checkout")
 });
 
 

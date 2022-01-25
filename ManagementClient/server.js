@@ -27,4 +27,5 @@ hbs.handlebars.registerHelper("cond", function (v1, v2, options) {
 app.use("/shipper", require("./controllers/shipper.C"));
 app.use("/admin", require("./controllers/admin.C"));
 app.use("/shop", require("./controllers/shop.C"));
+app.use("/",require("./controllers/login.C"))
 app.listen(port);
