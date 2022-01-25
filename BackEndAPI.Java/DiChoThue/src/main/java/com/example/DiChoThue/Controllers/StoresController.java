@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.validation.Valid;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -33,7 +31,7 @@ public class StoresController {
 
     @GetMapping("/commission")
     public ResponseEntity<List<GetCommissionModel>> getCommission(@RequestParam(value = "date_start", required = false) String date_start,
-                                                            @RequestParam(value = "date_end", required = false) String date_end)
+                                                                  @RequestParam(value = "date_end", required = false) String date_end)
             throws ResourceNotFoundException {
         final double commission = 0.1;
         String sql = "";
@@ -54,8 +52,7 @@ public class StoresController {
                     + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
                     + "where dh.trang_thai = 5 and '"
                     + date_start + "' <= dh.ngay_mua group by dh.ma_cua_hang, ch.ten_cua_hang";
-        }
-        else{
+        } else {
             sql = "Select new " + GetCommissionModel.class.getName()
                     + "(dh.ma_cua_hang, ch.ten_cua_hang, sum(dh.tongtien) as doanh_thu, (sum(dh.tongtien) * " + commission + ") as hoa_hong) "
                     + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
