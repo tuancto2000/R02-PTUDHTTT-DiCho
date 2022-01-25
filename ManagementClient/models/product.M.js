@@ -76,6 +76,8 @@ exports.addProduct = async (data) => {
         method: "post",
         baseURL: BaseURL,
         url: `/product`,
+        dataType: 'json',
+        contentType: 'application/json',
         data: data,
     })
         .then((response) => response.data)
@@ -83,11 +85,14 @@ exports.addProduct = async (data) => {
     return rs;
 };
 
-exports.updateProduct = async (id) => {
+exports.updateProduct = async (id,data) => {
     const rs = await axios({
         baseURL: BaseURL,
         method: "put",
+        dataType: 'json',
+        contentType: 'application/json',
         url: `/product/${id}`,
+        data:data
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

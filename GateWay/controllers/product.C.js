@@ -41,13 +41,16 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
     let data = req.body;
+    console.log(data);
+    
+   
     const result = await model.addProduct(data);
-    res.status(200).send(result);
+    res.status(200).send();
 });
 
 router.put("/:id", async (req, res) => {
     let id = req.params.id;
-    const data = await model.updateProduct(id);
+    const data = await model.updateProduct(id,req.body);
     res.status(200).send(data);
 });
 

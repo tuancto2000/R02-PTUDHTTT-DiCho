@@ -81,7 +81,6 @@ router.get('/', async (req,res)=>{
 
 router.get('/shoping-cart', async (req,res)=>{
   let cart = await cartModel.getCart(1);
-  console.log(cart);
   res.render('cus_shoping-cart',{
     cart:cart.item,
     sum:cart.sum,
@@ -92,11 +91,23 @@ router.get('/shoping-cart', async (req,res)=>{
 router.post('/shoping-cart', async (req,res)=>{
   var temparr = {};
   var chitietgiohang_list = [];
+  console.log(req.body);
   temparr = JSON.parse(JSON.stringify(req.body));
-  for(let i = 0 ; i <temparr.ma_sp.length;i++)
+  console.log(temparr);
+  if(!temparr.ma_sp)
   {
-      let tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
-      chitietgiohang_list.push(tempitem);
+    let [first] = Object.keys(temparr)
+    first = (JSON.parse((first)));
+    chitietgiohang_list = first.chitietgiohang_list;
+    console.log(chitietgiohang_list)
+  }
+  else
+  {
+    for(let i = 0 ; i <temparr.ma_sp.length;i++)
+    {
+        let tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
+        chitietgiohang_list.push(tempitem);
+    }
   }
   var data = {};
   data.ma_nguoi_dung = 1;
@@ -117,6 +128,22 @@ router.get('/shoping-cart-history', async (req,res)=>{
 }
 );
 
+router.get("/rate-order", async (req, res) => {
+  let history = await orderModel.getById(req.query.id);
+ 
+  res.render('cus_shoping-cart-history-item',{
+      layout: 'customer_layout',
+      history:history,
+    })
+});
+
+
+router.post("/rate-order", async (req, res) => {
+  let data = req.body;
+  data.ma_nguoi_dung = 1;
+  await orderModel.addRate(data);
+  res.redirect("/shoping-cart-history")
+});
 
 router.get('/checkout', async (req,res)=>{
   res.render('cus_checkout',{
@@ -152,6 +179,13 @@ router.get('/shop', async (req,res)=>{
 });
 
 
+
+router.get("/cancel-order", async (req, res) => {
+  const data = await orderModel.cancel(req.query.id);
+  res.redirect("/shoping-cart-history");
+});
+
+
 router.get('/my-shop', async (req,res)=>{
   const check = await storeModel.checkStore(1);
   if(!check) res.redirect("/shop-grid1");
@@ -175,7 +209,15 @@ router.post('/shop-register', async (req,res)=>{
   const data = req.body;
   data.maNguoiDung = 2;
   storeModel.addStore(data);
+  
   res.redirect("/");
+});
+
+router.post('/addtocart', async (req,res)=>{
+  const data = JSON.parse(JSON.stringify(req.body));
+  data.ma_nguoi_dung = 1;
+  await cartModel.addCart(data);
+  res.redirect("/shoping-cart");
 });
 
 router.get('/item-detail', async (req,res)=>{

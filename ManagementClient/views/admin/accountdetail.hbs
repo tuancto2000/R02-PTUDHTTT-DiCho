@@ -12,12 +12,14 @@
         </tr>
     </thead>
     <tbody>
-
+        <form method="post" action="/admin/reset-password">
         <tr>
+            <input style="display:none" name="username" value="{{detail.username}}">
+            <input style="display:none" name="password" value="{{detail.username}}">
             <td>{{detail.username}}</td>
-            <td><a href="/admin/resetpassword?id={{detail.maNguoiDung}}&&username={{detail.username}}">Reset mật khẩu</a></td>
+            <td><button type="submit" class="btn btn-primary">Reset mật khẩu</button></td>
         </tr>
-
+        </form>
     </tbody>
 </table>
 <div class="col-12 d-grid">

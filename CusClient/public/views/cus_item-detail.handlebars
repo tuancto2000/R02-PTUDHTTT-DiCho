@@ -4,6 +4,7 @@
     <!-- Product Details Section Begin -->
     <section class="product-details spad">
         <div class="container">
+            <form method="post" action="/addtocart">
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
@@ -21,20 +22,20 @@
                 </div>
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__text">
+                        <input name="ma_sp" type="text" value="{{sanpham.ma_sp}}" style="display: none;">
                         <h3>{{sanpham.ten_sp}}</h3>
-                        <div class="product__details__price">{{sanpham.gia_sp}}</div>
+                        <div class="product__details__price">{{#formatMoney sanpham.gia_sp}}{{/formatMoney}}</div>
                         <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
                             vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
                             quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input name="so_luong" type="text" value="1">
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">Thêm vào giỏ hàng</a>
-                        <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
+                        <button type="submit" class="primary-btn">Thêm vào giỏ hàng</button>
                         <ul>
                             <li><b>Số lượng còn lại</b> <span>{{sanpham.so_luong_con_lai}}</span></li>
                         </ul>
@@ -121,6 +122,7 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </section>
     <!-- Product Details Section End -->

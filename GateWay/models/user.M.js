@@ -58,7 +58,7 @@ exports.getByRole = async (role) => {
         method: "get",
         baseURL: netBaseURL,
 
-        url: `/Users/getbyrole/${id}`,
+        url: `/Users/getbyrole/${role}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

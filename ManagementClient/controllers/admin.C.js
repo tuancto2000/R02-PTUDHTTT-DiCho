@@ -5,6 +5,7 @@ const model = require("../models/order.M");
 const productModel = require("../models/product.M");
 const contractModel = require("../models/contract.M");
 const userModel = require("../models/user.M")
+const storeModel = require("../models/store.M")
 const axios = require("axios");
 module.exports = router;
 
@@ -34,6 +35,16 @@ router.get('/userlist', async (req,res)=>{
       });
   });
 
+  router.get('/feelist', async (req,res)=>{
+
+    let store = await storeModel.getFee(req.query.date_start,req.query.date_end);
+    
+    res.render('admin/feelist',{
+        store:store,
+        layout: 'adminLayout' ,
+        });
+    });
+  
   
 router.get("/getaccount-detail", async (req, res) => {
   const data = await userModel.getAccount(req.query.id);
@@ -55,6 +66,14 @@ router.get('/shipperlist', async (req,res)=>{
   });
 
   
+router.get('/shipperwaitlist', async (req,res)=>{
+  let user = await userModel.getbyrole(2);
+  
+  res.render('admin/shipperwaitlist',{
+      user:user,
+      layout: 'adminLayout' ,
+      });
+  });
   
 router.get('/shoplist', async (req,res)=>{
   let user = await userModel.getbyrole(1);
@@ -64,6 +83,8 @@ router.get('/shoplist', async (req,res)=>{
       layout: 'adminLayout' ,
       });
   });
+
+
 router.get('/register-shop', async (req,res)=>{
   
     
@@ -76,6 +97,25 @@ router.get('/register-shop', async (req,res)=>{
         });
     });
     
+router.post('/register-shop', async (req,res)=>{
+  
+    const data = req.body;
+    data.maNguoiDung = 1;
+  await contractModel.accept(data);
+  
+  res.redirect("/admin/register-shop")
+  });
+
+
+
+  router.get('/shipper-accept-contract', async (req,res)=>{
+  
+    const data = req.query.id;
+  await contractModel.acceptshipper(data);
+  
+  res.redirect("/admin//shipperwaitlist");
+  });
+
 
 router.get('/filter-product', async (req,res)=>{
     const page = +req.query.page || 1;
@@ -141,6 +181,14 @@ router.get("/view-contract-detail", async (req, res) => {
     layout:'adminLayout',
     
   });
+});
+
+
+router.post("/reset-password", async (req, res) => {
+  console.log(req.body);
+  const data = await userModel.resetpassword(req.body);
+  
+  res.redirect("/admin/userlist")
 });
 
 router.get("/item-detail", async (req, res) => {

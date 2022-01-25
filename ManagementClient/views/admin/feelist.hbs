@@ -1,0 +1,45 @@
+
+<div class="row">
+        <form  method="GET" class="form-inline md-form">
+           
+            <div class="col-2 m-0 pl-0">
+                <input type="date" name="date_start" style="width: 100%;">
+            </div>
+            <div class="col-2 m-0 pl-0">
+                <input type="date" name="date_end" style="width: 100%;">
+            </div>
+           
+            <div class="col-1">
+                <button class="btn btn-outline-primary align-self-center" type="submit"><i class="fa fa-search fa-lg"
+                        aria-hidden="true"></i></button>
+            </div>
+            
+        </form>
+</div>
+<table class="table table-bordered">
+    
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên cửa hàng</th>
+            <th scope="col">Doanh thu</th>
+            <th scope="col">Hoa hồng</th>
+       
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each store}}
+        <tr>
+            <th scope="row">{{this.ten_cua_hang}}</th>
+            <td>{{this.doanh_thu}}</td>
+            <td>{{this.hoa_hong}}</td>
+         
+        </tr>
+        {{/each}}
+
+    </tbody>
+
+</table>
+   <nav aria-label="Page navigation example">
+        {{{paginateHelper pagination paginationClass="pagination"}}}
+    </nav>

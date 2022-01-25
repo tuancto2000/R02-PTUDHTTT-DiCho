@@ -3,7 +3,7 @@
     <a href="/admin"><button class="btn btn-primary" type="submit">Back</button></a>
 </div>
 </div>
-
+<form method="post" action="register-shop">
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -12,22 +12,26 @@
             <th scope="col">Giấy phép kinh doanh</th>
             <th scope="col">Giấy chứng nhận an toàn thực phẩm</th>
             <th scope="col">Hợp đồng</th>
+            <th scope="col">Ngày hiệu lực</th>
+            <th scope="col">Ngày kết thúc</th>
         </tr>
     </thead>
     <tbody>
-
+        
         <tr>
-            <td>{{detail.maHopDong}}</td>
-            <td>{{detail.ngayDangKy}}</td>
-            <td><img src="{{detail.giayPhepKinhDoanhImg}}"></td>
-            <td><img src="{{detail.chungNhanAnToanImg}}"></td>
-            <td><img src="{{detail.hopDongImg}}"></td>
-         
+            <td><input name="maHopDong" type="text" style="display: none;" value="{{detail.maHopDong}}">{{detail.maHopDong}}</td>
+            <td><input name="ngayDangKy" type="text" style="display: none;" value="{{detail.ngayDangKy}}">{{detail.ngayDangKy}}</td>
+            <td><img src="/{{detail.giayPhepKinhDoanhImg}}" style="width: 100px;height: 100px;"></td>
+            <td><img src="/{{detail.chungNhanAnToanImg}}" style="width: 100px;height: 100px;"></td>
+            <td><input name="hopDongImg" type="text" style="display: none;" value="{{detail.hopDongImg}}"><img src="/{{detail.hopDongImg}}" style="width: 100px;height: 100px;"></td>
+            <td><input id="ngayHieuLuc"  name="ngayHieuLuc" type="date" required></td>
+            <td><input id="ngayKetThuc"  name="ngayKetThuc" type="date" required></td>
         </tr>
 
     </tbody>
 </table>
     
 <div class="col-12 d-grid" style="text-align: end;">
-    <a href="/admin/register-shop-accept?id={{detail.maHopDong}}"><button class="btn btn-primary" type="button">Ký hợp đồng</button></a>
+    <button type="submit" class="btn btn-primary">Ký hợp đồng</button>
 </div>
+</form>
