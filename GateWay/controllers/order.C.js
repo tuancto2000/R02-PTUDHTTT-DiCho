@@ -57,3 +57,8 @@ router.get("/:id/detail", async (req, res) => {
     const data = await model.getOrderDetail(id);
     res.send(data);
 });
+router.get("/getbystore/:id", async (req, res) => {
+    let id = req.params.id;
+    const data = await model.getByStoreId(id);
+    res.send(data);
+});

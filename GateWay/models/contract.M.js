@@ -29,7 +29,7 @@ exports.accept = async (data) => {
         baseURL: netBaseURL,
         method: "post",
         url: "/Contracts/accept",
-        data: data,
+        data: data, 
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
@@ -49,8 +49,19 @@ exports.addStore = async (data) => {
     const rs = await axios({
         baseURL: netBaseURL,
         method: "post",
-        url: "/Contracts/accept",
+        url: "/Contracts/store",
         data: data,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.checkStore = async (id) => {
+    const rs = await axios({
+        baseURL: netBaseURL,
+        method: "get",
+        url: "/Contracts/check-store/" + id,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
