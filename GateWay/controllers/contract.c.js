@@ -32,3 +32,8 @@ router.post("/store", async (req, res) => {
     const result = await model.addStore(data);
     res.status(200).res.send(result);
 });
+router.get("/check-store/:id", async (req, res) => {
+    let id = req.params.id;
+    const data = await model.checkStore(id);
+    res.send(data);
+});

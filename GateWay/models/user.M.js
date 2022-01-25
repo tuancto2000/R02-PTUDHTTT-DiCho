@@ -33,7 +33,7 @@ exports.addUser = async (data) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
-exports.getPassword= async (username)=>{
+exports.getPassword = async (username) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
@@ -42,8 +42,8 @@ exports.getPassword= async (username)=>{
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
-}
-exports.getUser= async (username)=>{
+};
+exports.getUser = async (username) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
@@ -52,4 +52,14 @@ exports.getUser= async (username)=>{
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
-}
+};
+exports.getByRole = async (role) => {
+    const rs = await axios({
+        method: "get",
+        baseURL: netBaseURL,
+        url: `/getbyrole/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};

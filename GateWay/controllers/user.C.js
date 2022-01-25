@@ -41,3 +41,9 @@ router.post("/userLogin", async (req, res) => {
     res.cookie("access_token", accessToken, { httpOnly: true });
     res.redirect("/api/product");
 });
+
+router.get("/getbyrole/:id", async (req, res) => {
+    let { id } = req.params;
+    const data = await model.getByRole(id);
+    res.send(data);
+});
