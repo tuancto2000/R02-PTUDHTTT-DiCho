@@ -8,7 +8,6 @@ namespace BackEndAPI.ViewModels.Orders
     public class DonHangCreateRequest
     {
         public int MaNguoiDung { get; set; }
-        public int MaCuaHang { get; set; }
         public string DiaChi { get; set; }
         public string TenNguoiNhan { get; set; }
         public string Sdt { get; set; }
