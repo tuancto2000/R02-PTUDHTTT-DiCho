@@ -31,36 +31,41 @@ public class StoresController {
     @Autowired
     private EntityManager entityManager;
 
-    @GetMapping("/{storeId}/commission")
-    public ResponseEntity<GetCommissionModel> getCommission(@PathVariable(value = "storeId") Integer storeId,
-                                                            @RequestParam(value = "date_start", required = false) String date_start,
+    @GetMapping("/commission")
+    public ResponseEntity<List<GetCommissionModel>> getCommission(@RequestParam(value = "date_start", required = false) String date_start,
                                                             @RequestParam(value = "date_end", required = false) String date_end)
             throws ResourceNotFoundException {
         final double commission = 0.1;
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
         String sql = "";
 
         if (date_start == null && date_end == null) {
             sql = "Select new " + GetCommissionModel.class.getName()
                     + "(dh.ma_cua_hang, ch.ten_cua_hang, sum(dh.tongtien) as doanh_thu, (sum(dh.tongtien) * " + commission + ") as hoa_hong) "
                     + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
-                    + "where dh.trang_thai = 5 and dh.ma_cua_hang = " + storeId + " group by dh.ma_cua_hang, ch.ten_cua_hang";
-        } else {
-            if (date_start == null) {
-                date_start = formatter.format(donHangRepository.getOldestSellDate(storeId));
-            } else if (date_end == null) {
-                date_end = formatter.format(new Date());
-            }
+                    + "where dh.trang_thai = 5 group by dh.ma_cua_hang, ch.ten_cua_hang";
+        } else if (date_start == null) {
             sql = "Select new " + GetCommissionModel.class.getName()
                     + "(dh.ma_cua_hang, ch.ten_cua_hang, sum(dh.tongtien) as doanh_thu, (sum(dh.tongtien) * " + commission + ") as hoa_hong) "
                     + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
-                    + "where dh.trang_thai = 5 and dh.ma_cua_hang = " + storeId + " and '"
+                    + "where dh.trang_thai = 5 and dh.ngay_mua <= '" + date_end + "' group by dh.ma_cua_hang, ch.ten_cua_hang";
+        } else if (date_end == null) {
+            sql = "Select new " + GetCommissionModel.class.getName()
+                    + "(dh.ma_cua_hang, ch.ten_cua_hang, sum(dh.tongtien) as doanh_thu, (sum(dh.tongtien) * " + commission + ") as hoa_hong) "
+                    + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
+                    + "where dh.trang_thai = 5 and '"
+                    + date_start + "' <= dh.ngay_mua group by dh.ma_cua_hang, ch.ten_cua_hang";
+        }
+        else{
+            sql = "Select new " + GetCommissionModel.class.getName()
+                    + "(dh.ma_cua_hang, ch.ten_cua_hang, sum(dh.tongtien) as doanh_thu, (sum(dh.tongtien) * " + commission + ") as hoa_hong) "
+                    + "from " + DonHang.class.getName() + " dh join " + CuaHang.class.getName() + " ch on dh.ma_cua_hang = ch.ma_cua_hang "
+                    + "where dh.trang_thai = 5 and '"
                     + date_start + "' <= dh.ngay_mua and dh.ngay_mua <= '" + date_end + "' group by dh.ma_cua_hang, ch.ten_cua_hang";
         }
 
+
         Query query = entityManager.createQuery(sql, GetCommissionModel.class);
-        return ResponseEntity.ok().body((GetCommissionModel) query.getSingleResult());
+        return ResponseEntity.ok().body(query.getResultList());
     }
 
     @Transactional
