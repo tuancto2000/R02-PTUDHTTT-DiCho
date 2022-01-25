@@ -1,9 +1,10 @@
 package com.example.DiChoThue.Controllers;
 
-import com.example.DiChoThue.Entities.*;
+import com.example.DiChoThue.Entities.ChiTietGioHang;
+import com.example.DiChoThue.Entities.HinhAnh;
+import com.example.DiChoThue.Entities.SanPham;
 import com.example.DiChoThue.Models.AddProductToCartModel;
 import com.example.DiChoThue.Models.GetCartModel;
-import com.example.DiChoThue.Models.SanPhamModel;
 import com.example.DiChoThue.Models.UpdateCartModel;
 import com.example.DiChoThue.Repository.ChiTIetGioHangRepository;
 import com.example.DiChoThue.Repository.GioHangRepository;
@@ -37,7 +38,7 @@ public class CartsController {
                 + " sp.mo_ta, sp.soluotdanhgia, sp.trungbinhsao, sp.trang_thai, ha.nguon_hinh_anh) "
                 + " from " + ChiTietGioHang.class.getName() + " ctgh join " + SanPham.class.getName() + " sp on ctgh.ma_sp = sp.ma_sp"
                 + " join " + HinhAnh.class.getName() + " ha on sp.ma_sp = ha.ma_sp"
-                + " where ha.mac_dinh = 1 and ctgh.id = " + cartId;
+                + " where ha.mac_dinh = 1 and ctgh.ma_gio_hang = " + cartId;
         List<GetCartModel> getCartModels = entityManager.createQuery(sql, GetCartModel.class).getResultList();
 
         return ResponseEntity.ok(getCartModels);
