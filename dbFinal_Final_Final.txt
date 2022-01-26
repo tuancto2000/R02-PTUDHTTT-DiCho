@@ -2029,3 +2029,8 @@ INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
 INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
 INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
 INSERT INTO DANH_GIA VALUES(50,50,50,4,'Lorem 1')
+
+
+  
+UPDATE NGUOI_DUNG SET KichHoat = 0 WHERE VAI_TRO != 0;
+  update hop_dong set ChungNhanAnToanImg = 'img/HD1.png',GiayPhepKinhDoanhImg='img/HD2.jpg',HopDongImg='img/HD3.jpg';

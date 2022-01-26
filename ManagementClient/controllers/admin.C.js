@@ -204,6 +204,7 @@ router.get("/item-detail", async (req, res) => {
     images: data.hinhanh,
   });
 });
+
 router.get("/thong-ke/nguoi-dung", async (req, res) => {
   const data = await axios
     .get(`http://localhost:18291/api/Statitics/nguoi-dung`)
