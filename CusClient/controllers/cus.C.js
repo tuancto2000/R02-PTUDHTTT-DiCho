@@ -5,6 +5,7 @@ const productModel = require("../model/product.M");
 const orderModel = require("../model/order.M");
 const cartModel = require("../model/cart.M");
 const storeModel = require("../model/store.M");
+const cusModel = require("../model/cus.M");
 module.exports = router;
 const axios = require("axios");
 const e = require("express");
@@ -68,8 +69,12 @@ router.get("/search", async (req, res) => {
     product3: product3.sanphams,
     product32: product32.sanphams,
     layout: "customer_layout",
-    pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems ,
-      queryParams: { productcategoryid: productCategoryId,search: search}},
+    pagination: {
+      page: parseInt(page),
+      limit: pagesize,
+      totalRows: product.totalItems,
+      queryParams: { productcategoryid: productCategoryId, search: search },
+    },
   });
 });
 
@@ -93,28 +98,22 @@ router.post("/shoping-cart", async (req, res) => {
   var temparr = {};
   var chitietgiohang_list = [];
   temparr = JSON.parse(JSON.stringify(req.body));
-  if(!temparr.ma_sp)
-  {
-    let [first] = Object.keys(temparr)
-    first = (JSON.parse((first)));
+  if (!temparr.ma_sp) {
+    let [first] = Object.keys(temparr);
+    first = JSON.parse(first);
     chitietgiohang_list = first.chitietgiohang_list;
     var tempgiohanglist = [];
-    chitietgiohang_list.forEach(element => {
-        if(element.so_luong != 0)
-        {
-          tempgiohanglist.push(element);
-        }
+    chitietgiohang_list.forEach((element) => {
+      if (element.so_luong != 0) {
+        tempgiohanglist.push(element);
+      }
     });
     chitietgiohang_list = tempgiohanglist;
-  }
-  else
-  {
-    for(let i = 0 ; i <temparr.ma_sp.length;i++)
-    {
+  } else {
+    for (let i = 0; i < temparr.ma_sp.length; i++) {
       let tempitem = {};
-      if(temparr.so_luong[i] != 0)
-      {
-        tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
+      if (temparr.so_luong[i] != 0) {
+        tempitem = { ma_sp: temparr.ma_sp[i], so_luong: temparr.so_luong[i] };
         chitietgiohang_list.push(tempitem);
       }
     }
@@ -239,7 +238,7 @@ router.get("/item-detail", async (req, res) => {
   res.render("cus_item-detail", {
     sanpham: product.sanpham,
     hinhanh: product.hinhanh,
-    star:product.start,
+    star: product.start,
     layout: "customer_layout",
     sanphams: product1.sanphams,
   });
@@ -283,8 +282,7 @@ router.post("/checkout", async (req, res) => {
   console.log(data);
   await axios
     .post("http://localhost:18291/api/Orders", data)
-    .then(function (response) {
-    })
+    .then(function (response) {})
     .catch(function (error) {
       console.log(error);
     });

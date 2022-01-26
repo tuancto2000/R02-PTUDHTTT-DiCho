@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const createError = require('http-errors');
+var cookieParser = require('cookie-parser')
 
 require("dotenv").config();
 
@@ -11,6 +12,7 @@ app.use(
         extended: "true",
     })
 );
+app.use(cookieParser());
 
 app.use(bodyParser.json());
 

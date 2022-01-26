@@ -5,6 +5,7 @@ const hbs = exphbs.create({
   defaultLayout: "main",
   extname: "hbs",
 });
+var cookieParser = require("cookie-parser");
 
 var paginateHelper = require("express-handlebars-paginate");
 
@@ -12,6 +13,7 @@ const port = 3000;
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
