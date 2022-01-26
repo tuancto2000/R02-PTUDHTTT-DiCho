@@ -51,10 +51,10 @@
                                        {{#formatMoney this.gia_sp}}{{/formatMoney}}
                                     </td>
                                     <td class="shoping__cart__quantity">
-                                        <input type="text"  class ="qqtext" value="{{this.so_luong}}" style="display: none;">
+                                        
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="text" value="{{this.so_luong}}">
+                                                <input type="text" class ="qqtext" name="so_luong" value="{{this.so_luong}}">
                                             </div>
                                         </div>
                                     </td>
@@ -138,8 +138,7 @@
     Array.from($('.inc.qtybtn')).forEach((e,i) =>{
 
         $(e).on('click', function() {
-            let tempVar = parseInt($('.qqtext')[i].value) + parseInt(1);
-            $('.qqtext').eq(i).val(tempVar)
+          
             
         });
             
@@ -147,8 +146,7 @@
     Array.from($('.dec.qtybtn')).forEach((e,i) =>{
 
         $(e).on('click', function() {
-           let tempVar = parseInt($('.qqtext')[i].value) - parseInt(1);
-           $('.qqtext').eq(i).val(tempVar)
+          
            
         });
             

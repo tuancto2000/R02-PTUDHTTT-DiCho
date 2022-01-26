@@ -20,6 +20,22 @@ exports.getAllByProductID = async (id) => {
   })
     .then((response) => response.data)
     .catch((error) => console.log("errrrrrrr : ", error));
+    var start = [];
+    for(let i = 0 ; i < rs.sanpham.trungbinhsao;i++)
+    {
+        start.push({'yes':"fa fa-star checked"});
+    }
+    if(rs.sanpham.trungbinhsao < 5)
+        if(rs.sanpham.trungbinhsao > 5)
+        {}
+        else
+        {
+            for(let i = 5 ; i > rs.sanpham.trungbinhsao;i--)
+            {
+                start.push({'yes':"fa fa-star-o"});
+            }
+        }
+    rs.start = start;
   return rs;
 };
 

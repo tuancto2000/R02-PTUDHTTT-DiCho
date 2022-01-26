@@ -1,38 +1,17 @@
 <body>
-
-
-
     <!-- Categories Section Begin -->
-    <section class="categories">
+   <section class="categories">
         <div class="container">
             <div class="row">
                 <div class="categories__slider owl-carousel">
+                    {{#each danhmuc}}
                     <div class="col-lg-3">
                         <div class="categories__item set-bg" data-setbg="img/categories/cat-1.jpg">
-                            <h5><a href="#">Trái cây tươi</a></h5>
+                            <h5><a href="/search?productcategoryid={{this.ma_dm}}">{{this.ten_dm}}</a></h5>
                         </div>
                     </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="img/categories/cat-2.jpg">
-                            <h5><a href="#">Trái cây khô</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="img/categories/cat-3.jpg">
-                            <h5><a href="#">Rau củ</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="img/categories/cat-4.jpg">
-                            <h5><a href="#">Đồ uống</a></h5>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="categories__item set-bg" data-setbg="img/categories/cat-4.jpg">
-                            <h5><a href="#">Đồ uống</a></h5>
-                        </div>
-                    </div>
-
+                    {{/each}}
+                    
                 </div>
             </div>
         </div>

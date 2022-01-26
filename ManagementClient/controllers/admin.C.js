@@ -67,13 +67,37 @@ router.get('/shipperlist', async (req,res)=>{
 
   
 router.get('/shipperwaitlist', async (req,res)=>{
-  let user = await userModel.getbyrole(2);
+  
+  let user = await contractModel.getByType("shipper");
   
   res.render('admin/shipperwaitlist',{
       user:user,
       layout: 'adminLayout' ,
       });
   });
+
+  
+router.get('/shipper-contract-detail', async (req,res)=>{
+  
+    
+  const data = await contractModel.getDetailShipper(req.query.id);
+  console.log(req.query.id);
+  res.render("admin/shipperregisterdetail", {
+    detail: data,
+    layout:'adminLayout',
+    
+  });
+});
+ 
+router.post('/shipper-contract-detail', async (req,res)=>{
+  
+    
+  const data = req.body;
+    console.log(data);
+  await contractModel.accept(data);
+  
+  res.redirect("/admin/shipperwaitlist");
+}); 
   
 router.get('/shoplist', async (req,res)=>{
   let user = await userModel.getbyrole(1);
@@ -100,7 +124,7 @@ router.get('/register-shop', async (req,res)=>{
 router.post('/register-shop', async (req,res)=>{
   
     const data = req.body;
-    data.maNguoiDung = 1;
+    
   await contractModel.accept(data);
   
   res.redirect("/admin/register-shop")
@@ -113,7 +137,7 @@ router.post('/register-shop', async (req,res)=>{
     const data = req.query.id;
   await contractModel.acceptshipper(data);
   
-  res.redirect("/admin//shipperwaitlist");
+  res.redirect("/admin/shipperwaitlist");
   });
 
 
@@ -183,10 +207,9 @@ router.get("/view-contract-detail", async (req, res) => {
   });
 });
 
-
 router.post("/reset-password", async (req, res) => {
   console.log(req.body);
-  const data = await userModel.resetpassword(req.body);
+  await userModel.resetpassword(req.body);
   
   res.redirect("/admin/userlist")
 });

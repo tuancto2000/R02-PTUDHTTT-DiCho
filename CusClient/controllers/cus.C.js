@@ -7,6 +7,7 @@ const cartModel = require("../model/cart.M");
 const storeModel = require("../model/store.M");
 module.exports = router;
 const axios = require("axios");
+const e = require("express");
 router.get("/", async (req, res) => {
   const page = +req.query.page || 1;
   const pagesize = +req.query.pagesize || 8;
@@ -20,7 +21,7 @@ router.get("/", async (req, res) => {
 
   let product3 = await productModel.getAllByProductCategory(7, "", 0, 3);
   let product32 = await productModel.getAllByProductCategory(7, "", 1, 3);
-  console.log(product);
+  console.log(danhmuc);
   res.render("cus_index", {
     danhmuc: danhmuc,
     sanpham: product.sanphams,
@@ -45,7 +46,9 @@ router.get("/search", async (req, res) => {
   const page = +req.query.page || 1;
   const pagesize = +req.query.pagesize || 8;
   let danhmuc = await categoryModel.getAll();
-  let product = await productModel.getAllByProductCategory("", req.query.search, page, pagesize);
+  let productCategoryId = req.query.productcategoryid || "";
+  let search = req.query.search || "";
+  let product = await productModel.getAllByProductCategory(productCategoryId, search, page, pagesize);
   let product1 = await productModel.getAllByProductCategory(4, "", 0, 3);
   let product12 = await productModel.getAllByProductCategory(4, "", 1, 3);
 
@@ -65,7 +68,8 @@ router.get("/search", async (req, res) => {
     product3: product3.sanphams,
     product32: product32.sanphams,
     layout: "customer_layout",
-    pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
+    pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems ,
+      queryParams: { productcategoryid: productCategoryId,search: search}},
   });
 });
 
@@ -88,22 +92,31 @@ router.get("/shoping-cart", async (req, res) => {
 router.post("/shoping-cart", async (req, res) => {
   var temparr = {};
   var chitietgiohang_list = [];
-  console.log(req.body);
   temparr = JSON.parse(JSON.stringify(req.body));
-  console.log(temparr);
   if(!temparr.ma_sp)
   {
     let [first] = Object.keys(temparr)
     first = (JSON.parse((first)));
     chitietgiohang_list = first.chitietgiohang_list;
-    console.log(chitietgiohang_list)
+    var tempgiohanglist = [];
+    chitietgiohang_list.forEach(element => {
+        if(element.so_luong != 0)
+        {
+          tempgiohanglist.push(element);
+        }
+    });
+    chitietgiohang_list = tempgiohanglist;
   }
   else
   {
     for(let i = 0 ; i <temparr.ma_sp.length;i++)
     {
-        let tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
+      let tempitem = {};
+      if(temparr.so_luong[i] != 0)
+      {
+        tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
         chitietgiohang_list.push(tempitem);
+      }
     }
   }
   var data = {};
@@ -141,10 +154,7 @@ router.post("/rate-order", async (req, res) => {
   res.redirect("/shoping-cart-history")
 });
 
-router.get('/checkout', async (req,res)=>{
-  res.render('cus_checkout',{
-      layout: 'customer_layout' 
-    })
+
 router.get("/checkout", async (req, res) => {
   var data;
   await axios.get(`http://localhost:18291/api/Orders/checkout/1`).then((rs) => {
@@ -236,6 +246,7 @@ router.get('/item-detail', async (req,res)=>{
   res.render("cus_item-detail", {
     sanpham: product.sanpham,
     hinhanh: product.hinhanh,
+    star:product.start,
     layout: "customer_layout",
     sanphams: product1.sanphams,
   });
@@ -280,11 +291,10 @@ router.post("/checkout", async (req, res) => {
   await axios
     .post("http://localhost:18291/api/Orders", data)
     .then(function (response) {
-      console.log(response);
     })
     .catch(function (error) {
       console.log(error);
     });
-  res.redirect("/checkout");
+  res.redirect("/shoping-cart-history");
 });
 module.exports = router;

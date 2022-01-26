@@ -4,7 +4,7 @@ const productModel = require("../models/product.M");
 const orderModel = require("../models/order.M");
 const categoryModel = require("../models/category.M");
 const upload = require("../middlewares/upload");
-const e = require('express');
+const contractModel = require("../models/contract.M");
 router.get('/', async (req,res)=>{
     const page = +req.query.page || 1;
     const pagesize = +req.query.pagesize || 8;
@@ -98,7 +98,7 @@ router.post("/newproduct",  upload.array("nguon_hinh_anh"), async (req, res) => 
     
     hinh_anh: hinhanh
   };
-
+  console.log(product);
   const rs = await productModel.addProduct((product));
 
   res.redirect("/shop");
@@ -131,6 +131,17 @@ router.post("/edit-product/:id",  upload.array("nguon_hinh_anh"), async (req, re
   const rs = await productModel.updateProduct(req.params.id,(product));
 
   res.redirect("/shop");
+});
+
+ 
+router.get("/contract-detail", async (req, res) => {
+  const data = await contractModel.getDetail(20);
+  
+  res.render("shop/shopregisterdetail", {
+    detail: data,
+    layout:'shop_layout',
+    
+  });
 });
 module.exports = router;
 
