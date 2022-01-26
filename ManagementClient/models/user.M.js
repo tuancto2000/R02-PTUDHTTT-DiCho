@@ -23,8 +23,7 @@ exports.getAccount = async (id) => {
 exports.resetpassword = async (data) => {
     const rs = await axios({
       method: "post",
-      url: `users/changePassword`,
-      data:data
+      url: `users/changePassword?username=${data.username}&password=${data.password}`
     })
       .then((response) => response.data)
       .catch((error) => console.log("errrrrrrr : ", error));

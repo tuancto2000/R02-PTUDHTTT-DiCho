@@ -117,6 +117,7 @@ namespace BackEndAPI.Controllers
                                 Sdt = x.NguoiDung.Sdt,
                                 Email = x.NguoiDung.Email,
                                 NgayDangKy = x.NgayDangKy,
+                                MaNguoiDung = x.MaNguoiDung
                             });
             return Ok(contract);
 

@@ -26,6 +26,17 @@ exports.getDetail = async (id) => {
     return rs;
 };
 
+exports.getDetailShipper = async (id) => {
+    const rs = await axios({
+    
+        method: "get",
+        url: `/contracts/detail/shipper/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
 exports.acceptshipper  = async (data) => {
     const rs = await axios({
         method: "post",

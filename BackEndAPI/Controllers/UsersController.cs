@@ -31,7 +31,7 @@ namespace BackEndAPI.Controllers
         [HttpGet("getbyrole/{role}")]
         public async Task<IActionResult> GetUsersByRole(int role)
         {
-            var nguoidung = _context.NguoiDung.Where(x => (int)x.VaiTro == role).ToList();
+            var nguoidung =  _context.NguoiDung.Where(x => (int)x.VaiTro == role && x.KichHoat == true ).ToList();
             return Ok(nguoidung);
         }
         [HttpPost("getUser")]
