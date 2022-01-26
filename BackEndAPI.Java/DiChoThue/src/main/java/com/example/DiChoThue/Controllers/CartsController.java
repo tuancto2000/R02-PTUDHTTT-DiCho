@@ -69,7 +69,7 @@ public class CartsController {
         List<ChiTietGioHang> curCart = chiTIetGioHangRepository.getCartDetailsByCartId(cartId);
         List<ChiTietGioHang> newCart = updateCartModel.getChitietgiohang_list();
 
-        if (newCart != null) {
+        if (newCart != null && newCart.size() != 0) {
             int i = 0;
             for (ChiTietGioHang ctgh : curCart) {
                 if (!newCart.stream().filter(o -> Objects.equals(o.getMa_sp(), ctgh.getMa_sp())).findFirst().isPresent()) {
