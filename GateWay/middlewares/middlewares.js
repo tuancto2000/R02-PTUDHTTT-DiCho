@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const res = require('express/lib/response');
 const model = require('../models/user.M')
 const bcryptPassword = async (req, res) => {
     try {
@@ -17,21 +18,9 @@ const checkPassword = async(password, passwordCus) => {
         return await bcrypt.compare(password, passwordCus);
      }
      catch (error) {
-        next(error);
+        res.status(400).send(error);
+        return;
      }
-}
-const checkRole1 = async (req, res) => {
-    try{
-        const user= await model.getDetail(req.payload);// req.payload chứa idcus sau khi kiểm tra cookie thành công
-        const role = user.role;
-        if(role==='1')
-        {
-            next();
-        }
-    }
-    catch(error) {
-        next(error);
-    }
 }
 module.exports = {
     bcryptPassword,checkPassword
