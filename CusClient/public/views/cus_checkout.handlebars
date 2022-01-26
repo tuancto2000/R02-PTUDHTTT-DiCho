@@ -4,7 +4,7 @@
     <script src="../js/checkout.js"></script>
 </head>
 <body>
-    
+
 
 
     <!-- Breadcrumb Section Begin -->
@@ -28,60 +28,60 @@
     <!-- Checkout Section Begin -->
     <section class="checkout spad">
         <div class="container">
-            
+
             <div class="checkout__form">
                 <h4>Thông tin đặt hàng</h4>
-                <form action="#">
+
+                <form action="/checkout" method="post">
+                    <input type="text" class="d-none" value="{{cart.maNguoiDung}}" name="maNguoiDung">
                     <div class="row">
                         <div class="col-lg-8 col-md-6">
                             <div class="row">
                                 <div class="col">
                                     <div class="checkout__input">
                                         <p>Họ và tên<span>*</span></p>
-                                        <input type="text" required>
+                                        <input type="text" value="{{cart.tenNguoiNhan}}" name="tenNguoiNhan">
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="checkout__input">
                                 <p>Địa chỉ<span>*</span></p>
-                                <input type="text" placeholder="180 Nguyễn Thị Minh Khai" class="checkout__input__add" required>
+                                <input type="text" value="{{cart.diaChi}}" class="checkout__input__add" name="diaChi">
                             </div>
-                           
+
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="checkout__input">
                                         <p>SĐT<span>*</span></p>
-                                        <input type="text" required>
+                                        <input type="text" value="{{cart.sdt}}" name="sdt">
                                     </div>
                                 </div>
-                                <div class="col-lg-6">
-                                    <div class="checkout__input">
-                                        <p>Email<span>*</span></p>
-                                        <input type="email" required>
-                                    </div>
-                                </div>
+
                             </div>
-                            
-                            
+
+
                             <div class="checkout__input">
-                                <p>Ghi chú thêm</p>
-                                <input type="text"
-                                    placeholder="Không ship vào 12h trưa">
+                                <p>Ghi chú thêm<span>*</span></p>
+                                <input type="text" placeholder="Không ship vào 12h trưa" name="phanHoi">
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6">
                             <div class="checkout__order">
                                 <h4>Hoá đơn</h4>
-                                <div class="checkout__order__products">Sản phẩm <span>Giá tiền</span></div>
+                                <div class="checkout__order__products">Sản phẩm <span>Giá</span></div>
                                 <ul>
-                                    <li>Vegetable’s Package <span>$75.99</span></li>
-                                    <li>Fresh Vegetable <span>$151.99</span></li>
-                                    <li>Organic Bananas <span>$53.99</span></li>
+                                    {{#each items}}
+                                    <input type="text" class="d-none" name="maSp" value="{{maSp}}">
+                                    <input type="text" class="d-none" name="soLuong" value="{{soLuong}}">
+                                    <input type="text" class="d-none" name="donGia" value="{{donGia}}">
+                                    <li>{{tenSp}} <span>{{#formatMoney subtotal}}{{/formatMoney}}</span></li>
+                                    {{/each}}
                                 </ul>
-                                <div class="checkout__order__total">Tổng tiền <span>$750.99</span></div>
-                              
-                                <p>Vì lý do dịch bệnh, vui lòng chọn một trong các phương thức thanh toán sau</p>
+                                <div class="checkout__order__total">Tổng tiền <span>{{#formatMoney
+                                        tong}}{{/formatMoney}}</span></div>
+
+                                <p>Vì lý do dịch bệnh, vui lòng chọn một trong các phương thức thanh toán online sau</p>
                                 <div class="checkout__input__checkbox">
                                     <label for="momoQR">
                                         Momo
@@ -109,6 +109,6 @@
     <!-- Checkout Section End -->
 
 
- 
+
 
 </body>

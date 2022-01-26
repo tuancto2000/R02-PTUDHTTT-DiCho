@@ -57,7 +57,7 @@ namespace BackEndAPI.Services
                 Loai = x.VaiTro.ToString(),
                 DiaChi = x.DiaChi.TenDiaChi,
                 Vung = x.DiaChi.LoaiVung.ToString()
-            }).ToListAsync();
+            }).Take(20).ToListAsync();
             var stores = await _context.CuaHang.Include(x => x.DiaChi).Select(x => new NguoiDungTheoVungVM()
             {
                 Ten = x.TenCuaHang,
@@ -66,9 +66,8 @@ namespace BackEndAPI.Services
                 Loai = "CuaHang",
                 DiaChi = x.DiaChi.TenDiaChi,
                 Vung = x.DiaChi.LoaiVung.ToString()
-            }).ToListAsync();
+            }).Take(20).ToListAsync();
             reports.AddRange(stores);
-
             return reports;
         }
         public async Task<List<MatHangThietYeuVM>> ThongKeMatHangThietYeu(int maCuaHang)

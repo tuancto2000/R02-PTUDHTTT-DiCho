@@ -1,6 +1,7 @@
 ﻿using BackEndAPI.Data.Enums;
 using BackEndAPI.Entities;
 using BackEndAPI.ViewModels.Orders;
+using BackEndAPI.ViewModels.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,29 @@ namespace BackEndAPI.Controllers
         public OrdersController(PTUDContext context)
         {
             _context = context;
+        }
+        [HttpGet("checkout/{maNguoiDung}")]
+        public async Task<IActionResult> CheckOut(int maNguoiDung)
+        {
+            var taikhoan = await _context.NguoiDung.Include(y => y.DiaChi).FirstOrDefaultAsync(x => x.MaNguoiDung == maNguoiDung);
+            if (taikhoan == null)
+                throw new Exception($"Can not find user with Id {maNguoiDung}");
+            var cart = _context.GioHang.Include(x => x.DSChiTietGioHang).ThenInclude(x => x.SanPham).FirstOrDefault(x => x.MaNguoiDung == maNguoiDung);
+             
+            var model = new DonHangCreateRequest
+            {
+                MaNguoiDung = taikhoan.MaNguoiDung,
+                DiaChi = taikhoan.DiaChi.TenDiaChi,
+                TenNguoiNhan = taikhoan.TenNguoiDung,
+                Sdt = taikhoan.Sdt,
+                DSChiTietDonHang = cart.DSChiTietGioHang.Select(x => new ChiTietVM { 
+                    DonGia = (int)x.SanPham.GiaSp,
+                    MaSp = x.MaSp,
+                    SoLuong = (int)x.SoLuong,
+                    TenSp = x.SanPham.TenSp
+                    }).ToList()
+            };
+            return Ok(new { taikhoan = taikhoan, cart = model, tongtien = cart.TongTien });
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DonHangCreateRequest request)
