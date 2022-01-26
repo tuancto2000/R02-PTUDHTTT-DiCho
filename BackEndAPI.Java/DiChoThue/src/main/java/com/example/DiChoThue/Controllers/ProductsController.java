@@ -174,6 +174,7 @@ public class ProductsController {
         sanPham.setGia_sp(product.getGia_sp());
         sanPham.setSo_luong_con_lai(product.getSo_luong_con_lai());
         sanPham.setMo_ta(product.getMo_ta());
+        sanPham.setTrang_thai(true);
 
         int productId = sanPhamRepository.save(sanPham).getMa_sp();
 
