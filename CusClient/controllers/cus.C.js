@@ -211,8 +211,8 @@ router.get('/register-form', async (req, res) => {
 router.post('/loginform', async (req, res) => {
   const data = req.body;
   const result = await cusModel.Login(data);
-  console.log(result);
-  res.cookie("access_token", result);
-  //res.redirect("/");
+  
+  res.cookie("access_token", result, { httpOnly: true });
+  res.redirect("/");
 })
 module.exports = router;

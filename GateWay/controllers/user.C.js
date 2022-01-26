@@ -45,8 +45,6 @@ router.post("/userLogin", async (req, res) => {
     if (!newToken) {
         throw res.status(404).send("Đăng nhập không thành công, bạn vui lòng thử lại");
     }
-
-    res.cookie("access_token", newToken,{ httpOnly: true});
     res.status(200).send(newToken);
 });
 
