@@ -3,22 +3,24 @@ const router = express.Router();
 const productModel = require("../models/product.M");
 const orderModel = require("../models/order.M");
 const categoryModel = require("../models/category.M");
-const upload = require("../middlewares/upload");
-const e = require("express");
 const axios = require("axios");
-router.get("/", async (req, res) => {
-  const page = +req.query.page || 1;
-  const pagesize = +req.query.pagesize || 8;
-  const shopid = 2;
-  let product = await productModel.getAllByStoreID(shopid);
-  res.render("shop/shop-details", {
-    sanpham: product.sanphams,
-
-    pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
-
-    layout: "shop_layout",
-  });
-});
+const upload = require("../middlewares/upload");
+const contractModel = require("../models/contract.M");
+router.get('/', async (req,res)=>{
+    const page = +req.query.page || 1;
+    const pagesize = +req.query.pagesize || 8;
+    const shopid = 2;
+    let product = await productModel.getAllByStoreID(shopid);
+   
+    res.render('shop/shop-details',{
+        sanpham:product.sanphams,
+     
+        pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
+  
+        layout: 'shop_layout' 
+        })
+    }
+);
 
 router.get("/item-detail", async (req, res) => {
   let product = await productModel.getAllByProductID(req.query.id);
@@ -140,6 +142,17 @@ router.get("/thong-ke", async (req, res) => {
     sp: data.items,
     url: data.urlDownload,
     layout: "shop_layout",
+  });
+});
+
+ 
+router.get("/contract-detail", async (req, res) => {
+  const data = await contractModel.getDetail(20);
+  
+  res.render("shop/shopregisterdetail", {
+    detail: data,
+    layout:'shop_layout',
+    
   });
 });
 module.exports = router;

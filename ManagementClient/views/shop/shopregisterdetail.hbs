@@ -1,9 +1,9 @@
 <div class="row" style="margin-bottom: 10px;">
 <div class="col-12 d-grid">
-    <a href="/admin"><button class="btn btn-primary" type="submit">Back</button></a>
+    <a href="/shop"><button class="btn btn-primary" type="submit">Back</button></a>
 </div>
 </div>
-<form method="post" action="register-shop">
+
 <table class="table table-bordered">
     <thead class="thead-dark">
         <tr>
@@ -24,16 +24,10 @@
             <td><img src="/{{detail.giayPhepKinhDoanhImg}}" style="width: 100px;height: 100px;"></td>
             <td><img src="/{{detail.chungNhanAnToanImg}}" style="width: 100px;height: 100px;"></td>
             <td><input name="hopDongImg" type="text" style="display: none;" value="{{detail.hopDongImg}}"><img src="/{{detail.hopDongImg}}" style="width: 100px;height: 100px;"></td>
-            <td><input id="ngayHieuLuc"  name="ngayHieuLuc" type="date" required></td>
-            <td><input id="ngayKetThuc"  name="ngayKetThuc" type="date" required></td>
+            <td>{{detail.ngayHieuLuc}}</td>
+            <td>{{detail.ngayKetThuc}}></td>
             
         </tr>
 
     </tbody>
 </table>
-    
-<div class="col-12 d-grid" style="text-align: end;">
-    <input name="maNguoiDung" type="text" value="{{detail.maNguoiDung}}" style="display:none">
-    <button type="submit" class="btn btn-primary">Ký hợp đồng</button>
-</div>
-</form>

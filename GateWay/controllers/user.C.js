@@ -54,7 +54,7 @@ router.get("/paging/:id", async (req, res) => {
 });
 
 router.post("/changePassword", async (req, res) => {
-    const data = req.body;
+    const data = req.query;
 
     const isValidpassword = await model.changePassword(data);
    

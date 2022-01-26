@@ -25,6 +25,7 @@ exports.getDetail = async (type, id) => {
     return rs;
 };
 exports.accept = async (data) => {
+    console.log(data);
     const rs = await axios({
         baseURL: netBaseURL,
         method: "post",
