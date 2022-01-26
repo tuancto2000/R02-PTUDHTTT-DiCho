@@ -45,7 +45,7 @@ namespace BackEndAPI.Services
                         SoLuongBanRa = g.Sum(i => i.SoLuong),
                         SoLuongConLai = g.Sum(i => i.ConLai)
                     }).ToList();
-            return reports;
+            return reports.OrderByDescending(x => x.SoLuongBanRa).ToList();
         }
         public async Task<List<NguoiDungTheoVungVM>> ThongKeNguoiDung()
         {
@@ -161,7 +161,7 @@ namespace BackEndAPI.Services
                         ThoiGian = DateTime.Now.Year.ToString()
                     }).ToList();
             }
-            return reports;
+            return reports.OrderByDescending(x => x.DoanhThu).Take(15).ToList();
         }
         public async Task<List<DoanhThuVM>> ThongKeDoanhThuCuaHang(string thoigian)
         {
@@ -199,7 +199,7 @@ namespace BackEndAPI.Services
                         ThoiGian = DateTime.Now.Year.ToString()
                     }).ToList();
             }
-            return reports;
+            return reports.OrderByDescending(x => x.DoanhThu).Take(10).ToList();
         }
 
 

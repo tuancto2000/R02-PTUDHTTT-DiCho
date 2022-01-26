@@ -91,19 +91,15 @@ router.post("/shoping-cart", async (req, res) => {
   console.log(req.body);
   temparr = JSON.parse(JSON.stringify(req.body));
   console.log(temparr);
-  if(!temparr.ma_sp)
-  {
-    let [first] = Object.keys(temparr)
-    first = (JSON.parse((first)));
+  if (!temparr.ma_sp) {
+    let [first] = Object.keys(temparr);
+    first = JSON.parse(first);
     chitietgiohang_list = first.chitietgiohang_list;
-    console.log(chitietgiohang_list)
-  }
-  else
-  {
-    for(let i = 0 ; i <temparr.ma_sp.length;i++)
-    {
-        let tempitem = {'ma_sp': temparr.ma_sp[i],'so_luong':temparr.so_luong[i]};
-        chitietgiohang_list.push(tempitem);
+    console.log(chitietgiohang_list);
+  } else {
+    for (let i = 0; i < temparr.ma_sp.length; i++) {
+      let tempitem = { ma_sp: temparr.ma_sp[i], so_luong: temparr.so_luong[i] };
+      chitietgiohang_list.push(tempitem);
     }
   }
   var data = {};
@@ -116,38 +112,32 @@ router.post("/shoping-cart", async (req, res) => {
 
 router.get("/shoping-cart-history", async (req, res) => {
   let history = await orderModel.getOrderHistory(1);
-  res.render('cus_shoping-cart-history',{
-      layout: 'customer_layout',
-      history:history.history,
-      sumtien: history.sumtien
-    })
-}
-);
+  res.render("cus_shoping-cart-history", {
+    layout: "customer_layout",
+    history: history.history,
+    sumtien: history.sumtien,
+  });
+});
 
 router.get("/rate-order", async (req, res) => {
   let history = await orderModel.getById(req.query.id);
- 
-  res.render('cus_shoping-cart-history-item',{
-      layout: 'customer_layout',
-      history:history,
-    })
-});
 
+  res.render("cus_shoping-cart-history-item", {
+    layout: "customer_layout",
+    history: history,
+  });
+});
 
 router.post("/rate-order", async (req, res) => {
   let data = req.body;
   data.ma_nguoi_dung = 1;
   await orderModel.addRate(data);
-  res.redirect("/shoping-cart-history")
+  res.redirect("/shoping-cart-history");
 });
-
-router.get('/checkout', async (req,res)=>{
-  res.render('cus_checkout',{
-      layout: 'customer_layout' 
-    })
 router.get("/checkout", async (req, res) => {
   var data;
-  await axios.get(`http://localhost:18291/api/Orders/checkout/1`).then((rs) => {
+  var cusId = 1;
+  await axios.get(`http://localhost:18291/api/Orders/checkout/${cusId}`).then((rs) => {
     data = rs.data;
   });
   res.render("cus_checkout", {
@@ -161,76 +151,72 @@ router.get("/checkout", async (req, res) => {
   });
 });
 
-
-router.get('/shop-near',async (req,res)=>{
+router.get("/shop-near", async (req, res) => {
   var data = {};
   data.ma_nguoi_dung = 5;
   let stores = await storeModel.getNearestStore(data);
-  res.render('cus_nearest-shop',{
-    stores:stores,
-    layout: 'customer_layout' 
-  })
+  res.render("cus_nearest-shop", {
+    stores: stores,
+    layout: "customer_layout",
+  });
 });
 
-
-router.get('/shop', async (req,res)=>{
+router.get("/shop", async (req, res) => {
   const page = +req.query.page || 1;
   const pagesize = +req.query.pagesize || 8;
   const shopid = req.query.id;
   let product = await productModel.getAllByStoreID(shopid);
- 
-  res.render('cus_shop-details',{
-      sanpham:product.sanphams,
-   
-      pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
 
-      layout: 'customer_layout' 
-      })
+  res.render("cus_shop-details", {
+    sanpham: product.sanphams,
+
+    pagination: { page: parseInt(page), limit: pagesize, totalRows: product.totalItems },
+
+    layout: "customer_layout",
+  });
 });
-
-
 
 router.get("/cancel-order", async (req, res) => {
   const data = await orderModel.cancel(req.query.id);
   res.redirect("/shoping-cart-history");
 });
 
-
-router.get('/my-shop', async (req,res)=>{
+router.get("/my-shop", async (req, res) => {
   const check = await storeModel.checkStore(1);
-  if(!check) res.redirect("/shop-grid1");
-  else{
+  if (!check) res.redirect("/shop-grid1");
+  else {
     //REDIRECT Manager;
   }
+  res.redirect("/");
 });
-router.get('/shop-grid1', async (req,res)=>{
-  res.render('cus_shop-details-not-exists',{
-      layout: 'customer_layout' 
-    })
-});
-
-router.get('/shop-register', async (req,res)=>{
-  res.render('cus_shop-register',{
-      layout: 'customer_layout' 
-    })
+router.get("/shop-grid1", async (req, res) => {
+  res.render("cus_shop-details-not-exists", {
+    layout: "customer_layout",
+  });
 });
 
-router.post('/shop-register', async (req,res)=>{
+router.get("/shop-register", async (req, res) => {
+  res.render("cus_shop-register", {
+    layout: "customer_layout",
+  });
+});
+
+router.post("/shop-register", async (req, res) => {
   const data = req.body;
   data.maNguoiDung = 2;
   storeModel.addStore(data);
-  
+
   res.redirect("/");
 });
 
-router.post('/addtocart', async (req,res)=>{
+router.post("/addtocart", async (req, res) => {
   const data = JSON.parse(JSON.stringify(req.body));
   data.ma_nguoi_dung = 1;
   await cartModel.addCart(data);
   res.redirect("/shoping-cart");
 });
 
-router.get('/item-detail', async (req,res)=>{
+router.get("/item-detail", async (req, res) => {
   let product = await productModel.getAllByProductID(req.query.id);
   let product1 = await productModel.getAllByProductCategory(product.sanpham.ma_dm, "", 0, 4);
   res.render("cus_item-detail", {
@@ -287,4 +273,3 @@ router.post("/checkout", async (req, res) => {
     });
   res.redirect("/checkout");
 });
-module.exports = router;

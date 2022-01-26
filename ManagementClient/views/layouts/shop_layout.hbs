@@ -11,7 +11,7 @@
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
     <!-- Css Styles -->
     <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="../css/dropdown.css" type="text/css">
@@ -38,7 +38,7 @@
             <a href="#"><img src="img/logo.png" alt=""></a>
         </div>
         <div class="humberger__menu__cart">
-           
+
         </div>
         <div class="humberger__menu__widget">
             <div class="header__top__right__language">
@@ -52,7 +52,7 @@
         <nav class="humberger__menu__nav mobile-menu">
             <ul>
                 <li class="active"><a href="/shop">Trang chủ</a></li>
-                <li class="active"><a href="/shop/orderlist">Đơn hàng</a></li>
+                <li class=""><a href="/shop/orderlist">Đơn hàng</a></li>
             </ul>
         </nav>
         <div id="mobile-menu-wrap"></div>
@@ -97,6 +97,8 @@
                     <nav class="header__menu">
                         <ul>
                             <li class="active"><a href="/shop">Trang chủ</a></li>
+                            <li><a href="/shop/thong-ke">Xem thống kê nhu yếu phẩm</a>
+                            </li>
                         </ul>
                     </nav>
                 </div>
@@ -114,14 +116,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    
+
                 </div>
             </div>
         </div>
     </section>
     <!-- Hero Section End -->
     <section>
-    {{{body}}}
+        {{{body}}}
     </section>
     <!-- Footer Section Begin -->
     <footer class="footer spad">
@@ -129,9 +131,16 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="footer__copyright">
-                        <div class="footer__copyright__text"><p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p></div>
+                        <div class="footer__copyright__text">
+                            <p>
+                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                Copyright &copy;
+                                <script>document.write(new Date().getFullYear());</script> All rights reserved | This
+                                template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a
+                                    href="https://colorlib.com" target="_blank">Colorlib</a>
+                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -30,7 +30,7 @@ namespace BackEndAPI.Controllers
             var result = new ThongKeVM<NguoiDungTheoVungVM>()
             {
                 Items = items,
-                UrlDownload = "http://localhost:18291/api/statitics/export/nguoidung"
+                UrlDownload = "http://localhost:18291/api/statitics/export/nguoi-dung"
             };
             var chart = items.GroupBy(x => new {vung = x.Vung }).Select(x => new
             {
@@ -46,7 +46,7 @@ namespace BackEndAPI.Controllers
             var items = await _service.ThongKeMatHangThietYeu(maCuaHang);
             var result = new ThongKeVM<MatHangThietYeuVM>()
             {
-                Items = items,
+                Items = items.Take(15).ToList(),
                 UrlDownload = "http://localhost:18291/api/statitics/export/mat-hang-thiet-yeu?maCuaHang=" + maCuaHang
             };
             return Ok(result);

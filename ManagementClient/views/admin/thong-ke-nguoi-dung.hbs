@@ -1,0 +1,67 @@
+<body>
+    <section class="container">
+        <div class="row justify-content-center mt-2 mb-4 ml-4">
+            <div class="col-lg-4 col-md-10 col-mb-10 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-lg text-center font-weight-bold text-danger text-uppercase mb-1">
+                            Vùng đỏ</div>
+                        <div class="h5 mb-0 font-weight-bold text-center text-gray-800 f1">{{do}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-10 col-mb-10 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-lg text-center font-weight-bold text-warning text-uppercase mb-1">
+                            Vùng cam</div>
+                        <div class="h5 mb-0 font-weight-bold text-center text-gray-800 f2">{{cam}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-10 col-mb-10 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-lg text-center font-weight-bold text-success text-uppercase mb-1">
+                            Vùng xanh</div>
+                        <div class="h5 mb-0 font-weight-bold text-center text-gray-800 f3">{{xanh}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-2 mb-4 ml-4" style="overflow:scroll; height:500px;">
+            <a href="{{url}}" type="button" class="btn btn-primary mb-2">Xuất file excel</a>
+            <table class="table table-bordered" id="package-Statistic-Table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Tên người dùng</th>
+                        <th scope="col">Loại người dùng</th>
+                        <th scope="col">Địa chỉ</th>
+                        <th scope="col">Vùng</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each users}}
+                    <tr>
+                        <th scope="row">{{ten}}</th>
+                        <td>{{loai}}</a></td>
+                        <td>{{diaChi}}</td>
+                        <td>{{vung}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card mb-4">
+                    <div class="card-body"><canvas id="patientPieChart" width="100%" height="40"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/chart/chart-pie-demo.js"></script>
+</body>

@@ -1,0 +1,35 @@
+<div class="mt-2 mb-4 ml-4">
+    <a href="/admin/thong-ke/doanh-thu-cua-hang?thoigian=nam" type="button" class="btn btn-primary mb-2">Theo năm
+        nay</a>
+    <a href="/admin/thong-ke/doanh-thu-cua-hang?thoigian=thang" type="button" class="btn btn-primary mb-2">Theo
+        tháng này</a>
+    <table class="table table-bordered" id="package-Statistic-Table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Doanh thu</th>
+                <th scope="col">Lượt mua</th>
+                <th scope="col">Thời gian</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {{#each sp}}
+            <tr>
+                <th scope="row">{{ten}}</th>
+                <td>{{#formatMoney doanhThu}}{{/formatMoney}}</td>
+                <td>{{soLuongDonHang}}</td>
+                <td>{{thoiGian}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-8 center">
+        <div class="card mb-4">
+            <div class="card-body"><canvas id="packageBarChart" width="100%" height="40"></canvas></div>
+        </div>
+    </div>
+</div>
+<script src="/js/chart/chart-bar-demo-for-cung-ky.js"></script>

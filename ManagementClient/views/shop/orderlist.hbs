@@ -1,48 +1,48 @@
 <body>
-<section class = "container">
-<table class="table table-bordered">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Tên người nhận</th>
-            <th scope="col">Địa chỉ</th>
-            <th scope="col">Ngày mua</th>
-            <th scope="col">SĐT người nhận</th>
-            <th scope="col">Tổng tiền</th>
+    <section class="container">
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Tên người nhận</th>
+                    <th scope="col">Địa chỉ</th>
+                    <th scope="col">Ngày mua</th>
+                    <th scope="col">SĐT người nhận</th>
+                    <th scope="col">Tổng tiền</th>
 
-            <th scope="col" >Trạng thái</th>
-            <th scope="col" >Chi tiết</th>
-            <th scope="col" >Action</th>
-        </tr>
-    </thead>
-    <tbody>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Chi tiết</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
 
-        {{#each orders}}
-        <tr>
-            <td>{{this.tenNguoiNhan}}</td>
-            <th scope="row">{{this.diaChi}}</th>
-            <td>{{this.ngayMua}}</td>
-            <td>{{this.sdt}}</td>
-            <td>{{this.tongTien}}</td>
-            <td>{{this.trangThai}}</td>
-            <td class ="dropdown">
-                <button class="dropbtn">Chi tiết</button>
-                <div class="dropdown-content">
-                    {{#each this.dsChiTietDonHang}}
-                        <a>{{this.tenSp}} với số lượng {{this.soLuong}}</a>
-                    {{/each}}
-                </div>
-            </td>
-            <td>
-                <a href ="/shop/accept?id={{maDonHang}}" type="button">Xác nhận đơn hàng</a>
-                 <a href ="/shop/cancel?id={{maDonHang}}" type="button">Huỷ đơn hàng</a>
-            </td>
-            
+                {{#each orders}}
+                <tr>
+                    <td>{{this.tenNguoiNhan}}</td>
+                    <th scope="row">{{this.diaChi}}</th>
+                    <td>{{this.ngayMua}}</td>
+                    <td>{{this.sdt}}</td>
+                    <td>{{this.tongTien}}</td>
+                    <td>{{this.trangThai}}</td>
+                    <td class="dropdown">
+                        <button class="dropbtn">Chi tiết</button>
+                        <div class="dropdown-content">
+                            {{#each this.dsChiTietDonHang}}
+                            <a>{{this.tenSp}} với số lượng {{this.soLuong}}</a>
+                            {{/each}}
+                        </div>
+                    </td>
+                    <td>
+                        <a href="/shop/accept?id={{maDonHang}}" type="button">Xác nhận đơn hàng</a>
+                        <a href="/shop/cancel?id={{maDonHang}}" type="button">Huỷ đơn hàng</a>
+                    </td>
 
-        </tr>
-        {{/each}}
 
-    </tbody>
+                </tr>
+                {{/each}}
 
-</table>
-</section>
- </body>
+            </tbody>
+
+        </table>
+    </section>
+</body>

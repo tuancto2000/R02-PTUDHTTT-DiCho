@@ -11,11 +11,12 @@ getTableData(packageNode, oTablePac);
 function getTableData(node, oTable) {
   const dataTable = [...oTable.rows].map((t) => [...t.children].map((u) => u.innerText));
   dataTable.splice(0, 1);
+
   const oData = {
     labels: dataTable.map((e, i) => e[0]),
-    data: dataTable.map((e, i) => e[2]),
+    data: dataTable.map((e, i) => e[1].replace(".", "").replace("đ", "")),
   };
-
+  console.log(oData);
   let max = oData.data[0];
   max = Math.ceil(max / 10) * 10;
 
@@ -29,7 +30,7 @@ function runChart(node, objData, max) {
       labels: objData.labels,
       datasets: [
         {
-          label: "Số lượng",
+          label: "Doanh",
           backgroundColor: "rgba(2,117,216,1)",
           borderColor: "rgba(2,117,216,1)",
           data: objData.data,
