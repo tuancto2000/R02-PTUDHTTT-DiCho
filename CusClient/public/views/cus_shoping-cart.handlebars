@@ -44,16 +44,17 @@
                                     <td class="shoping__cart__item">
                                         <img src="{{this.nguon_hinh_anh}}" style="width: 100px;height:100px" alt="">
                                         <h5>{{this.ten_sp}}</h5>
-                                        <input type="text" name="ma_sp" value="{{this.ma_sp}}" style="display: none;">
+                                        <input type="text" class="maSP" name="ma_sp" value="{{this.ma_sp}}" style="display: none;">
                                     </td>
                                     <td class="shoping__cart__price">
+                                        <input class="giaspinput" type="text" value="{{this.gia_sp}}" style="display: none;">
                                        {{#formatMoney this.gia_sp}}{{/formatMoney}}
                                     </td>
                                     <td class="shoping__cart__quantity">
-                                        <input type="text" name="so_luong" value="{{this.ma_sp}}" style="display: none;">
+                                        
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input type="text" value="{{this.so_luong}}">
+                                                <input type="text" class ="qqtext" name="so_luong" value="{{this.so_luong}}">
                                             </div>
                                         </div>
                                     </td>
@@ -74,8 +75,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="shoping__cart__btns">
-                        <a href="/shoping-cart" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-                            Cập nhật giỏ hàng</a>
+                        <button type="button" onclick="onclickF()" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
+                            Cập nhật giỏ hàng</button>
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -95,6 +96,61 @@
         </form>
     </section>
     <!-- Shoping Cart Section End -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+   function onclickF(){
+       var data = {};
+       var chitietgiohang_list = [];
+       Array.from($('.qqtext')).forEach((e,i) =>{
+           chitietgiohang_list.push({'ma_sp':$('.maSP')[i].value,'so_luong':$('.qqtext')[i].value})
+        });
+        data.chitietgiohang_list = chitietgiohang_list;
+        console.log(JSON.stringify(data));
+        $.ajax({
+        url: "/shoping-cart",
+        type: "post",
+        
+        success: function (data) {
+            location.href = "/shoping-cart"
+        },
+        data: JSON.stringify(data),
 
+        });
+   } 
+   $(document).ready(function(){
+       var formatter = new Intl.NumberFormat('vn-VN', {
+        style: 'currency',
+        currency: 'VND',
 
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+        });
+
+   Array.from($('.qqtext')).forEach((e,i) =>{
+        $(e).on('change', function() {
+            
+            let tempSum = e.value * parseInt($('.giaspinput')[i].value);
+            $(".shoping__cart__total")[i].innerText = formatter.format(tempSum);
+            });
+    });
+
+    Array.from($('.inc.qtybtn')).forEach((e,i) =>{
+
+        $(e).on('click', function() {
+          
+            
+        });
+            
+    });
+    Array.from($('.dec.qtybtn')).forEach((e,i) =>{
+
+        $(e).on('click', function() {
+          
+           
+        });
+            
+    });    
+   });
+</script>
 </body>

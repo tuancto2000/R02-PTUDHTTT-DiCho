@@ -55,8 +55,8 @@
                                         {{this.trang_thai}}
                                     </td>
                                     <td class ="shoping__cart__item__close">
-                                        <span class="icon_open"></span>
-                                        <span class="icon_close"></span>
+                                        <a href="/rate-order?id={{this.ma_don_hang}}" class="button site-btn icon_mail"></a>
+                                        <a href="/cancel-order?id={{this.ma_don_hang}}" class="button site-btn icon_close"></a>
                                     </td>
                                 </tr>
                                 {{/each}}
@@ -70,6 +70,7 @@
                     <div class="shoping__cart__btns">
                         <a href="shoping-cart-history" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
                             Cập nhật</a>
+                            
                     </div>
                 </div>
                 <div class="col-lg-6">

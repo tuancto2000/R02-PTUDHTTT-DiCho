@@ -60,17 +60,8 @@ router.get("/paging/:id", async (req, res) => {
 });
 
 router.post("/changePassword", async (req, res) => {
-    const { username, password } = req.body;
+    const data = req.query;
 
-    const isValidpassword = await model.getPassword(username);
-    const ischeckPassword = await checkPassword(password, isValidpassword);
-    if (!ischeckPassword) {
-        throw createError("Sai mật khẩu");
-    }
-    const accessToken = await signAccessToken(user);
-    if (!accessToken) {
-        throw createError("Đăng nhập không thành công, bạn vui lòng thử lại");
-    }
-    res.cookie("access_token", accessToken, { httpOnly: true });
-    res.redirect("/api/product");
+    const isValidpassword = await model.changePassword(data);
+   
 });

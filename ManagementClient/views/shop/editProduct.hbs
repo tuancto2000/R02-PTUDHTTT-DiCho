@@ -2,7 +2,7 @@
     <h1 class="mt-4">Thêm Nhu Yếu Phẩm</h1>
     <div class="card mb-4">
         <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" action="/shop/edit-product/{{product.ma_sp}}">
                 <div class="form-group">
                     <label for="title">Tên sản phẩm</label>
                     <input type="text" class="form-control" id="title" name="ten_sp" value="{{product.ten_sp}}">
@@ -12,8 +12,8 @@
                 </div>
                  <div class="form-group">
                     <label for="danhmuc">Danh mục</label>
-                     <select id="danhmuc" name="danhmuc" class="form-select form-select-md border border-secondary ">
-                         <option value="">Tên danh mục</option>
+                     <select id="danhmuc" name="ma_dm" class="form-select form-select-md border border-secondary ">
+                         <option value="{{product.ma_dm}}">{{product.ten_dm}}</option>
                     {{#each danhmuc}}
                        <option value="{{this.ma_dm}}">{{this.ten_dm}}</option>
                     {{/each}}
@@ -22,7 +22,7 @@
                
                 <div class="form-group">
                     <label for="basePrice">Giá</label>
-                    <input type="number" class="form-control" id="basePrice" name="gia_sp" value="product.gia_sp">
+                    <input type="number" class="form-control" id="basePrice" name="gia_sp" value="{{product.gia_sp}}">
                 </div>
                 <div class="form-group">
                     <label for="description">Số lượng còn lại</label>
@@ -49,7 +49,7 @@
                     <div class="card mr-2 border-0" width="80%" height="300px">
                         <div class=" form-floating ">
                             <input data-preview-file-type=" text" class='file' type="file" type="text"
-                                class="form-control" id='image' name="ImagePath" multiple>
+                                class="form-control" id='image' name="nguon_hinh_anh" multiple>
                         </div>
                     </div>
                 </div>

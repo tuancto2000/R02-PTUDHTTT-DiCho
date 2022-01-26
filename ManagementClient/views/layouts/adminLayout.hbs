@@ -1,111 +1,154 @@
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Website Quản lý thông tin Covid</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="stylesheet" href="../css/style.css" />
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../css/fileinput.min.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="../js/plugins/piexif.min.js"></script>
-    <script src="../js/plugins/sortable.min.js"></script>
-    <script src="../js/themes/fas/theme.min.js"></script>
-    <script src="../js/fileinput.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
-    <script src="../js/datatables-simple-demo.js"></script>
-    {{{head}}}
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Quản lý thông tin Covid</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="../js/jquery-3.6.0.min.js"></script>
+  <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../css/fileinput.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+  <script src="../js/plugins/piexif.min.js"></script>
+  <script src="../js/plugins/sortable.min.js"></script>
+  <script src="../js/themes/fas/theme.min.js"></script>
+  <script src="../js/fileinput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+  <script src="../js/datatables-simple-demo.js"></script>
+  {{{head}}}
+</head>
 
-  <body>
-    <div class="sb-nav-fixed">
-      <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="/">Home</a>
-        <!-- Sidebar Toggle-->
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
-            class="fas fa-bars"
-          ></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-          <li id="logout">
-            <a class="nav-link" role="button">Đăng xuất</a>
-          </li>
-        </ul>
-      </nav>
+<body>
+  <div class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+      <!-- Navbar Brand-->
+      <a class="navbar-brand ps-3" href="/">Home</a>
+      <!-- Sidebar Toggle-->
+      <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+          class="fas fa-bars"></i></button>
+      <!-- Navbar Search-->
+      <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+      </form>
+      <!-- Navbar-->
+      <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li id="logout">
+          <a class="nav-link" role="button">Đăng xuất</a>
+        </li>
+      </ul>
+    </nav>
 
-    </div>
-    <div id="layoutSidenav">
-      <div id="layoutSidenav_nav">
-        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-          <div class="sb-sidenav-menu">
-            <div class="nav">
-              <div class="sb-sidenav-menu-heading">Core</div>
-              <a class="nav-link" href="#">
-                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                Dashboard
-              </a>
-              <div class="sb-sidenav-menu-heading">Quản trị</div>
-              <a class="nav-link collapsed" href="/admin">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách sản phẩm
-              </a>
-              <a class="nav-link collapsed" href="/admin/register-shop?type=1">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách đăng ký bán hàng
-              </a>
-              <a class="nav-link collapsed" href="/admin/shipperlist">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách shipper
-              </a>
-              <a class="nav-link collapsed" href="/admin/userlist">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách người dùng
-              </a>
-              <a class="nav-link collapsed" href="/admin/shoplist">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách cửa hàng
-              </a>
-              <a class="nav-link collapsed" href="/admin/orderlist">
-                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                Danh sách đơn hàng
-              </a>
+  </div>
+  <div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+      <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+        <div class="sb-sidenav-menu">
+          <div class="nav">
+            <div class="sb-sidenav-menu-heading">Core</div>
+            <a class="nav-link" href="#">
+              <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+              Dashboard
+            </a>
+            <div class="sb-sidenav-menu-heading">Quản trị</div>
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages1"
+              aria-expanded="false" aria-controls="collapsePages">
+              <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+              Xem danh sách
+              <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapsePages1" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+              <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                <a class="nav-link collapsed" href="/admin">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách sản phẩm
+                </a>
+                <a class="nav-link collapsed" href="/admin/register-shop?type=1">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách đăng ký bán hàng
+                </a>
+                <a class="nav-link collapsed" href="/admin/shipperwaitlist">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách shipper đăng ký
+                </a>
+                <a class="nav-link collapsed" href="/admin/shipperlist">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách shipper
+                </a>
+                <a class="nav-link collapsed" href="/admin/userlist">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách người dùng
+                </a>
+                <a class="nav-link collapsed" href="/admin/shoplist">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách cửa hàng
+                </a>
+                <a class="nav-link collapsed" href="/admin/orderlist">
+                  <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                  Danh sách đơn hàng
+                </a>
+              </nav>
+            </div>
+
+            <a class="nav-link collapsed" href="/admin/feelist">
+              <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+              Thống kê hoa hồng
+            </a>
+            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+              aria-expanded="false" aria-controls="collapsePages">
+              <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+              Xem thống kê
+              <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+            </a>
+            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+              <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                <a class="nav-link collapsed" href="/admin/thong-ke/nguoi-dung">
+                  Thống kê người dùng
+                </a>
+                <a class="nav-link collapsed" href="/admin/thong-ke/mat-hang-thiet-yeu">
+                  Thống kê mặt hàng thiết yếu
+                </a>
+                <a class="nav-link collapsed" href="/admin/thong-ke/danh-muc-thiet-yeu">
+                  Thống kê danh mục thiết yếu
+                </a>
+                <a class="nav-link collapsed" href="/admin/thong-ke/nhu-cau-cung-ky">
+                  Thống kê nhu cầu cùng kỳ
+                </a>
+                <a class="nav-link collapsed" href="/admin/thong-ke/doanh-thu-cua-hang">
+                  Thống kê doanh thu cửa hàng
+                </a>
+                <a class="nav-link collapsed" href="/admin/thong-ke/doanh-thu-san-pham">
+                  Thống kê doanh thu sản phẩm
+                </a>
+              </nav>
             </div>
           </div>
-          <div class="sb-sidenav-footer">
-            Người quản trị
-          </div>
-        </nav>
-      </div>
-      <div id="layoutSidenav_content" class="p-3">
-        <main>
-          {{{body}}}
-        </main>
-      </div>
+        </div>
+        <div class="sb-sidenav-footer">
+          Người quản trị
+        </div>
+      </nav>
     </div>
-    <div class="container-fluid">
-
+    <div id="layoutSidenav_content" class="p-3">
+      <main>
+        {{{body}}}
+      </main>
     </div>
-    <script src="../js/main.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
-    <script type="text/javascript" src="/js/logout.js"></script>
+  </div>
+  <div class="container-fluid">
 
-  </body>
+  </div>
+  <script src="../js/main.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+  <script type="text/javascript" src="/js/logout.js"></script>
+
+</body>
 
 </html>

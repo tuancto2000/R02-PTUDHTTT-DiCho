@@ -88,18 +88,23 @@ exports.addProduct = async (data) => {
         method: "post",
         baseURL: javaBaseURL,
         url: `/products`,
-        data: data,
+        
+        dataType: 'json',
+        contentType: 'application/json',
+        data: (data),
+
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
 
-exports.updateProduct = async (id) => {
+exports.updateProduct = async (id,data) => {
     const rs = await axios({
         baseURL: javaBaseURL,
         method: "put",
-        url: `/product/${id}`,
+        url: `/products/${id}`,
+        data:data
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

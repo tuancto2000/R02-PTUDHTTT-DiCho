@@ -3,10 +3,10 @@ const router = express.Router();
 const model = require("../models/store.M");
 module.exports = router;
 
-router.get("/getCommission/:id", async (req, res) => {
-    let { id } = req.params;
+router.get("/getCommission", async (req, res) => {
     let query = req.query;
-    const data = await model.getCommission(id, query);
+    const data = await model.getCommission(query);
+    console.log(req.query);
     res.send(data);
 });
 

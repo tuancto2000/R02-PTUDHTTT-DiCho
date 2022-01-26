@@ -23,7 +23,7 @@ exports.getById = async (id) => {
     const rs = await axios({
         baseURL: BaseURL,
         method: "get",
-        url: "/orders/detail/" + id,
+        url: "/orders/" + id + "/detail",
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
@@ -65,7 +65,7 @@ exports.addRate = async (data) => {
   const rs = await axios({
       baseURL: BaseURL,
       method: "post",
-      url: "/orders/" + data.ma_chi_tiet_don_hang + "/rate",
+      url: "/orders/add/" + data.ma_chi_tiet_don_hang + "/rate",
       data: data,
   })
       .then((response) => response.data)

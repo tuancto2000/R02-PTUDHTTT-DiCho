@@ -1,0 +1,45 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Detail User</li>
+    </ol>
+</nav>
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Tên danh mục</th>
+            <th scope="col">Giá sản phẩm</th>
+            <th scope="col">Số tồn kho</th>
+            <th scope="col">Đánh giá</th>
+            <th scope="col">Số đánh giá</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>{{detail.ten_sp}}</td>
+            <td>{{detail.ten_dm}}</td>
+            <td>{{detail.gia_sp}}</td>
+            <td>{{detail.so_luong_con_lai}}</td>
+            <td>{{detail.trungbinhsao}}</td>
+            <td>{{detail.soluotdanhgia}}</td>
+        </tr>
+
+    </tbody>
+</table>
+<h2>Hình ảnh sản phẩm:</h2>
+<div class="card-group row row-cols-1 row-cols-md-3 d-flex align-items-stretch">
+    {{#each images}}
+    <div class="col-md-2 mb-4">
+        <div class="card mr-2 border-0">
+            <img src="/{{this.nguon_hinh_anh}}" class="mr-5 rounded border border-primary" width="100%" height="200px">
+            
+        </div>
+    </div>
+
+    {{/each}}
+</div>
+<div class="col-12 d-grid">
+    <a href="/admin"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>

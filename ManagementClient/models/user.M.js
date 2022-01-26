@@ -20,10 +20,10 @@ exports.getAccount = async (id) => {
     return rs;
   };
 
-exports.resetpassword = async (role) => {
+exports.resetpassword = async (data) => {
     const rs = await axios({
-      method: "get",
-      url: `users/getbyrole/${role}`,
+      method: "post",
+      url: `users/changePassword?username=${data.username}&password=${data.password}`
     })
       .then((response) => response.data)
       .catch((error) => console.log("errrrrrrr : ", error));

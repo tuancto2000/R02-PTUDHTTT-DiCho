@@ -45,7 +45,7 @@ namespace BackEndAPI.Services
                         SoLuongBanRa = g.Sum(i => i.SoLuong),
                         SoLuongConLai = g.Sum(i => i.ConLai)
                     }).ToList();
-            return reports;
+            return reports.OrderByDescending(x => x.SoLuongBanRa).ToList();
         }
         public async Task<List<NguoiDungTheoVungVM>> ThongKeNguoiDung()
         {
@@ -57,7 +57,7 @@ namespace BackEndAPI.Services
                 Loai = x.VaiTro.ToString(),
                 DiaChi = x.DiaChi.TenDiaChi,
                 Vung = x.DiaChi.LoaiVung.ToString()
-            }).ToListAsync();
+            }).Take(20).ToListAsync();
             var stores = await _context.CuaHang.Include(x => x.DiaChi).Select(x => new NguoiDungTheoVungVM()
             {
                 Ten = x.TenCuaHang,
@@ -66,9 +66,8 @@ namespace BackEndAPI.Services
                 Loai = "CuaHang",
                 DiaChi = x.DiaChi.TenDiaChi,
                 Vung = x.DiaChi.LoaiVung.ToString()
-            }).ToListAsync();
+            }).Take(20).ToListAsync();
             reports.AddRange(stores);
-
             return reports;
         }
         public async Task<List<MatHangThietYeuVM>> ThongKeMatHangThietYeu(int maCuaHang)
@@ -162,7 +161,7 @@ namespace BackEndAPI.Services
                         ThoiGian = DateTime.Now.Year.ToString()
                     }).ToList();
             }
-            return reports;
+            return reports.OrderByDescending(x => x.DoanhThu).Take(15).ToList();
         }
         public async Task<List<DoanhThuVM>> ThongKeDoanhThuCuaHang(string thoigian)
         {
@@ -200,7 +199,7 @@ namespace BackEndAPI.Services
                         ThoiGian = DateTime.Now.Year.ToString()
                     }).ToList();
             }
-            return reports;
+            return reports.OrderByDescending(x => x.DoanhThu).Take(10).ToList();
         }
 
 

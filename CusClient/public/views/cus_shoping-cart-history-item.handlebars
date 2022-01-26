@@ -1,0 +1,77 @@
+
+<body>
+   
+    
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb__text">
+                        <h2>Lịch sử mua hàng</h2>
+                        <div class="breadcrumb__option">
+                            <a href="/">Home</a>
+                            <span>Lịch sử mua hàng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shoping Cart Section Begin -->
+    <section class="shoping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>hình ảnh</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Đánh giá</th>
+                                    <th>Nhận xét</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each history}}
+                                <form method="post" action="/rate-order">
+                                <tr>
+                                    <td style="height: 50px; width:50px;">
+                                        {{this.nguon_hinh_anh}}
+                                         <input name="ma_chi_tiet_don_hang" type="text" value="{{this.id}}" style="display: none;">
+                                    </td>
+                                    <td>
+                                         <input name="ma_san_pham" type="text" value="{{this.ma_sp}}" style="display: none;">
+                                        
+                                         {{this.ten_sp}}
+                                    </td>
+                                    <td>
+                                        <input name="sao" type="number" max="5" min="0">
+                                       
+                                    </td>
+                                    <td>
+                                       <input name="binh_luan" type="Text">
+                                    </td>
+                                    <td class ="shoping__cart__item__close">
+                                        <button type="submit" class="button site-btn icon_mail"></button>
+                                    </td>
+                                </tr>
+                                </form>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </section>
+    <!-- Shoping Cart Section End -->
+
+
+</body>

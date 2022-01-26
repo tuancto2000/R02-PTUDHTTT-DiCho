@@ -58,7 +58,7 @@ exports.getByRole = async (role) => {
         method: "get",
         baseURL: netBaseURL,
 
-        url: `/Users/getbyrole/${id}`,
+        url: `/Users/getbyrole/${role}`,
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));
@@ -79,11 +79,8 @@ exports.changePassword = async (data) => {
     const rs = await axios({
         method: "post",
         baseURL: netBaseURL,
-        url: `/Users/changePassword`,
-        data: {
-            username: username,
-            password: password,
-        },
+        url: `/Users/changePassword?username=${data.username}&password=${data.password}`,
+        
     })
         .then((response) => response.data)
         .catch((error) => console.log("errrrrrrr : ", error));

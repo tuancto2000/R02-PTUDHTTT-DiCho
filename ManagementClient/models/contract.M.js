@@ -25,3 +25,35 @@ exports.getDetail = async (id) => {
         .catch((error) => console.log("errrrrrrr : ", error));
     return rs;
 };
+
+exports.getDetailShipper = async (id) => {
+    const rs = await axios({
+    
+        method: "get",
+        url: `/contracts/detail/shipper/${id}`,
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+
+exports.acceptshipper  = async (data) => {
+    const rs = await axios({
+        method: "post",
+        url: "/contracts/shipper",
+        data: data, 
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};
+exports.accept = async (data) => {
+    const rs = await axios({
+        method: "post",
+        url: "/contracts/accept",
+        data: data, 
+    })
+        .then((response) => response.data)
+        .catch((error) => console.log("errrrrrrr : ", error));
+    return rs;
+};

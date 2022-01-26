@@ -20,12 +20,13 @@ router.get("/detail/store/:id", async (req, res) => {
 router.post("/accept", async (req, res) => {
     let data = req.body;
     const result = await model.accept(data);
-    res.status(200).res.send(result);
+    console.log(result);
+    res.status(200).send();
 });
 router.post("/shipper", async (req, res) => {
     let data = req.body;
     const result = await model.addShipper(data);
-    res.status(200).res.send(result);
+    res.status(200).send(result);
 });
 router.post("/store", async (req, res) => {
     let data = req.body;

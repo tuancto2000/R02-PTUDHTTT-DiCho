@@ -1,0 +1,32 @@
+
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Tên người dùng</th>
+            <th scope="col">Ngày sinh</th>
+            <th scope="col">SĐT</th>
+            <th scope="col">Email</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Xem hợp đồng</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        {{#each user}}
+        <tr>
+            <th scope="row">{{this.tenNguoiDung}}</th>
+            <td>{{this.ngaySinh}}</td>
+            <td>{{this.sdt}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.kichHoat}}</td>
+             <td><a type="button" href="/admin/shipper-contract-detail?id={{this.maHopDong}}">Ký hợp đồng</a></td>
+        </tr>
+        {{/each}}
+
+    </tbody>
+
+</table>
+   <nav aria-label="Page navigation example">
+        {{{paginateHelper pagination paginationClass="pagination"}}}
+    </nav>

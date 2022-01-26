@@ -1,0 +1,30 @@
+<div class="row" style="margin-bottom: 10px;">
+<div class="col-12 d-grid">
+    <a href="/admin"><button class="btn btn-primary" type="submit">Back</button></a>
+</div>
+</div>
+
+<table class="table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Mã hợp đồng</th>
+            <th scope="col">Ngày đăng ký</th>
+              <th scope="col">Hợp đồng</th>
+            <th scope="col">Ngày hiệu lực</th>
+            <th scope="col">Ngày kết thúc</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr>
+            <td><input name="maHopDong" type="text" style="display: none;" value="{{detail.maHopDong}}">{{detail.maHopDong}}</td>
+            <td><input name="ngayDangKy" type="text" style="display: none;" value="{{detail.ngayDangKy}}">{{detail.ngayDangKy}}</td>
+            <td><input name="hopDongImg" type="text" style="display: none;" value="{{detail.hopDongImg}}"><img src="/{{detail.hopDongImg}}" style="width: 100px;height: 100px;"></td>
+            <td><input id="ngayHieuLuc"  name="ngayHieuLuc" type="date" required></td>
+            <td><input id="ngayKetThuc"  name="ngayKetThuc" type="date" required></td>
+            
+        </tr>
+
+    </tbody>
+</table>
+    
